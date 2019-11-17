@@ -1,10 +1,11 @@
 package de.ljw.aachen.lagerbank.domain;
 
 import lombok.*;
+import org.apache.commons.lang.Validate;
 
 import java.time.Instant;
+import java.util.UUID;
 
-@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 @Getter
 @EqualsAndHashCode
 @ToString
@@ -16,16 +17,32 @@ public class Transaction {
     private final Money amount;
     private final Instant time;
 
+    public Transaction(TransactionId id, AccountId source, AccountId target, Money amount, Instant time) {
+        this.id = id;
+        this.source = source;
+        this.target = target;
+        this.amount = amount;
+        this.time = time;
+
+        Validate.notNull(this.id);
+        Validate.isTrue(this.amount.isGreaterThan(Money.of(0.0)));
+        Validate.notNull(this.time);
+    }
+
     public static Transaction forDeposit(AccountId target, Money amount) {
-        return new Transaction(new TransactionId(), null, target, amount, Instant.now());
+        return new Transaction(generateTransactionId(), null, target, amount, Instant.now());
     }
 
     public static Transaction forWithdrawal(AccountId source, Money amount) {
-        return new Transaction(new TransactionId(), source, null, amount, Instant.now());
+        return new Transaction(generateTransactionId(), source, null, amount, Instant.now());
     }
 
     public static Transaction forTransfer(AccountId source, AccountId target, Money amount) {
-        return new Transaction(new TransactionId(), source, target, amount, Instant.now());
+        return new Transaction(generateTransactionId(), source, target, amount, Instant.now());
+    }
+
+    private static TransactionId generateTransactionId() {
+        return new TransactionId(UUID.randomUUID().toString());
     }
 
 }

@@ -3,12 +3,16 @@ package de.ljw.aachen.lagerbank.domain;
 import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
+import org.apache.commons.lang.Validate;
 
-@RequiredArgsConstructor
 @EqualsAndHashCode
 @ToString
 public class TransactionId {
 
-    Long id;
+    String id;
 
+    public TransactionId(String id) {
+        this.id = id;
+        Validate.notEmpty(this.id);
+    }
 }
