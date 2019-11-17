@@ -1,24 +1,47 @@
 package de.ljw.aachen.lagerbank.domain;
 
 import lombok.*;
+import org.joda.money.CurrencyUnit;
 
-import java.util.Currency;
+import java.math.BigDecimal;
 
-@RequiredArgsConstructor(staticName = "of")
+@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 @EqualsAndHashCode
 @ToString
 public class Money {
 
-    @Getter
-    private final Double value;
+
+    private final org.joda.money.Money value;
 
     public Money plus(Money amount) {
-        return new Money(this.value + amount.value);
-
+        var sum = this.value.plus(amount.value);
+        return new Money(sum);
     }
 
     public Money minus(Money amount) {
-        return new Money(this.value - amount.value);
+        var sum = this.value.minus(amount.value);
+        return new Money(sum);
+    }
+
+    public boolean isLessThan(Money money) {
+        return this.value.isLessThan(money.value);
+    }
+
+    public boolean isEqualTo(Money money) {
+        return this.value.isEqual(money.value);
+    }
+
+    public boolean isLessThanOrEqualTo(Money money){
+        return this.isLessThan(money) || this.isEqualTo(money);
+    }
+
+    public boolean isGreaterThan(Money money) {
+        return this.value.isGreaterThan(money.value);
+    }
+
+    public static Money of(double amount) {
+        var value = org.joda.money.Money.of(CurrencyUnit.EUR, amount);
+        return new Money(value);
     }
 
 }

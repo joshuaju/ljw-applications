@@ -11,7 +11,6 @@ import de.ljw.aachen.lagerbank.port.out.TransactionStorePort;
 import lombok.RequiredArgsConstructor;
 
 import static de.ljw.aachen.lagerbank.service.BalanceCalculator.calculateBalance;
-import static de.ljw.aachen.lagerbank.service.WithdrawalValidator.isWithdrawalAllowed;
 
 @RequiredArgsConstructor
 public class TransactionService implements DepositMoneyUseCase, WithdrawMoneyUseCase, TransferMoneyUseCase {
@@ -28,10 +27,7 @@ public class TransactionService implements DepositMoneyUseCase, WithdrawMoneyUse
     public void withdraw(Money amount, AccountId accountId) throws WithdrawalNotAllowedException {
         Money balance = calculateBalance(accountId, transactionStore.getAll(accountId));
 
-        boolean withdrawalAllowed = isWithdrawalAllowed(balance, amount);
-        if (!withdrawalAllowed) {
-            throw new WithdrawalNotAllowedException();
-        }
+        checkWithdrawal(amount, balance);
 
         Transaction transaction = Transaction.forWithdrawal(accountId, amount);
         transactionStore.add(transaction);
@@ -41,13 +37,17 @@ public class TransactionService implements DepositMoneyUseCase, WithdrawMoneyUse
     public void transfer(Money amount, AccountId sourceId, AccountId targetId) throws WithdrawalNotAllowedException {
         Money sourceAccountBalance = calculateBalance(sourceId, transactionStore.getAll(sourceId));
 
-        boolean withdrawalAllowed = isWithdrawalAllowed(sourceAccountBalance, amount);
-        if (!withdrawalAllowed) {
-            throw new WithdrawalNotAllowedException();
-        }
+        checkWithdrawal(amount, sourceAccountBalance);
 
         Transaction transaction = Transaction.forTransfer(sourceId, targetId, amount);
         transactionStore.add(transaction);
+    }
+
+    private void checkWithdrawal(Money amount, Money balance) throws WithdrawalNotAllowedException {
+        boolean withdrawalAllowed = amount.isLessThanOrEqualTo(balance);
+        if (!withdrawalAllowed) {
+            throw new WithdrawalNotAllowedException();
+        }
     }
 
 }
