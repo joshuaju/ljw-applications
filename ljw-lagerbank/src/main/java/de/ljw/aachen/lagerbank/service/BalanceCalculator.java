@@ -5,27 +5,26 @@ import de.ljw.aachen.lagerbank.domain.Money;
 import de.ljw.aachen.lagerbank.domain.Transaction;
 
 import java.util.Collection;
+import java.util.stream.Stream;
 
 class BalanceCalculator {
 
     static Money calculateBalance(AccountId accountId, Collection<Transaction> transactions) {
-        Money earnings = calculateEarnings(accountId, transactions);
-        Money expenses = calculateExpenses(accountId, transactions);
+        Money earnings = getEarnings(accountId, transactions).reduce(Money.of(0.0), Money::plus);
+        Money expenses = getExpenses(accountId, transactions).reduce(Money.of(0.0), Money::plus);
         return earnings.minus(expenses);
     }
 
-    private static Money calculateEarnings(AccountId accountId, Collection<Transaction> transactions) {
+    private static Stream<Money> getEarnings(AccountId accountId, Collection<Transaction> transactions) {
         return transactions.stream()
                 .filter(transaction -> accountId.equals(transaction.getTarget()))
-                .map(Transaction::getAmount)
-                .reduce(Money.of(0.0), Money::plus);
+                .map(Transaction::getAmount);
 
     }
 
-    private static Money calculateExpenses(AccountId accountId, Collection<Transaction> transactions) {
+    private static Stream<Money> getExpenses(AccountId accountId, Collection<Transaction> transactions) {
         return transactions.stream()
                 .filter(transaction -> accountId.equals(transaction.getSource()))
-                .map(Transaction::getAmount)
-                .reduce(Money.of(0.0), Money::plus);
+                .map(Transaction::getAmount);
     }
 }

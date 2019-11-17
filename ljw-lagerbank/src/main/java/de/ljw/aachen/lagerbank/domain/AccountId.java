@@ -4,13 +4,16 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
+import org.apache.commons.lang.Validate;
 
-@RequiredArgsConstructor
 @EqualsAndHashCode
 @ToString
 public class AccountId {
 
     @Getter
-    public final Long id;
+    public final long id;
 
+    public AccountId(long id) {
+        this.id = id;
+    }
 }

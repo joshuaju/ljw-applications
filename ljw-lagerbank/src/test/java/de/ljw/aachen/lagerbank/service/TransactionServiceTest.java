@@ -64,7 +64,7 @@ class TransactionServiceTest {
     @Test
     void failToTransferWhenBalanceWouldBeOverdrawn(){
         Money petersBalance = Money.of(10.0);
-        Money juliasBalance = Money.of(0.0);
+        Money juliasBalance = Money.of(0.5);
 
         depositMoneyService.deposit(petersBalance, peter);
         depositMoneyService.deposit(juliasBalance, julia);
