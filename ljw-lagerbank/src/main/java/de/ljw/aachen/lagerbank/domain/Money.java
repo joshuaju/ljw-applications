@@ -13,6 +13,10 @@ public class Money {
 
     private final org.joda.money.Money value;
 
+    public BigDecimal getAmount(){
+        return value.getAmount();
+    }
+
     public Money plus(Money amount) {
         var sum = this.value.plus(amount.value);
         return new Money(sum);

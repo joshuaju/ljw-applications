@@ -1,11 +1,13 @@
 package de.ljw.aachen.lagerbank.domain;
 
 import lombok.*;
+import lombok.experimental.FieldNameConstants;
 import org.apache.commons.lang.Validate;
 
 import java.time.Instant;
 import java.util.UUID;
 
+@FieldNameConstants
 @Getter
 @EqualsAndHashCode
 @ToString
