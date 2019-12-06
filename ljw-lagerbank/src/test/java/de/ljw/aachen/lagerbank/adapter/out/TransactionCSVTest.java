@@ -14,7 +14,7 @@ class TransactionCSVConverterTest {
 
     @ParameterizedTest
     @MethodSource("transactions")
-    void convertBothWays(Transaction transaction){
+    void convertBothWays(Transaction transaction) {
         String serialized = TransactionCSVConverter.convert(transaction);
         System.out.println(serialized);
 
@@ -23,7 +23,7 @@ class TransactionCSVConverterTest {
         assertThat(transaction).isEqualTo(deserialized);
     }
 
-    static Stream<Transaction> transactions(){
+    static Stream<Transaction> transactions() {
         AccountId peter = new AccountId(0L);
         AccountId julia = new AccountId(1L);
         return Stream.of(
