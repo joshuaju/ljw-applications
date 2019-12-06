@@ -10,7 +10,6 @@ import org.apache.commons.lang.Validate;
 import java.time.Instant;
 import java.util.UUID;
 
-@FieldNameConstants
 @Getter
 @EqualsAndHashCode
 @ToString
