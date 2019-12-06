@@ -10,15 +10,15 @@ import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class TransactionCSVConverterTest {
+class TransactionCSVTest {
 
     @ParameterizedTest
     @MethodSource("transactions")
     void convertBothWays(Transaction transaction) {
-        String serialized = TransactionCSVConverter.convert(transaction);
+        String serialized = TransactionCSV.serialize(transaction);
         System.out.println(serialized);
 
-        Transaction deserialized = TransactionCSVConverter.convert(serialized);
+        Transaction deserialized = TransactionCSV.deserialize(serialized);
 
         assertThat(transaction).isEqualTo(deserialized);
     }

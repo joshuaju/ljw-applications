@@ -32,7 +32,7 @@ public class TransactionCSVStore implements TransactionStorePort {
     @SneakyThrows
     private List<Transaction> readAll(Path out) {
         return Files.readAllLines(out).stream()
-                .map(TransactionCSVConverter::convert)
+                .map(TransactionCSV::deserialize)
                 .collect(Collectors.toList());
     }
 
@@ -40,7 +40,7 @@ public class TransactionCSVStore implements TransactionStorePort {
     @Override
     @SneakyThrows
     public void add(Transaction transaction) {
-        String transactionString = TransactionCSVConverter.convert(transaction) + "\n";
+        String transactionString = TransactionCSV.serialize(transaction) + "\n";
         Files.write(out, transactionString.getBytes(), StandardOpenOption.APPEND);
         memoryStore.add(transaction);
     }
