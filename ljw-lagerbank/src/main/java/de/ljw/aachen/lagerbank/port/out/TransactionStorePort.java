@@ -1,10 +1,9 @@
 package de.ljw.aachen.lagerbank.port.out;
 
-import de.ljw.aachen.lagerbank.domain.AccountId;
+import de.ljw.aachen.account.management.domain.AccountId;
 import de.ljw.aachen.lagerbank.domain.Transaction;
 
 import java.util.Collection;
-import java.util.function.Predicate;
 
 public interface TransactionStorePort {
 

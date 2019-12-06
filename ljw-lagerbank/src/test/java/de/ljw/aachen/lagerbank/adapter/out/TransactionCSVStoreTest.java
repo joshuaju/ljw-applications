@@ -1,6 +1,6 @@
 package de.ljw.aachen.lagerbank.adapter.out;
 
-import de.ljw.aachen.lagerbank.domain.AccountId;
+import de.ljw.aachen.account.management.domain.AccountId;
 import de.ljw.aachen.lagerbank.domain.Money;
 import de.ljw.aachen.lagerbank.domain.Transaction;
 import de.ljw.aachen.lagerbank.port.in.GetBalanceUseCase;
@@ -8,13 +8,10 @@ import de.ljw.aachen.lagerbank.port.out.TransactionStorePort;
 import de.ljw.aachen.lagerbank.service.BalanceService;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
-import java.util.function.Consumer;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

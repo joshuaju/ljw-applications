@@ -1,7 +1,7 @@
 package de.ljw.aachen.lagerbank.service;
 
+import de.ljw.aachen.account.management.domain.AccountId;
 import de.ljw.aachen.lagerbank.adapter.out.TransactionStoreMem;
-import de.ljw.aachen.lagerbank.domain.AccountId;
 import de.ljw.aachen.lagerbank.domain.Money;
 import de.ljw.aachen.lagerbank.port.in.*;
 import de.ljw.aachen.lagerbank.port.out.TransactionStorePort;
@@ -9,7 +9,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class TransactionServiceTest {
 

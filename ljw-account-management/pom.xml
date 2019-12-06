@@ -10,20 +10,6 @@
     <modelVersion>4.0.0</modelVersion>
     <packaging>jar</packaging>
 
-    <artifactId>ljw-lagerbank</artifactId>
-
-    <dependencies>
-
-        <dependency>
-            <groupId>de.ljw.aachen</groupId>
-            <artifactId>ljw-account-management</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.joda</groupId>
-            <artifactId>joda-money</artifactId>
-        </dependency>
-
-    </dependencies>
+    <artifactId>ljw-account-management</artifactId>
 
 </project>

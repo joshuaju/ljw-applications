@@ -1,6 +1,9 @@
 package de.ljw.aachen.lagerbank.domain;
 
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.EqualsAndHashCode;
+import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 import org.joda.money.CurrencyUnit;
 
 import java.math.BigDecimal;

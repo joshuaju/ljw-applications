@@ -1,14 +1,12 @@
 package de.ljw.aachen.lagerbank.adapter.out;
 
-import de.ljw.aachen.lagerbank.domain.AccountId;
+import de.ljw.aachen.account.management.domain.AccountId;
 import de.ljw.aachen.lagerbank.domain.Transaction;
 import de.ljw.aachen.lagerbank.port.out.TransactionStorePort;
-import lombok.RequiredArgsConstructor;
 
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class TransactionStoreMem implements TransactionStorePort {

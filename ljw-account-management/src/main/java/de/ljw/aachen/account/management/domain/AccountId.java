@@ -1,4 +1,4 @@
-package de.ljw.aachen.lagerbank.domain;
+package de.ljw.aachen.account.management.domain;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;

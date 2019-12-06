@@ -1,6 +1,9 @@
 package de.ljw.aachen.lagerbank.domain;
 
-import lombok.*;
+import de.ljw.aachen.account.management.domain.AccountId;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.ToString;
 import lombok.experimental.FieldNameConstants;
 import org.apache.commons.lang.Validate;
 

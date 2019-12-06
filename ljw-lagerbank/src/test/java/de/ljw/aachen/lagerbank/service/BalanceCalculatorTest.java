@@ -1,6 +1,6 @@
 package de.ljw.aachen.lagerbank.service;
 
-import de.ljw.aachen.lagerbank.domain.AccountId;
+import de.ljw.aachen.account.management.domain.AccountId;
 import de.ljw.aachen.lagerbank.domain.Money;
 import de.ljw.aachen.lagerbank.domain.Transaction;
 import org.junit.jupiter.api.Test;
