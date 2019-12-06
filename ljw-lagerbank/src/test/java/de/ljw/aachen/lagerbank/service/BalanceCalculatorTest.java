@@ -17,12 +17,12 @@ class BalanceCalculatorTest {
     @Test
     void zeroBalance() {
         Collection<Transaction> transactions = List.of(
-                Transaction.forDeposit(BalanceCalculatorTest.ID, Money.of(10.0)),
-                Transaction.forWithdrawal(BalanceCalculatorTest.ID, Money.of(10.0))
+                Transaction.forDeposit(ID, Money.of(10.0)),
+                Transaction.forWithdrawal(ID, Money.of(10.0))
         );
         Money expectedBalance = Money.of(0.0);
 
-        Money balance = BalanceCalculator.calculateBalance(BalanceCalculatorTest.ID, transactions);
+        Money balance = BalanceCalculator.calculateBalance(ID, transactions);
 
         assertThat(balance).isEqualTo(expectedBalance);
     }
