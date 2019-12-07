@@ -18,8 +18,8 @@ class TransactionCSV {
     static String serialize(Transaction transaction) {
         return MessageFormat.format("{0}, {1}, {2}, {3,number,#.##}, {4}",
                 transaction.getId().getValue(),
-                (transaction.getSource() == null) ? NO_ACCOUNT : transaction.getSource().getId(),
-                (transaction.getTarget() == null) ? NO_ACCOUNT : transaction.getTarget().getId(),
+                serializeAccountId(transaction.getSource()),
+                serializeAccountId(transaction.getTarget()),
                 transaction.getAmount().getAmount(),
                 transaction.getTime()
         );
@@ -31,18 +31,21 @@ class TransactionCSV {
                 .collect(Collectors.toList());
 
         var transactionId = new TransactionId(fields.get(0));
-        var sourceId = parseAccountId(fields.get(1));
-        var targetId = parseAccountId(fields.get(2));
+        var sourceId = deserializeAccountId(fields.get(1));
+        var targetId = deserializeAccountId(fields.get(2));
         var amount = Money.of(Double.parseDouble(fields.get(3)));
         var time = Instant.parse(fields.get(4));
 
         return new Transaction(transactionId, sourceId, targetId, amount, time);
     }
 
-    private static AccountId parseAccountId(String accountId) {
-        if (NO_ACCOUNT.equals(accountId)) return null;
+    private static String serializeAccountId(AccountId id){
+        return id == null ? NO_ACCOUNT : id.getValue();
+    }
 
-        long value = Long.parseLong(accountId);
+    private static AccountId deserializeAccountId(String value) {
+        if (NO_ACCOUNT.equals(value)) return null;
+
         return new AccountId(value);
     }
 

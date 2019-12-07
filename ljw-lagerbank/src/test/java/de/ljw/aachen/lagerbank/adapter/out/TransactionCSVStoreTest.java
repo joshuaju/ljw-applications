@@ -17,8 +17,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class TransactionCSVStoreTest {
 
-    private final AccountId peter = new AccountId(0L);
-    private final AccountId julia = new AccountId(1L);
+    private final AccountId peter = new AccountId();
+    private final AccountId julia = new AccountId();
 
     private static Path out = Path.of("transactions.csv");
     private TransactionStorePort transactionCSVStore;

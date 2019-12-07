@@ -24,8 +24,8 @@ class TransactionCSVTest {
     }
 
     static Stream<Transaction> transactions() {
-        AccountId peter = new AccountId(0L);
-        AccountId julia = new AccountId(1L);
+        AccountId peter = new AccountId();
+        AccountId julia = new AccountId();
         return Stream.of(
                 Transaction.forTransfer(peter, julia, Money.of(10.5)),
                 Transaction.forDeposit(peter, Money.of(1)),

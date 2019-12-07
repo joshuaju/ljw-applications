@@ -6,14 +6,21 @@ import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import org.apache.commons.lang.Validate;
 
+import java.util.UUID;
+
 @EqualsAndHashCode
 @ToString
 public class AccountId {
 
     @Getter
-    public final long id;
+    public final String value;
 
-    public AccountId(long id) {
-        this.id = id;
+    public AccountId(){
+        this(UUID.randomUUID().toString());
     }
+
+    public AccountId(String value) {
+        this.value = value;
+    }
+
 }

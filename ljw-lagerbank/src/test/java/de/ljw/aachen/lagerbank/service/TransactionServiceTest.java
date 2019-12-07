@@ -20,8 +20,8 @@ class TransactionServiceTest {
     private TransferMoneyUseCase transferMoneyService;
 
     private GetBalanceUseCase getBalanceService;
-    public static final AccountId peter = new AccountId(0L);
-    public static final AccountId julia = new AccountId(1L);
+    public static final AccountId peter = new AccountId();
+    public static final AccountId julia = new AccountId();
 
     @BeforeEach
     void setup() {
@@ -52,7 +52,7 @@ class TransactionServiceTest {
     }
 
     @Test
-    void failToWithdrawWhenBalanceWouldBeOverdrawn(){
+    void failToWithdrawWhenBalanceWouldBeOverdrawn() {
         Money balance = Money.of(10.0);
         depositMoneyService.deposit(balance, peter);
 
@@ -62,7 +62,7 @@ class TransactionServiceTest {
     }
 
     @Test
-    void failToTransferWhenBalanceWouldBeOverdrawn(){
+    void failToTransferWhenBalanceWouldBeOverdrawn() {
         Money petersBalance = Money.of(10.0);
         Money juliasBalance = Money.of(0.5);
 

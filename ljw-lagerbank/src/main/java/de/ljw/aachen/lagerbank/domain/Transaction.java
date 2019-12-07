@@ -34,19 +34,16 @@ public class Transaction {
     }
 
     public static Transaction forDeposit(AccountId target, Money amount) {
-        return new Transaction(generateTransactionId(), null, target, amount, Instant.now());
+        return new Transaction(new TransactionId(), null, target, amount, Instant.now());
     }
 
     public static Transaction forWithdrawal(AccountId source, Money amount) {
-        return new Transaction(generateTransactionId(), source, null, amount, Instant.now());
+        return new Transaction(new TransactionId(), source, null, amount, Instant.now());
     }
 
     public static Transaction forTransfer(AccountId source, AccountId target, Money amount) {
-        return new Transaction(generateTransactionId(), source, target, amount, Instant.now());
+        return new Transaction(new TransactionId(), source, target, amount, Instant.now());
     }
 
-    private static TransactionId generateTransactionId() {
-        return new TransactionId(UUID.randomUUID().toString());
-    }
 
 }

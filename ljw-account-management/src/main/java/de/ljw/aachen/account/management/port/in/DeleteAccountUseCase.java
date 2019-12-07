@@ -1,14 +1,16 @@
 package de.ljw.aachen.account.management.port.in;
 
 import de.ljw.aachen.account.management.domain.AccountId;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
-public interface UpdateAccount {
+public interface DeleteAccountUseCase {
 
-    AccountId updateAccount(UpdateAccountCommand command);
+    void deleteAccount(DeleteAccountCommand command);
 
+    @Getter
     @RequiredArgsConstructor
-    class UpdateAccountCommand {
+    class DeleteAccountCommand {
 
         private final AccountId accountId;
 

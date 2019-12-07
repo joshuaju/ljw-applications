@@ -12,7 +12,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class BalanceCalculatorTest {
 
-    private static final AccountId ID = new AccountId(0L);
+    private static final AccountId ID = new AccountId();
 
     @Test
     void zeroBalance() {
