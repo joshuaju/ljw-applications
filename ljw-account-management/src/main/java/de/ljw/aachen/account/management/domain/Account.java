@@ -5,8 +5,8 @@ import org.apache.commons.lang.Validate;
 
 import java.time.Instant;
 
-@Getter
 @Setter
+@Getter
 @EqualsAndHashCode
 public class Account {
 
@@ -16,6 +16,9 @@ public class Account {
     private String firstName;
     private String lastName;
 
+    public Account(Account account){
+        this(account.id, account.created, account.firstName, account.lastName);
+    }
 
     public Account(AccountId id, Instant created, String firstName, String lastName) {
         this.id = id;

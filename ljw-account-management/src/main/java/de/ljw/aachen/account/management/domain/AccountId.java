@@ -2,9 +2,7 @@ package de.ljw.aachen.account.management.domain;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.ToString;
-import org.apache.commons.lang.Validate;
 
 import java.util.UUID;
 
