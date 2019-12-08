@@ -12,6 +12,7 @@
     <modules>
         <module>ljw-lagerbank</module>
         <module>ljw-account-management</module>
+        <module>ljw-fx-client</module>
     </modules>
 
     <!-- *********************************************************************************************************** -->
