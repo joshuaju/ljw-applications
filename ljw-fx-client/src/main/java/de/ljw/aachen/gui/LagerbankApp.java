@@ -13,14 +13,13 @@ public class HelloWorld extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
-        URL resource = getClass().getResource("/fxml/helloworld.fxml");
-
+        URL resource = getClass().getResource("/fxml/lagerbank.fxml");
         Validate.notNull(resource);
-        Parent root = FXMLLoader.load(resource);
 
+        Parent root = FXMLLoader.load(resource);
         Scene scene = new Scene(root, 300, 275);
 
-        stage.setTitle("Hello World");
+        stage.setTitle("LJW Lagerbank");
         stage.setScene(scene);
         stage.show();
     }
