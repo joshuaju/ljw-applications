@@ -9,7 +9,7 @@ import org.apache.commons.lang.Validate;
 
 import java.net.URL;
 
-public class HelloWorld extends Application {
+public class LagerbankApp extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
