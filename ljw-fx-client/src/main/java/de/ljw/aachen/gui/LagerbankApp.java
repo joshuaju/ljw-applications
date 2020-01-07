@@ -17,7 +17,7 @@ public class LagerbankApp extends Application {
         Validate.notNull(resource);
 
         Parent root = FXMLLoader.load(resource);
-        Scene scene = new Scene(root, 300, 275);
+        Scene scene = new Scene(root, 650, 300);
 
         stage.setTitle("LJW Lagerbank");
         stage.setScene(scene);

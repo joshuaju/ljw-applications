@@ -1,36 +1,45 @@
 package de.ljw.aachen.gui.controller;
 
+import de.ljw.aachen.account.management.domain.Account;
+import javafx.beans.binding.Bindings;
+import javafx.beans.binding.BooleanBinding;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.ToggleGroup;
+import javafx.fxml.Initializable;
+import javafx.scene.control.*;
+import javafx.util.StringConverter;
 import lombok.extern.slf4j.Slf4j;
 
+import java.net.URL;
+import java.util.List;
+import java.util.ResourceBundle;
+
 @Slf4j
-public class LagerbankController {
+public class LagerbankController implements Initializable {
 
     @FXML
-    private ComboBox<?> cbAccounts;
+    private ComboBox<Account> cbAccounts;
 
     @FXML
     private Button btnNewUser;
 
     @FXML
-    private RadioButton tbDeposit;
+    private RadioButton rbDeposit;
 
     @FXML
     private ToggleGroup tgTransaction;
 
     @FXML
-    private RadioButton tbWithdraw;
+    private RadioButton rbWithdraw;
 
     @FXML
-    private RadioButton tbTransfer;
+    private RadioButton rbTransfer;
 
     @FXML
-    private ComboBox<?> cbReceivers;
+    private TextField tfAmount;
+
+    @FXML
+    private ComboBox<Account> cbReceivers;
 
     @FXML
     private Button btnApply;
@@ -38,9 +47,37 @@ public class LagerbankController {
     @FXML
     private Button btnReset;
 
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        var accounts = List.of(Account.createFor("Peter", "Peterson"), Account.createFor("Julia", "Juliette"));
+
+
+        StringConverter<Account> accountStringConverter = new StringConverter<>() { // TODO move to own class
+            @Override
+            public String toString(Account account) {
+                if (account == null) return "";
+                else return String.format("%s %s", account.getFirstName(), account.getLastName());
+            }
+
+            @Override
+            public Account fromString(String s) {
+                throw new UnsupportedOperationException();
+            }
+        };
+
+        cbAccounts.setConverter(accountStringConverter);
+        cbReceivers.setConverter(accountStringConverter);
+
+        cbAccounts.getItems().addAll(accounts);
+        cbReceivers.getItems().addAll(accounts);
+
+        cbReceivers.disableProperty().bind(rbTransfer.selectedProperty().not());
+        // TODO exlude the selected Account from the receivers items
+    }
+
     @FXML
     void onAccountSelected(ActionEvent event) {
-        log.debug("onAccountSelected");
+        log.info("onAccountSelected");
 
         // TODO load data for this account;
         //  current balance,
@@ -48,28 +85,54 @@ public class LagerbankController {
 
     @FXML
     void onApply(ActionEvent event) {
-        log.debug("onApply");
+        log.info("onApply");
 
-        // TODO deposit, withdraw or transfer money
+        if (cbAccounts.getSelectionModel().isEmpty()) {
+            log.info("no account selected");
+            return;
+        }
+
+        if (rbDeposit.isSelected()) {
+            log.info("deposit " + tfAmount.getText() +
+                    " to " + cbAccounts.getSelectionModel().getSelectedItem().getFirstName());
+            // TODO deposit money
+        } else if (rbWithdraw.isSelected()) {
+            log.info("withdraw " + tfAmount.getText() +
+                    " from " + cbAccounts.getSelectionModel().getSelectedItem().getFirstName());
+            // TODO withdraw money
+        } else if (rbTransfer.isSelected()) {
+            if (cbReceivers.getSelectionModel().isEmpty()) {
+                log.info("no receiver selected");
+                return;
+            }
+            log.info("transfer " + tfAmount.getText() +
+                    " from " + cbAccounts.getSelectionModel().getSelectedItem().getFirstName() +
+                    " to " + cbReceivers.getSelectionModel().getSelectedItem().getFirstName());
+            // TODO transfer
+        } else {
+            log.info("no transaction type selected");
+            // TODO indicate error in UI
+        }
+
+        // TODO call onReset when successful
     }
 
     @FXML
     void onCreateAccount(ActionEvent event) {
-        log.debug("onCreateAccount");
+        log.info("onCreateAccount");
 
         // TODO open create user dialog
     }
 
     @FXML
     void onReset(ActionEvent event) {
-        log.debug("onReset");
+        log.info("onReset");
 
-        // TODO clear everything;
-        //  cbAccounts,
-        //  tgTransaction,
-        //  tfAmount
-        //  cbReceivers,
+        cbAccounts.getSelectionModel().select(-1);
+        cbReceivers.getSelectionModel().select(-1);
 
+        tgTransaction.getToggles().forEach(toggle -> toggle.setSelected(false));
+        tfAmount.clear();
     }
 
 }
