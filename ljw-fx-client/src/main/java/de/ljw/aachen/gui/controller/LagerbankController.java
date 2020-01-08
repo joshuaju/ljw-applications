@@ -3,6 +3,10 @@ package de.ljw.aachen.gui.controller;
 import de.ljw.aachen.account.management.domain.Account;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
+import javafx.beans.binding.ListBinding;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableArray;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -13,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.function.Predicate;
 
 @Slf4j
 public class LagerbankController implements Initializable {
@@ -68,11 +73,14 @@ public class LagerbankController implements Initializable {
         cbAccounts.setConverter(accountStringConverter);
         cbReceivers.setConverter(accountStringConverter);
 
-        cbAccounts.getItems().addAll(accounts);
-        cbReceivers.getItems().addAll(accounts);
+        cbAccounts.getItems().setAll(accounts);
+        cbAccounts.setOnAction(event -> {
+            var selectedAccount = cbAccounts.getSelectionModel().getSelectedItem();
+            Predicate<Account> filter = account -> selectedAccount != null && !account.equals(selectedAccount);
+            cbReceivers.getItems().setAll(cbAccounts.getItems().filtered(filter));
+        });
 
         cbReceivers.disableProperty().bind(rbTransfer.selectedProperty().not());
-        // TODO exlude the selected Account from the receivers items
     }
 
     @FXML
@@ -128,8 +136,8 @@ public class LagerbankController implements Initializable {
     void onReset(ActionEvent event) {
         log.info("onReset");
 
-        cbAccounts.getSelectionModel().select(-1);
-        cbReceivers.getSelectionModel().select(-1);
+        cbAccounts.getSelectionModel().clearSelection();
+        cbReceivers.getSelectionModel().clearSelection();
 
         tgTransaction.getToggles().forEach(toggle -> toggle.setSelected(false));
         tfAmount.clear();

@@ -17,7 +17,7 @@
          <children>
             <HBox alignment="CENTER" spacing="10.0">
                <children>
-                  <ComboBox fx:id="cbAccounts" maxWidth="1.7976931348623157E308" onAction="#onAccountSelected" HBox.hgrow="ALWAYS">
+                  <ComboBox fx:id="cbAccounts" maxWidth="1.7976931348623157E308" onAction="#onAccountSelected" promptText="Select account" HBox.hgrow="ALWAYS">
                      <padding>
                         <Insets top="5.0" />
                      </padding>
@@ -41,7 +41,7 @@
                </children>
             </HBox>
             <TextField id="tfAmount" fx:id="tfAmount" />
-            <ComboBox fx:id="cbReceivers" disable="true" maxWidth="1.7976931348623157E308">
+            <ComboBox fx:id="cbReceivers" disable="true" maxWidth="1.7976931348623157E308" promptText="Select recipient">
                <padding>
                   <Insets top="5.0" />
                </padding>
