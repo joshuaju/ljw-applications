@@ -1,17 +1,18 @@
 package de.ljw.aachen.gui.controller;
 
 import de.ljw.aachen.account.management.domain.Account;
-import javafx.beans.binding.Bindings;
-import javafx.beans.binding.BooleanBinding;
-import javafx.beans.binding.ListBinding;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableArray;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import javafx.util.StringConverter;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
 import java.net.URL;
@@ -126,10 +127,17 @@ public class LagerbankController implements Initializable {
     }
 
     @FXML
+    @SneakyThrows
     void onCreateAccount(ActionEvent event) {
         log.info("onCreateAccount");
-
-        // TODO open create user dialog
+        Stage stage = new Stage();
+        URL resource = LagerbankController.class.getClassLoader().getResource("fxml/create_user.fxml");
+        Parent root = FXMLLoader.load(resource);
+        stage.setScene(new Scene(root));
+        stage.setTitle("Create new account");
+        stage.initModality(Modality.WINDOW_MODAL);
+        stage.initOwner(((Node)event.getSource()).getScene().getWindow() );
+        stage.show();
     }
 
     @FXML
