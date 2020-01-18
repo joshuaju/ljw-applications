@@ -7,9 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang.Validate;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -44,6 +42,11 @@ public class AccountStoreMem implements AccountStorePort {
     @Override
     public Account read(AccountId id) {
         return new Account(accounts.get(id));
+    }
+
+    @Override
+    public Set<Account> readAll() {
+        return new HashSet<>(accounts.values());
     }
 
     @Override

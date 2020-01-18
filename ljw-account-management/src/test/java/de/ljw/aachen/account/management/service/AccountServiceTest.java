@@ -12,8 +12,10 @@ import de.ljw.aachen.account.management.port.in.ReadAccountUseCase.ReadAccountCo
 import de.ljw.aachen.account.management.port.in.UpdateAccountUseCase;
 import de.ljw.aachen.account.management.port.in.UpdateAccountUseCase.UpdateAccountCommand;
 import de.ljw.aachen.account.management.port.out.AccountStorePort;
+import de.ljw.aachen.common.EventPort;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -32,7 +34,12 @@ class AccountServiceTest {
     void beforeEach() {
         this.accountStore = new AccountStoreMem();
 
-        AccountService accountService = new AccountService(accountStore);
+        AccountService accountService = new AccountService(accountStore, new EventPort() {
+            @Override
+            public <T> void publish(T event) {
+                // TODO Use mockito
+            }
+        });
         this.createAccountService = accountService;
         this.deleteAccountService = accountService;
         this.readAccountService = accountService;

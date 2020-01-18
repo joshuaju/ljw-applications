@@ -2,23 +2,28 @@ package de.ljw.aachen.account.management.service;
 
 import de.ljw.aachen.account.management.domain.Account;
 import de.ljw.aachen.account.management.domain.AccountId;
-import de.ljw.aachen.account.management.port.in.CreateAccountUseCase;
-import de.ljw.aachen.account.management.port.in.DeleteAccountUseCase;
-import de.ljw.aachen.account.management.port.in.ReadAccountUseCase;
-import de.ljw.aachen.account.management.port.in.UpdateAccountUseCase;
+import de.ljw.aachen.account.management.domain.event.AccountCreatedEvent;
+import de.ljw.aachen.account.management.domain.event.AccountDeletedEvent;
+import de.ljw.aachen.account.management.domain.event.AccountUpdatedEvent;
+import de.ljw.aachen.account.management.port.in.*;
 import de.ljw.aachen.account.management.port.out.AccountStorePort;
+import de.ljw.aachen.common.EventPort;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang.Validate;
 
+import java.util.Set;
+
 @RequiredArgsConstructor
-public class AccountService implements CreateAccountUseCase, DeleteAccountUseCase, ReadAccountUseCase, UpdateAccountUseCase {
+public class AccountService implements CreateAccountUseCase, DeleteAccountUseCase, ReadAccountUseCase, UpdateAccountUseCase, ListAccountsUseCase {
 
     private final AccountStorePort accountStore;
+    private final EventPort eventPort;
 
     @Override
     public AccountId createAccount(CreateAccountCommand command) {
         var account = Account.createFor(command.getFirstName(), command.getLastName());
         accountStore.store(account);
+        eventPort.publish(new AccountCreatedEvent());
         return account.getId();
     }
 
@@ -27,6 +32,7 @@ public class AccountService implements CreateAccountUseCase, DeleteAccountUseCas
         var id = command.getAccountId();
         if (accountStore.contains(id)) {
             accountStore.delete(id);
+            eventPort.publish(new AccountDeletedEvent());
         }
     }
 
@@ -42,5 +48,11 @@ public class AccountService implements CreateAccountUseCase, DeleteAccountUseCas
         var account = command.getAccount();
         Validate.isTrue(accountStore.contains(account.getId()), "No account for id %s", account.getId());
         accountStore.update(command.getAccount());
+        eventPort.publish(new AccountUpdatedEvent());
+    }
+
+    @Override
+    public Set<Account> listAccounts() {
+        return accountStore.readAll();
     }
 }

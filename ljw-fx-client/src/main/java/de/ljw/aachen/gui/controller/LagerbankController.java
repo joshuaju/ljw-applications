@@ -1,6 +1,9 @@
 package de.ljw.aachen.gui.controller;
 
 import de.ljw.aachen.account.management.domain.Account;
+import de.ljw.aachen.account.management.domain.event.AccountCreatedEvent;
+import de.ljw.aachen.account.management.port.in.ListAccountsUseCase;
+import de.ljw.aachen.account.management.port.in.ReadAccountUseCase;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -12,8 +15,12 @@ import javafx.scene.control.*;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.event.EventListener;
 
 import java.net.URL;
 import java.util.List;
@@ -21,6 +28,7 @@ import java.util.ResourceBundle;
 import java.util.function.Predicate;
 
 @Slf4j
+@RequiredArgsConstructor
 public class LagerbankController implements Initializable {
 
     @FXML
@@ -53,11 +61,12 @@ public class LagerbankController implements Initializable {
     @FXML
     private Button btnReset;
 
+    private final ApplicationContext applicationContext;
+
+    private final ListAccountsUseCase listAccountsUseCase;
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        var accounts = List.of(Account.createFor("Peter", "Peterson"), Account.createFor("Julia", "Juliette"));
-
-
         StringConverter<Account> accountStringConverter = new StringConverter<>() { // TODO move to own class
             @Override
             public String toString(Account account) {
@@ -74,7 +83,9 @@ public class LagerbankController implements Initializable {
         cbAccounts.setConverter(accountStringConverter);
         cbReceivers.setConverter(accountStringConverter);
 
+        var accounts = listAccountsUseCase.listAccounts();
         cbAccounts.getItems().setAll(accounts);
+
         cbAccounts.setOnAction(event -> {
             var selectedAccount = cbAccounts.getSelectionModel().getSelectedItem();
             Predicate<Account> filter = account -> selectedAccount != null && !account.equals(selectedAccount);
@@ -132,11 +143,13 @@ public class LagerbankController implements Initializable {
         log.info("onCreateAccount");
         Stage stage = new Stage();
         URL resource = LagerbankController.class.getClassLoader().getResource("fxml/create_user.fxml");
-        Parent root = FXMLLoader.load(resource);
+        FXMLLoader loader = new FXMLLoader(resource);
+        loader.setControllerFactory(applicationContext::getBean);
+        Parent root = loader.load();
         stage.setScene(new Scene(root));
         stage.setTitle("Create new account");
         stage.initModality(Modality.WINDOW_MODAL);
-        stage.initOwner(((Node)event.getSource()).getScene().getWindow() );
+        stage.initOwner(((Node) event.getSource()).getScene().getWindow());
         stage.show();
     }
 
@@ -150,5 +163,13 @@ public class LagerbankController implements Initializable {
         tgTransaction.getToggles().forEach(toggle -> toggle.setSelected(false));
         tfAmount.clear();
     }
+
+    @EventListener
+    void on(AccountCreatedEvent event) {
+        log.info("Received account created event");
+        var accounts = listAccountsUseCase.listAccounts();
+        cbAccounts.getItems().setAll(accounts);
+    }
+
 
 }
