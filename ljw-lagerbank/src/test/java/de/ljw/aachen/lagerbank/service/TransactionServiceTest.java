@@ -1,12 +1,14 @@
 package de.ljw.aachen.lagerbank.service;
 
 import de.ljw.aachen.account.management.domain.AccountId;
+import de.ljw.aachen.common.EventPort;
 import de.ljw.aachen.lagerbank.adapter.out.TransactionStoreMem;
 import de.ljw.aachen.lagerbank.domain.Money;
 import de.ljw.aachen.lagerbank.port.in.*;
 import de.ljw.aachen.lagerbank.port.out.TransactionStorePort;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -23,11 +25,14 @@ class TransactionServiceTest {
     public static final AccountId peter = new AccountId();
     public static final AccountId julia = new AccountId();
 
+    private EventPort eventPortMock;
+
     @BeforeEach
     void setup() {
         this.transactionStorePort = new TransactionStoreMem();
+        this.eventPortMock = Mockito.mock(EventPort.class);
 
-        TransactionService transactionService = new TransactionService(transactionStorePort);
+        TransactionService transactionService = new TransactionService(transactionStorePort, eventPortMock);
         this.depositMoneyService = transactionService;
         this.withdrawMoneyService = transactionService;
         this.transferMoneyService = transactionService;
@@ -73,7 +78,6 @@ class TransactionServiceTest {
 
         assertThat(getBalanceService.getBalance(peter)).isEqualTo(petersBalance);
         assertThat(getBalanceService.getBalance(julia)).isEqualTo(juliasBalance);
-
     }
 
 }
