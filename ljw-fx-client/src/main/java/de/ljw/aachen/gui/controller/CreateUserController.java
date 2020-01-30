@@ -44,17 +44,20 @@ public class CreateUserController {
 
     @FXML
     void onCancel(ActionEvent event) {
-        log.info("creating a user was cancelled");
+        log.info("Creating a user was cancelled");
         Stage stage = (Stage) btnCancel.getScene().getWindow();
         stage.close();
     }
 
     @FXML
     void onSave(ActionEvent event) {
-        var firstName = tfFirstName.getText();
-        var lastName = tfLastName.getText();
+        var firstName = tfFirstName.getText().trim();
+        var lastName = tfLastName.getText().trim();
 
-        var accountId = createAccountUseCase.createAccount(new CreateAccountCommand(firstName, lastName));
+        // TODO input validation and show notifications
+
+        var cmd = new CreateAccountCommand(firstName, lastName);
+        var accountId = createAccountUseCase.createAccount(cmd);
 
         log.info("Created Account: {}", accountId);
         Stage stage = (Stage) btnSave.getScene().getWindow();

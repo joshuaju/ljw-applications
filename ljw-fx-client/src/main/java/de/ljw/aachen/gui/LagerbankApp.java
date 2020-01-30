@@ -32,7 +32,7 @@ public class LagerbankApp extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         stage.setTitle("LJW Lagerbank");
-        Scene scene = new Scene(root, 650, 300);
+        Scene scene = new Scene(root, 650, 350);
         stage.setScene(scene);
         stage.show();
     }

@@ -20,15 +20,18 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.Alert.AlertType;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.controlsfx.control.Notifications;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.event.EventListener;
 
+import javax.management.Notification;
 import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.function.Predicate;
@@ -88,22 +91,25 @@ public class LagerbankController implements Initializable {
 
     @FXML
     void onAccountSelected(ActionEvent event) {
-        log.info("onAccountSelected");
-        var selectedAccount = cbAccounts.getSelectionModel().getSelectedItem();
-        Predicate<Account> filter = account -> selectedAccount != null && !account.equals(selectedAccount);
-        cbReceivers.getItems().setAll(cbAccounts.getItems().filtered(filter));
+        refreshReceivers();
         refreshAccountDetails();
     }
 
     @FXML
     void onApply(ActionEvent event) {
         if (cbAccounts.getSelectionModel().isEmpty()) {
-            log.info("no account selected");
+            Notifications.create().owner(((Node) event.getSource()).getScene().getWindow()).darkStyle()
+                    .title("Invalid input").text("No account selected")
+                    .showError();
+            log.error("no account selected");
             return;
         }
 
         var account = cbAccounts.getSelectionModel().getSelectedItem();
         if (cbAccounts.getSelectionModel().isEmpty()) {
+            Notifications.create().owner(((Node) event.getSource()).getScene().getWindow()).darkStyle()
+                    .title("Invalid input").text("No receiver selected")
+                    .showError();
             log.error("no receiver selected");
             return;
         }
@@ -112,43 +118,62 @@ public class LagerbankController implements Initializable {
         try {
             amount = Double.parseDouble(tfAmount.getText());
         } catch (NumberFormatException e) {
+            Notifications.create().owner(((Node) event.getSource()).getScene().getWindow()).darkStyle()
+                    .title("Invalid input").text("Amount needs to be a decimal number")
+                    .showError();
             log.error("amount is not a double", e);
             return;
         }
 
         if (rbDeposit.isSelected()) {
             log.info("deposit {} to {}", amount, account);
+            Notifications.create().owner(((Node) event.getSource()).getScene().getWindow()).darkStyle()
+                    .title("Deposit successful")
+                    .showConfirm();
             depositMoneyUseCase.deposit(Money.of(amount), account.getId());
-
-            onReset(event);
         } else if (rbWithdraw.isSelected()) {
-            log.info("withdraw {} from {}", amount, account);
             try {
                 withdrawMoneyUseCase.withdraw(Money.of(amount), account.getId());
-                onReset(event);
+                Notifications.create().owner(((Node) event.getSource()).getScene().getWindow()).darkStyle()
+                        .title("Withdrawal successful")
+                        .showConfirm();
+                resetView();
             } catch (WithdrawalNotAllowedException e) { // TODO code clone
+                Notifications.create().owner(((Node) event.getSource()).getScene().getWindow()).darkStyle()
+                        .title("Invalid transaction").text("Withdrawal not allowed")
+                        .showError();
                 log.error("Withdrawal not allowed", e);
-                // TODO Show warning
+                return;
             }
-
         } else if (rbTransfer.isSelected()) {
             if (cbReceivers.getSelectionModel().isEmpty()) {
+                Notifications.create().owner(((Node) event.getSource()).getScene().getWindow()).darkStyle()
+                        .title("Invalid input").text("No receiver selected")
+                        .showError();
                 log.error("no receiver selected");
                 return;
             }
             Account receiver = cbReceivers.getSelectionModel().getSelectedItem();
-            log.info("transfer {} from {} to {}", amount, account, receiver);
             try {
                 transferMoneyUseCase.transfer(Money.of(amount), account.getId(), receiver.getId());
-                onReset(event);
+                Notifications.create().owner(((Node) event.getSource()).getScene().getWindow()).darkStyle()
+                        .title("Transfer successful")
+                        .showConfirm();
             } catch (WithdrawalNotAllowedException e) { // TODO code clone
+                Notifications.create().owner(((Node) event.getSource()).getScene().getWindow()).darkStyle()
+                        .title("Invalid transaction").text("Withdrawal not allowed")
+                        .showError();
                 log.error("Withdrawal not allowed", e);
-                // TODO Show warning
+                return;
             }
         } else {
+            Notifications.create().owner(((Node) event.getSource()).getScene().getWindow()).darkStyle()
+                    .title("Invalid input").text("No transaction type selected")
+                    .showError();
             log.error("no transaction type selected");
-            // TODO Show warning
+            return;
         }
+        resetView();
     }
 
     @FXML
@@ -169,52 +194,43 @@ public class LagerbankController implements Initializable {
 
     @FXML
     void onReset(ActionEvent event) {
-        log.info("onReset");
-
-        cbAccounts.getSelectionModel().clearSelection();
-        tfBalance.clear();
-        cbReceivers.getSelectionModel().clearSelection();
-
-        tgTransaction.getToggles().forEach(toggle -> toggle.setSelected(false));
-        tfAmount.clear();
+        resetView();
     }
 
     @EventListener
     void on(AccountCreatedEvent event) {
-        log.info("Received {}", event.getClass().getSimpleName());
         refreshAccounts();
+        refreshReceivers();
     }
 
     @EventListener()
     void on(AccountDeletedEvent event) {
-        log.info("Received {}", event.getClass().getSimpleName());
         refreshAccounts();
+        refreshReceivers();
     }
 
     @EventListener
     void on(AccountUpdatedEvent event) {
-        log.info("Received {}", event.getClass().getSimpleName());
         refreshAccounts();
+        refreshReceivers();
     }
 
     @EventListener
     void on(MoneyDepositedEvent event) {
-        log.info("Received {}", event.getClass().getSimpleName());
-        var account = cbAccounts.getSelectionModel().getSelectedItem();
-        if (account == null) return;
+        var selectedAccount = cbAccounts.getSelectionModel().getSelectedItem();
+        if (selectedAccount == null) return;
 
-        if (account.getId().equals(event.getAccountId())) {
+        if (selectedAccount.getId().equals(event.getAccountId())) {
             refreshAccountDetails();
         }
     }
 
     @EventListener
     void on(MoneyWithdrawnEvent event) {
-        log.info("Received {}", event.getClass().getSimpleName());
-        var account = cbAccounts.getSelectionModel().getSelectedItem();
-        if (account == null) return;
+        var selectedAccount = cbAccounts.getSelectionModel().getSelectedItem();
+        if (selectedAccount == null) return;
 
-        if (account.getId().equals(event.getAccountId())) {
+        if (selectedAccount.getId().equals(event.getAccountId())) {
             refreshAccountDetails();
         }
     }
@@ -224,15 +240,33 @@ public class LagerbankController implements Initializable {
         cbAccounts.getItems().setAll(accounts);
     }
 
-
     private void refreshAccountDetails() {
         var account = cbAccounts.getSelectionModel().getSelectedItem();
-        if (account == null) return;
+        if (account == null) {
+            tfBalance.clear();
+            // TODO clear details
+            return;
+        }
 
         var balance = getBalanceUseCase.getBalance(account.getId());
-        log.info("Refresh account details. {} {} has {}", account.getFirstName(), account.getLastName(), balance.getAmount().doubleValue());
         tfBalance.setText(Double.toString(balance.getAmount().doubleValue()));
+
         // TODO show details in UI
+    }
+
+    private void refreshReceivers() {
+        var selectedAccount = cbAccounts.getSelectionModel().getSelectedItem();
+        Predicate<Account> notSelected = account -> selectedAccount != null && !account.equals(selectedAccount);
+        cbReceivers.getItems().setAll(cbAccounts.getItems().filtered(notSelected));
+    }
+
+    private void resetView() {
+        cbAccounts.getSelectionModel().clearSelection();
+        tfBalance.clear();
+        cbReceivers.getSelectionModel().clearSelection();
+
+        tgTransaction.getToggles().forEach(toggle -> toggle.setSelected(false));
+        tfAmount.clear();
     }
 
 }
