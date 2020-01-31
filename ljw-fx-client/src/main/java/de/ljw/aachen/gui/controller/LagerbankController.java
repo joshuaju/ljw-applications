@@ -32,6 +32,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.event.EventListener;
 
 import java.net.URL;
+import java.time.Instant;
 import java.util.ResourceBundle;
 import java.util.function.Predicate;
 
@@ -53,6 +54,19 @@ public class LagerbankController implements Initializable {
 
     @FXML
     private TableView<Transaction> tvTransactions;
+
+    @FXML
+    private TableColumn<Transaction, Instant> tcDate;
+
+    @FXML
+    private TableColumn<Transaction, String> tcDescription;
+
+    @FXML
+    private TableColumn<Transaction, Double> tcAmount;
+
+    @FXML
+    private TableColumn<Transaction, Double> tcBalance;
+
 
     @FXML
     private TextField tfAmount;
@@ -86,15 +100,11 @@ public class LagerbankController implements Initializable {
             }
         });
 
-        TableColumn<Transaction, String> dateCol = new TableColumn<>();
-        dateCol.setCellValueFactory(new PropertyValueFactory<>("time"));
-        TableColumn<Transaction, String> commentCol = new TableColumn<>();
-        commentCol.setCellValueFactory(new PropertyValueFactory<>("source"));
-        TableColumn<Transaction, String> amountCol = new TableColumn<>();
-        amountCol.setCellValueFactory(new PropertyValueFactory<>("target"));
-        TableColumn<Transaction, String> totalBalanceCol = new TableColumn<>();
-        totalBalanceCol.setCellValueFactory(new PropertyValueFactory<>("amount"));
-        tvTransactions.getColumns().setAll(dateCol, commentCol, amountCol, totalBalanceCol);
+        // TODO implement proper CellFactory or CellValueFactory for columns
+        tcDate.setCellValueFactory(new PropertyValueFactory<>("time"));
+        tcDescription.setCellValueFactory(new PropertyValueFactory<>("source"));
+        tcAmount.setCellValueFactory(new PropertyValueFactory<>("target"));
+        tcBalance.setCellValueFactory(new PropertyValueFactory<>("amount"));
 
         cbReceivers.setConverter(new AccountStringConverter());
         cbReceivers.disableProperty().bind(rbTransfer.selectedProperty().not());
