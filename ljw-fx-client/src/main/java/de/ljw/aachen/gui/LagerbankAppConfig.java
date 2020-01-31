@@ -11,7 +11,7 @@ import de.ljw.aachen.gui.controller.CreateUserController;
 import de.ljw.aachen.gui.controller.LagerbankController;
 import de.ljw.aachen.lagerbank.adapter.out.TransactionStoreMem;
 import de.ljw.aachen.lagerbank.port.in.DepositMoneyUseCase;
-import de.ljw.aachen.lagerbank.port.in.GetBalanceUseCase;
+import de.ljw.aachen.lagerbank.port.in.ListTransactionsUseCase;
 import de.ljw.aachen.lagerbank.port.in.TransferMoneyUseCase;
 import de.ljw.aachen.lagerbank.port.in.WithdrawMoneyUseCase;
 import de.ljw.aachen.lagerbank.port.out.TransactionStorePort;
@@ -33,14 +33,14 @@ public class LagerbankAppConfig {
                                             DepositMoneyUseCase depositMoneyUseCase,
                                             WithdrawMoneyUseCase withdrawMoneyUseCase,
                                             TransferMoneyUseCase transferMoneyUseCase,
-                                            GetBalanceUseCase getBalanceUseCase) {
+                                            ListTransactionsUseCase listTransactionsUseCase) {
         return new LagerbankController(
                 applicationContext,
                 listAccountsUseCase,
                 depositMoneyUseCase,
                 withdrawMoneyUseCase,
                 transferMoneyUseCase,
-                getBalanceUseCase);
+                listTransactionsUseCase);
     }
 
     @Bean
