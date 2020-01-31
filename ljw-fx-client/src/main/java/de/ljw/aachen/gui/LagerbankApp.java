@@ -8,7 +8,6 @@ import javafx.stage.Stage;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.annotation.Import;
 
 import java.net.URL;
 
@@ -30,19 +29,19 @@ public class LagerbankApp extends Application {
     }
 
     @Override
-    public void start(Stage stage) throws Exception {
+    public void start(Stage stage)  {
         stage.setTitle("LJW Lagerbank");
-        Scene scene = new Scene(root, 650, 350);
+        Scene scene = new Scene(root);
         stage.setScene(scene);
         stage.show();
     }
 
     @Override
-    public void stop() throws Exception {
+    public void stop() {
         context.stop();
     }
 
-    public static void main(String[] args){
+    public static void main(String[] args) {
         launch(LagerbankApp.class, args);
     }
 }
