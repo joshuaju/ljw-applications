@@ -20,6 +20,7 @@ public class Transaction {
     private final AccountId target;
     private final Money amount;
     private final Instant time;
+    private final TransactionType type;
 
     public Transaction(TransactionId id, AccountId source, AccountId target, Money amount, Instant time) {
         this.id = id;
@@ -31,6 +32,13 @@ public class Transaction {
         Validate.notNull(this.id);
         Validate.isTrue(this.amount.isGreaterThan(Money.of(0.0)));
         Validate.notNull(this.time);
+
+        if (source == null)
+            type = TransactionType.Deposit;
+        else if (target == null)
+            type = TransactionType.Withdrawal;
+        else
+            type = TransactionType.Transfer;
     }
 
     public static Transaction forDeposit(AccountId target, Money amount) {
