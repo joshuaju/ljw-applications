@@ -2,7 +2,9 @@ package de.ljw.aachen.account.management.service;
 
 import de.ljw.aachen.account.management.adapter.out.AccountStoreMem;
 import de.ljw.aachen.account.management.domain.Account;
-import de.ljw.aachen.account.management.domain.AccountId;
+import de.ljw.aachen.account.management.domain.event.AccountCreatedEvent;
+import de.ljw.aachen.account.management.domain.event.AccountDeletedEvent;
+import de.ljw.aachen.account.management.domain.event.AccountUpdatedEvent;
 import de.ljw.aachen.account.management.port.in.CreateAccountUseCase;
 import de.ljw.aachen.account.management.port.in.CreateAccountUseCase.CreateAccountCommand;
 import de.ljw.aachen.account.management.port.in.DeleteAccountUseCase;
@@ -12,10 +14,15 @@ import de.ljw.aachen.account.management.port.in.ReadAccountUseCase.ReadAccountCo
 import de.ljw.aachen.account.management.port.in.UpdateAccountUseCase;
 import de.ljw.aachen.account.management.port.in.UpdateAccountUseCase.UpdateAccountCommand;
 import de.ljw.aachen.account.management.port.out.AccountStorePort;
+import de.ljw.aachen.common.EventPort;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+
 
 class AccountServiceTest {
 
@@ -26,13 +33,16 @@ class AccountServiceTest {
 
 
     AccountStorePort accountStore;
+
+    EventPort eventPortMock;
     public static final Account BENJAMIN_LINUS = Account.createFor("Benjamin", "Linus");
 
     @BeforeEach
     void beforeEach() {
         this.accountStore = new AccountStoreMem();
+        this.eventPortMock = mock(EventPort.class);
 
-        AccountService accountService = new AccountService(accountStore);
+        AccountService accountService = new AccountService(accountStore, eventPortMock);
         this.createAccountService = accountService;
         this.deleteAccountService = accountService;
         this.readAccountService = accountService;
@@ -48,6 +58,7 @@ class AccountServiceTest {
         var benjamin = readAccountService.readAccount(new ReadAccountCommand(benjaminsId));
         assertThat(benjamin.getFirstName()).isEqualTo(BENJAMIN_LINUS.getFirstName());
         assertThat(benjamin.getLastName()).isEqualTo(BENJAMIN_LINUS.getLastName());
+        verify(eventPortMock).publish(any(AccountCreatedEvent.class));
     }
 
     @Test
@@ -58,17 +69,17 @@ class AccountServiceTest {
         var deleteBenjamin = new DeleteAccountCommand(benjaminsId);
         deleteAccountService.deleteAccount(deleteBenjamin);
 
+        verify(eventPortMock).publish(any(AccountDeletedEvent.class));
+
         var readBenjamin = new ReadAccountCommand(benjaminsId);
         assertThatExceptionOfType(IllegalArgumentException.class)
                 .isThrownBy(() -> readAccountService.readAccount(readBenjamin));
-
         assertThatCode(() -> deleteAccountService.deleteAccount(deleteBenjamin))
                 .doesNotThrowAnyException();
-
     }
 
     @Test
-    void updateAccount(){
+    void updateAccount() {
         var createBenjamin = new CreateAccountCommand(BENJAMIN_LINUS.getFirstName(), BENJAMIN_LINUS.getLastName());
         var benjaminsId = createAccountService.createAccount(createBenjamin);
         ReadAccountCommand readBenjamin = new ReadAccountCommand(benjaminsId);
@@ -79,10 +90,11 @@ class AccountServiceTest {
         assertThat(benjamin).isNotEqualTo(benjaminWithChangedName);
 
         updateAccountService.updateAccount(new UpdateAccountCommand(benjaminWithChangedName));
+        verify(eventPortMock).publish(any(AccountUpdatedEvent.class));
+
         var benjaminAfterUpdate = readAccountService.readAccount(readBenjamin);
         assertThat(benjaminAfterUpdate).isNotEqualTo(benjamin);
         assertThat(benjaminAfterUpdate).isEqualTo(benjaminWithChangedName);
-
     }
 
 }

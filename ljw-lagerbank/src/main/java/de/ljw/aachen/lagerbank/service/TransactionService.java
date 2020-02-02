@@ -1,8 +1,11 @@
 package de.ljw.aachen.lagerbank.service;
 
 import de.ljw.aachen.account.management.domain.AccountId;
+import de.ljw.aachen.common.EventPort;
 import de.ljw.aachen.lagerbank.domain.Money;
 import de.ljw.aachen.lagerbank.domain.Transaction;
+import de.ljw.aachen.lagerbank.domain.event.MoneyDepositedEvent;
+import de.ljw.aachen.lagerbank.domain.event.MoneyWithdrawnEvent;
 import de.ljw.aachen.lagerbank.port.in.DepositMoneyUseCase;
 import de.ljw.aachen.lagerbank.port.in.TransferMoneyUseCase;
 import de.ljw.aachen.lagerbank.port.in.WithdrawMoneyUseCase;
@@ -16,11 +19,14 @@ import static de.ljw.aachen.lagerbank.service.BalanceCalculator.calculateBalance
 public class TransactionService implements DepositMoneyUseCase, WithdrawMoneyUseCase, TransferMoneyUseCase {
 
     private final TransactionStorePort transactionStore;
+    private final EventPort eventPort;
 
     @Override
     public void deposit(Money amount, AccountId accountId) {
         Transaction transaction = Transaction.forDeposit(accountId, amount);
         transactionStore.add(transaction);
+
+        eventPort.publish(new MoneyDepositedEvent(accountId, transaction.getId()));
     }
 
     @Override
@@ -31,6 +37,8 @@ public class TransactionService implements DepositMoneyUseCase, WithdrawMoneyUse
 
         Transaction transaction = Transaction.forWithdrawal(accountId, amount);
         transactionStore.add(transaction);
+
+        eventPort.publish(new MoneyWithdrawnEvent(accountId, transaction.getId()));
     }
 
     @Override
@@ -41,6 +49,9 @@ public class TransactionService implements DepositMoneyUseCase, WithdrawMoneyUse
 
         Transaction transaction = Transaction.forTransfer(sourceId, targetId, amount);
         transactionStore.add(transaction);
+
+        eventPort.publish(new MoneyWithdrawnEvent(sourceId, transaction.getId()));
+        eventPort.publish(new MoneyDepositedEvent(targetId, transaction.getId()));
     }
 
     private void checkWithdrawal(Money amount, Money balance) throws WithdrawalNotAllowedException {

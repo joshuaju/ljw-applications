@@ -8,6 +8,7 @@ import java.time.Instant;
 @Setter
 @Getter
 @EqualsAndHashCode
+@ToString
 public class Account {
 
     private final AccountId id;
