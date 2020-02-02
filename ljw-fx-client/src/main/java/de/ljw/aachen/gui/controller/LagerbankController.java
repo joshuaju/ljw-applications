@@ -134,7 +134,7 @@ public class LagerbankController implements Initializable {
     void onApply(ActionEvent event) {
         var selectedAccount = selectedAccountProperty.getValue();
         if (selectedAccount == null) {
-            Notifications.create().owner(((Node) event.getSource()).getScene().getWindow()).darkStyle()
+            Notifications.create().owner(((Node) event.getSource()).getScene().getWindow())
                     .title("Invalid input").text("No account selected")
                     .showError();
             log.error("no account selected");
@@ -145,7 +145,7 @@ public class LagerbankController implements Initializable {
         try {
             amount = Double.parseDouble(tfAmount.getText());
         } catch (NumberFormatException e) {
-            Notifications.create().owner(((Node) event.getSource()).getScene().getWindow()).darkStyle()
+            Notifications.create().owner(((Node) event.getSource()).getScene().getWindow())
                     .title("Invalid input").text("Amount needs to be a decimal number")
                     .showError();
             log.error("amount is not a double", e);
@@ -154,19 +154,18 @@ public class LagerbankController implements Initializable {
 
         if (rbDeposit.isSelected()) {
             log.info("deposit {} to {}", amount, selectedAccount);
-            Notifications.create().owner(((Node) event.getSource()).getScene().getWindow()).darkStyle()
+            Notifications.create().owner(((Node) event.getSource()).getScene().getWindow())
                     .title("Deposit successful")
                     .showConfirm();
             depositMoneyUseCase.deposit(Money.of(amount), selectedAccount.getId());
         } else if (rbWithdraw.isSelected()) {
             try {
                 withdrawMoneyUseCase.withdraw(Money.of(amount), selectedAccount.getId());
-                Notifications.create().owner(((Node) event.getSource()).getScene().getWindow()).darkStyle()
+                Notifications.create().owner(((Node) event.getSource()).getScene().getWindow())
                         .title("Withdrawal successful")
                         .showConfirm();
-                resetView();
             } catch (WithdrawalNotAllowedException e) { // TODO code clone
-                Notifications.create().owner(((Node) event.getSource()).getScene().getWindow()).darkStyle()
+                Notifications.create().owner(((Node) event.getSource()).getScene().getWindow())
                         .title("Invalid transaction").text("Withdrawal not allowed")
                         .showError();
                 log.error("Withdrawal not allowed", e);
@@ -175,7 +174,7 @@ public class LagerbankController implements Initializable {
         } else if (rbTransfer.isSelected()) {
             var selectedReceiver = selectedReceiverProperty.getValue();
             if (selectedReceiver == null) {
-                Notifications.create().owner(((Node) event.getSource()).getScene().getWindow()).darkStyle()
+                Notifications.create().owner(((Node) event.getSource()).getScene().getWindow())
                         .title("Invalid input").text("No receiver selected")
                         .showError();
                 log.error("no receiver selected");
@@ -184,24 +183,26 @@ public class LagerbankController implements Initializable {
 
             try {
                 transferMoneyUseCase.transfer(Money.of(amount), selectedAccount.getId(), selectedReceiver.getId());
-                Notifications.create().owner(((Node) event.getSource()).getScene().getWindow()).darkStyle()
+                Notifications.create().owner(((Node) event.getSource()).getScene().getWindow())
                         .title("Transfer successful")
                         .showConfirm();
             } catch (WithdrawalNotAllowedException e) { // TODO code clone
-                Notifications.create().owner(((Node) event.getSource()).getScene().getWindow()).darkStyle()
+                Notifications.create().owner(((Node) event.getSource()).getScene().getWindow())
                         .title("Invalid transaction").text("Withdrawal not allowed")
                         .showError();
                 log.error("Withdrawal not allowed", e);
                 return;
             }
         } else {
-            Notifications.create().owner(((Node) event.getSource()).getScene().getWindow()).darkStyle()
+            Notifications.create().owner(((Node) event.getSource()).getScene().getWindow())
                     .title("Invalid input").text("No transaction type selected")
                     .showError();
             log.error("no transaction type selected");
             return;
         }
-        resetView();
+
+        tfAmount.clear();
+        refreshAccountDetails();
     }
 
     @FXML
@@ -290,7 +291,6 @@ public class LagerbankController implements Initializable {
     }
 
     private void resetView() {
-        lvAccounts.getSelectionModel().clearSelection();
         tvTransactions.getItems().clear();
         cbReceivers.getSelectionModel().clearSelection();
 
