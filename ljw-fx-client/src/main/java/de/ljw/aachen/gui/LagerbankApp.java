@@ -41,7 +41,7 @@ public class LagerbankApp extends Application {
         context.stop();
     }
 
-    public static void main(String[] args) {
-        launch(LagerbankApp.class, args);
+    public static void main(String[] args){
+        launch();
     }
 }
