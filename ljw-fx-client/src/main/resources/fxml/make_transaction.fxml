@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+
+<VBox spacing="20.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="de.ljw.aachen.gui.controller.MakeTransactionController">
+
+    <HBox alignment="CENTER_LEFT" spacing="10.0">
+        <children>
+            <RadioButton fx:id="rbDeposit" mnemonicParsing="false" text="Deposit">
+                <toggleGroup>
+                    <ToggleGroup fx:id="tgTransaction"/>
+                </toggleGroup>
+            </RadioButton>
+            <RadioButton fx:id="rbWithdraw" mnemonicParsing="false" text="Withdraw" toggleGroup="$tgTransaction"/>
+            <RadioButton fx:id="rbTransfer" mnemonicParsing="false" text="Transfer" toggleGroup="$tgTransaction"/>
+        </children>
+    </HBox>
+    <TextField id="tfAmount" fx:id="tfAmount" promptText="Enter amount"/>
+    <ComboBox fx:id="cbReceivers" disable="true" maxWidth="1.7976931348623157E308" promptText="Select recipient">
+        <padding>
+            <Insets top="5.0"/>
+        </padding>
+    </ComboBox>
+    <Separator prefWidth="200.0"/>
+    <HBox alignment="CENTER" spacing="10.0">
+        <children>
+            <Button fx:id="btnApply" defaultButton="true" mnemonicParsing="false" onAction="#onApply" text="Apply"/>
+            <Button fx:id="btnReset" cancelButton="true" mnemonicParsing="false" onAction="#onReset" text="Reset"/>
+        </children>
+    </HBox>
+</VBox>
+

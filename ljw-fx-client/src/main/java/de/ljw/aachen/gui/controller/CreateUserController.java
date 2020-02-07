@@ -23,12 +23,6 @@ import static de.ljw.aachen.account.management.port.in.CreateAccountUseCase.*;
 public class CreateUserController {
 
     @FXML
-    private ResourceBundle resources;
-
-    @FXML
-    private URL location;
-
-    @FXML
     private TextField tfFirstName;
 
     @FXML
@@ -43,13 +37,6 @@ public class CreateUserController {
     private final CreateAccountUseCase createAccountUseCase;
 
     @FXML
-    void onCancel(ActionEvent event) {
-        log.info("Creating a user was cancelled");
-        Stage stage = (Stage) btnCancel.getScene().getWindow();
-        stage.close();
-    }
-
-    @FXML
     void onSave(ActionEvent event) {
         var firstName = tfFirstName.getText().trim();
         var lastName = tfLastName.getText().trim();
@@ -61,6 +48,13 @@ public class CreateUserController {
 
         log.info("Created Account: {}", accountId);
         Stage stage = (Stage) btnSave.getScene().getWindow();
+        stage.close();
+    }
+
+    @FXML
+    void onCancel(ActionEvent event) {
+        log.info("Creating a user was cancelled");
+        Stage stage = (Stage) btnCancel.getScene().getWindow();
         stage.close();
     }
 }

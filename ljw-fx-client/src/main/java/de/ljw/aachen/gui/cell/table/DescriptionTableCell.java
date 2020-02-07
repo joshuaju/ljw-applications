@@ -2,7 +2,6 @@ package de.ljw.aachen.gui.cell.table;
 
 import de.ljw.aachen.account.management.domain.Account;
 import de.ljw.aachen.account.management.domain.AccountId;
-import de.ljw.aachen.account.management.port.in.ReadAccountUseCase;
 import de.ljw.aachen.lagerbank.domain.Transaction;
 import javafx.beans.property.ObjectProperty;
 import javafx.scene.control.TableCell;
@@ -19,7 +18,7 @@ public class DescriptionTableCell extends TableCell<Transaction, Transaction> {
     @Override
     protected void updateItem(Transaction transaction, boolean b) {
         super.updateItem(transaction, b);
-        if (transaction == null){
+        if (transaction == null) {
             setText("");
             return;
         }
