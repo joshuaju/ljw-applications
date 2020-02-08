@@ -10,7 +10,7 @@
 <VBox spacing="20.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.ljw.aachen.gui.controller.TransactionsOverviewController">
     <TableView fx:id="tvTransactions" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
         <placeholder>
-            <Label text="No transactions"/>
+            <Label text="No transactions" />
         </placeholder>
         <columns>
             <TableColumn fx:id="tcDate" prefWidth="75.0" text="Date" />

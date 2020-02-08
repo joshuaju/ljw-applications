@@ -17,7 +17,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.ListView;
+import javafx.scene.control.*;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import lombok.RequiredArgsConstructor;
@@ -40,10 +40,11 @@ public class AccountSelectionController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        lvAccounts.setCellFactory(accountListView -> new AccountListCell());
         selectedAccountProperty.bind(lvAccounts.getSelectionModel().selectedItemProperty());
+        lvAccounts.setCellFactory(accountListView -> new AccountListCell());
         lvAccounts.itemsProperty().bind(Bindings.createObjectBinding(() ->
-                accountListProperty.sorted(Comparator.comparing(Account::getFirstName)), accountListProperty));
+                accountListProperty.sorted(Comparator.comparing(account -> account.getFirstName().toUpperCase())), accountListProperty));
+        lvAccounts.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
     }
 
     @FXML
