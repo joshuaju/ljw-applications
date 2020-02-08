@@ -10,6 +10,8 @@ import de.ljw.aachen.lagerbank.port.in.DepositMoneyUseCase;
 import de.ljw.aachen.lagerbank.port.in.TransferMoneyUseCase;
 import de.ljw.aachen.lagerbank.port.in.WithdrawMoneyUseCase;
 import de.ljw.aachen.lagerbank.port.in.WithdrawalNotAllowedException;
+import javafx.beans.binding.Bindings;
+import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -65,10 +67,15 @@ public class MakeTransactionController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         cbReceivers.setConverter(new AccountStringConverter());
-        cbReceivers.disableProperty().bind(rbTransfer.selectedProperty().not());
+        cbReceivers.disableProperty().bind(Bindings.createBooleanBinding(() -> {
+            var noAccountIsSelected = selectedAccountProperty.isNull();
+            var transferButtonIsNotSelected = rbTransfer.selectedProperty().not();
+            return noAccountIsSelected.or(transferButtonIsNotSelected).get();
+        }, rbTransfer.selectedProperty(), selectedAccountProperty));
         selectedReceiverProperty = new SimpleObjectProperty<Account>();
         selectedReceiverProperty.bind(cbReceivers.getSelectionModel().selectedItemProperty());
         selectedAccountProperty.addListener((observableValue, previous, selected) -> refresh());
+
     }
 
     @FXML
@@ -149,11 +156,6 @@ public class MakeTransactionController implements Initializable {
         cbReceivers.getSelectionModel().clearSelection();
         tgTransaction.getToggles().forEach(toggle -> toggle.setSelected(false));
         tfAmount.clear();
-    }
-
-    @EventListener(classes = {AccountCreatedEvent.class, AccountDeletedEvent.class, AccountUpdatedEvent.class})
-    void on() {
-        refresh();
     }
 
     private void refresh() {

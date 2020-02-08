@@ -1,10 +1,7 @@
 package de.ljw.aachen.gui.controller;
 
 import de.ljw.aachen.account.management.domain.Account;
-import de.ljw.aachen.account.management.domain.event.AccountCreatedEvent;
-import de.ljw.aachen.account.management.domain.event.AccountDeletedEvent;
-import de.ljw.aachen.account.management.domain.event.AccountUpdatedEvent;
-import de.ljw.aachen.account.management.port.in.ReadAccountUseCase;
+import de.ljw.aachen.account.management.domain.AccountId;
 import de.ljw.aachen.gui.cell.table.DescriptionTableCell;
 import de.ljw.aachen.gui.cell.table.InstantTableCell;
 import de.ljw.aachen.gui.cell.table.MoneyTableCell;
@@ -62,59 +59,50 @@ public class TransactionsOverviewController implements Initializable {
         tcDate.setCellValueFactory(new PropertyValueFactory<>("time"));
         tcDate.setCellFactory(transactionInstantTableColumn -> new InstantTableCell());
 
-        tcDescription.setCellValueFactory(transactionStringCellDataFeatures -> {
-            var transaction = transactionStringCellDataFeatures.getValue();
-            return new SimpleObjectProperty<>(transaction);
-        });
+        tcDescription.setCellValueFactory(transactionStringCellDataFeatures ->
+                new SimpleObjectProperty<>(transactionStringCellDataFeatures.getValue()));
         tcDescription.setCellFactory(transactionInstantTableColumn ->
-                new DescriptionTableCell(
-                        selectedAccountProperty,
-                        accountId -> accountListProperty.stream()
-                                .filter(account -> accountId.equals(account.getId())).findFirst().orElseThrow()));
+                new DescriptionTableCell(selectedAccountProperty, accountListProperty));
 
         tcAmount.setCellValueFactory(transactionDoubleCellDataFeatures -> new SimpleObjectProperty<Money>(transactionDoubleCellDataFeatures.getValue().getAmount()));
         tcAmount.setCellFactory(transactionMoneyTableColumn -> new MoneyTableCell());
 
-        selectedAccountProperty.addListener((observableValue, previous, selected) -> refreshAccountDetails());
-    }
-
-    @EventListener
-    void on(AccountDeletedEvent event) {
-        // TODO reset receivers
+        selectedAccountProperty.addListener((observableValue, previous, selected) -> refresh());
     }
 
     @EventListener
     void on(MoneyDepositedEvent event) {
         var selectedAccount = selectedAccountProperty.getValue();
-        if (selectedAccount == null) return;
-
-        if (selectedAccount.getId().equals(event.getAccountId())) {
-            refreshAccountDetails();
-        }
+        if (isShowing(event.getAccountId())) update(selectedAccount);
     }
 
     @EventListener
     void on(MoneyWithdrawnEvent event) {
         var selectedAccount = selectedAccountProperty.getValue();
-        if (selectedAccount == null) return;
-
-        if (selectedAccount.getId().equals(event.getAccountId())) {
-            refreshAccountDetails();
-        }
+        if (isShowing(event.getAccountId())) update(selectedAccount);
     }
 
-    private void refreshAccountDetails() {
-        Account account = selectedAccountProperty.getValue();
-        if (account == null) {
-            tvTransactions.getItems().clear();
-            lblTotalBalance.setText("");
-            return;
-        }
+    private boolean isShowing(AccountId accountId) {
+        var selectedAccount = selectedAccountProperty.getValue();
+        if (selectedAccount == null) return false;
+        else return selectedAccount.getId().equals(accountId);
+    }
 
+    private void refresh() {
+        Account account = selectedAccountProperty.getValue();
+        if (account == null) clear();
+        else update(account);
+    }
+
+    private void clear() {
+        tvTransactions.getItems().clear();
+        lblTotalBalance.setText("");
+    }
+
+    private void update(Account account) {
         var balance = getBalanceUseCase.getBalance(account.getId());
         lblTotalBalance.setText(MessageFormat.format("{0, number, #.##}", balance.getAmount()));
         var transactions = listTransactionsUseCase.listTransactions(account.getId());
-
         tvTransactions.getItems().setAll(transactions);
     }
 

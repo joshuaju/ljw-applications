@@ -2,8 +2,14 @@ package de.ljw.aachen.gui.controller;
 
 import de.ljw.aachen.account.management.domain.Account;
 import de.ljw.aachen.gui.cell.list.AccountListCell;
+import javafx.beans.InvalidationListener;
+import javafx.beans.Observable;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -19,6 +25,7 @@ import lombok.SneakyThrows;
 import org.springframework.context.ApplicationContext;
 
 import java.net.URL;
+import java.util.Comparator;
 import java.util.ResourceBundle;
 
 @RequiredArgsConstructor
@@ -35,7 +42,8 @@ public class AccountSelectionController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         lvAccounts.setCellFactory(accountListView -> new AccountListCell());
         selectedAccountProperty.bind(lvAccounts.getSelectionModel().selectedItemProperty());
-        lvAccounts.itemsProperty().bind(accountListProperty);
+        lvAccounts.itemsProperty().bind(Bindings.createObjectBinding(() ->
+                accountListProperty.sorted(Comparator.comparing(Account::getFirstName)), accountListProperty));
     }
 
     @FXML
