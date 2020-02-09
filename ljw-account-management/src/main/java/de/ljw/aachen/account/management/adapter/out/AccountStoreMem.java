@@ -26,6 +26,7 @@ public class AccountStoreMem implements AccountStorePort {
 
     @Override
     public void store(Account account) {
+        Validate.isTrue(!contains(account.getId()), "Account was not unique.");
         accounts.put(account.getId(), account);
     }
 

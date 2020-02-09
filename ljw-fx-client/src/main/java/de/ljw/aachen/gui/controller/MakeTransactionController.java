@@ -4,6 +4,7 @@ import de.ljw.aachen.account.management.domain.Account;
 import de.ljw.aachen.account.management.domain.event.AccountCreatedEvent;
 import de.ljw.aachen.account.management.domain.event.AccountDeletedEvent;
 import de.ljw.aachen.account.management.domain.event.AccountUpdatedEvent;
+import de.ljw.aachen.gui.BuildNotification;
 import de.ljw.aachen.gui.converter.AccountStringConverter;
 import de.ljw.aachen.lagerbank.domain.Money;
 import de.ljw.aachen.lagerbank.port.in.DepositMoneyUseCase;
@@ -28,6 +29,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.controlsfx.control.Notifications;
 import org.springframework.context.event.EventListener;
 
+import javax.management.Notification;
 import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.function.Predicate;
@@ -82,8 +84,7 @@ public class MakeTransactionController implements Initializable {
     void onApply(ActionEvent event) { // TODO refactor method
         var selectedAccount = selectedAccountProperty.getValue();
         if (selectedAccount == null) {
-            Notifications.create().owner(((Node) event.getSource()).getScene().getWindow())
-                    .title("Invalid input").text("No account selected")
+            BuildNotification.about("Invalid input", "No account selected", ((Node) event.getSource()).getScene().getWindow())
                     .showError();
             log.error("no account selected");
             return;
@@ -93,8 +94,7 @@ public class MakeTransactionController implements Initializable {
         try {
             amount = Double.parseDouble(tfAmount.getText());
         } catch (NumberFormatException e) {
-            Notifications.create().owner(((Node) event.getSource()).getScene().getWindow())
-                    .title("Invalid input").text("Amount needs to be a decimal number")
+            BuildNotification.about("Invalid input", "Amount needs to be a decimal number", ((Node) event.getSource()).getScene().getWindow())
                     .showError();
             log.error("amount is not a double", e);
             return;
@@ -102,19 +102,16 @@ public class MakeTransactionController implements Initializable {
 
         if (rbDeposit.isSelected()) {
             log.info("deposit {} to {}", amount, selectedAccount);
-            Notifications.create().owner(((Node) event.getSource()).getScene().getWindow())
-                    .title("Deposit successful")
+            BuildNotification.about("Deposit successful", null, ((Node) event.getSource()).getScene().getWindow())
                     .showConfirm();
             depositMoneyUseCase.deposit(Money.of(amount), selectedAccount.getId());
         } else if (rbWithdraw.isSelected()) {
             try {
                 withdrawMoneyUseCase.withdraw(Money.of(amount), selectedAccount.getId());
-                Notifications.create().owner(((Node) event.getSource()).getScene().getWindow())
-                        .title("Withdrawal successful")
+                BuildNotification.about("Withdrawal successful", null, ((Node) event.getSource()).getScene().getWindow())
                         .showConfirm();
             } catch (WithdrawalNotAllowedException e) { // TODO code clone
-                Notifications.create().owner(((Node) event.getSource()).getScene().getWindow())
-                        .title("Invalid transaction").text("Withdrawal not allowed")
+                BuildNotification.about("Invalid input", "Withdrawal not allowed", ((Node) event.getSource()).getScene().getWindow())
                         .showError();
                 log.error("Withdrawal not allowed", e);
                 return;
@@ -122,8 +119,7 @@ public class MakeTransactionController implements Initializable {
         } else if (rbTransfer.isSelected()) {
             var selectedReceiver = selectedReceiverProperty.getValue();
             if (selectedReceiver == null) {
-                Notifications.create().owner(((Node) event.getSource()).getScene().getWindow())
-                        .title("Invalid input").text("No receiver selected")
+                BuildNotification.about("Invalid input", "No receiver selected", ((Node) event.getSource()).getScene().getWindow())
                         .showError();
                 log.error("no receiver selected");
                 return;
@@ -131,19 +127,17 @@ public class MakeTransactionController implements Initializable {
 
             try {
                 transferMoneyUseCase.transfer(Money.of(amount), selectedAccount.getId(), selectedReceiver.getId());
-                Notifications.create().owner(((Node) event.getSource()).getScene().getWindow())
+                BuildNotification.about("Transfer successful", null, ((Node) event.getSource()).getScene().getWindow())
                         .title("Transfer successful")
                         .showConfirm();
             } catch (WithdrawalNotAllowedException e) { // TODO code clone
-                Notifications.create().owner(((Node) event.getSource()).getScene().getWindow())
-                        .title("Invalid transaction").text("Withdrawal not allowed")
+                BuildNotification.about("Invalid input", "Withdrawal not allowed", ((Node) event.getSource()).getScene().getWindow())
                         .showError();
                 log.error("Withdrawal not allowed", e);
                 return;
             }
         } else {
-            Notifications.create().owner(((Node) event.getSource()).getScene().getWindow())
-                    .title("Invalid input").text("No transaction type selected")
+            BuildNotification.about("Invalid input", "No transaction type selected", ((Node) event.getSource()).getScene().getWindow())
                     .showError();
             log.error("no transaction type selected");
             return;

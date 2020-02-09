@@ -62,6 +62,17 @@ class AccountServiceTest {
     }
 
     @Test
+    void createAccountWithIdenticalForeAndLastName() {
+        var createBenjamin = new CreateAccountCommand(BENJAMIN_LINUS.getFirstName(), BENJAMIN_LINUS.getLastName());
+        assertThatCode(() -> createAccountService.createAccount(createBenjamin))
+                .doesNotThrowAnyException();
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> assertThat(createAccountService.createAccount(createBenjamin)));
+
+
+    }
+
+    @Test
     void deleteAccount() {
         var createBenjamin = new CreateAccountCommand(BENJAMIN_LINUS.getFirstName(), BENJAMIN_LINUS.getLastName());
         var benjaminsId = createAccountService.createAccount(createBenjamin);

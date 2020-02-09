@@ -3,9 +3,11 @@ package de.ljw.aachen.gui.controller;
 import de.ljw.aachen.account.management.domain.Account;
 import de.ljw.aachen.account.management.domain.AccountId;
 import de.ljw.aachen.account.management.port.in.CreateAccountUseCase;
+import de.ljw.aachen.gui.BuildNotification;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
@@ -41,14 +43,17 @@ public class CreateUserController {
         var firstName = tfFirstName.getText().trim();
         var lastName = tfLastName.getText().trim();
 
-        // TODO input validation and show notifications
-
         var cmd = new CreateAccountCommand(firstName, lastName);
-        var accountId = createAccountUseCase.createAccount(cmd);
-
-        log.info("Created Account: {}", accountId);
-        Stage stage = (Stage) btnSave.getScene().getWindow();
-        stage.close();
+        try {
+            var accountId = createAccountUseCase.createAccount(cmd);
+            log.info("Created Account: {}", accountId);
+            Stage stage = (Stage) btnSave.getScene().getWindow();
+            stage.close();
+        } catch (IllegalArgumentException e){
+            BuildNotification.about("Could not create account", null, ((Node) event.getSource()).getScene().getWindow())
+                    .showError();
+            log.error("Error creating account", e);
+        }
     }
 
     @FXML
