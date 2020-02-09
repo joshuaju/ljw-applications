@@ -24,9 +24,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
 
+import java.math.RoundingMode;
 import java.net.URL;
 import java.text.MessageFormat;
 import java.time.Instant;
+import java.util.Currency;
+import java.util.Locale;
 import java.util.ResourceBundle;
 
 @Slf4j
@@ -101,7 +104,9 @@ public class TransactionsOverviewController implements Initializable {
 
     private void update(Account account) {
         var balance = getBalanceUseCase.getBalance(account.getId());
-        lblTotalBalance.setText(MessageFormat.format("{0, number, #.##}", balance.getAmount()));
+        lblTotalBalance.setText(MessageFormat.format("{0, number, #0.00} {1}",
+                balance.getAmount(),
+                Currency.getInstance(Locale.getDefault()).getSymbol()));
         var transactions = listTransactionsUseCase.listTransactions(account.getId());
         tvTransactions.getItems().setAll(transactions);
     }

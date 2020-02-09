@@ -26,11 +26,18 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 @Configuration
 public class LagerbankAppConfig {
+
+    @PostConstruct
+    void setLocale() {
+        Locale.setDefault(Locale.GERMANY);
+    }
 
     @Bean
     LagerbankController lagerbankController(ListAccountsUseCase listAccountsUseCase,
