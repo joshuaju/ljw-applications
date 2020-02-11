@@ -29,7 +29,7 @@ public class LagerbankApp extends Application {
     }
 
     @Override
-    public void start(Stage stage)  {
+    public void start(Stage stage) {
         stage.setTitle("LJW Lagerbank");
         Scene scene = new Scene(root);
         stage.setScene(scene);
@@ -41,7 +41,7 @@ public class LagerbankApp extends Application {
         context.stop();
     }
 
-    public static void main(String[] args){
+    public static void main(String[] args) {
         launch();
     }
 }
