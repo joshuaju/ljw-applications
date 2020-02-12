@@ -10,6 +10,7 @@ import de.ljw.aachen.lagerbank.port.in.WithdrawMoneyUseCase;
 import de.ljw.aachen.lagerbank.port.in.WithdrawalNotAllowedException;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
+import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -27,7 +28,6 @@ import org.controlsfx.validation.Validator;
 
 import java.net.URL;
 import java.util.ResourceBundle;
-import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 @Slf4j
@@ -64,66 +64,72 @@ public class MakeTransactionController implements Initializable {
 
     private final ObjectProperty<Account> selectedAccountProperty;
     private final ListProperty<Account> accountListProperty;
-
     private ObjectProperty<Account> selectedReceiverProperty;
-    private ValidationSupport amountValidation;
-    private ValidationSupport receiverValidation;
 
+    private ValidationSupport tfAmountValidation;
+    private ValidationSupport cbReceiverValidation;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         cbReceivers.setConverter(new AccountStringConverter());
-        cbReceivers.disableProperty().bind(Bindings.createBooleanBinding(() -> {
-            var noAccountIsSelected = selectedAccountProperty.isNull();
-            var transferButtonIsNotSelected = rbTransfer.selectedProperty().not();
-            return noAccountIsSelected.or(transferButtonIsNotSelected).get();
-        }, rbTransfer.selectedProperty(), selectedAccountProperty));
+
         selectedReceiverProperty = new SimpleObjectProperty<Account>();
         selectedReceiverProperty.bind(cbReceivers.getSelectionModel().selectedItemProperty());
         selectedAccountProperty.addListener((observableValue, previous, selected) -> refresh());
 
-        btnApply.disableProperty().bind(selectedAccountProperty.isNull().and(tgTransaction.selectedToggleProperty().isNull()));
-        btnReset.disableProperty().bind(btnApply.disableProperty());
-
+        this.setupControlsDisableProperty();
         Platform.runLater(this::setupValidationSupport);
     }
 
-    void setupValidationSupport() {
-        amountValidation = new ValidationSupport();
+    private void setupControlsDisableProperty() {
+        BooleanBinding noAccountSelected = selectedAccountProperty.isNull();
+        btnApply.disableProperty().bind(noAccountSelected);
+        btnReset.disableProperty().bind(noAccountSelected);
+        tfAmount.disableProperty().bind(noAccountSelected);
+        rbDeposit.disableProperty().bind(noAccountSelected);
+        rbWithdraw.disableProperty().bind(noAccountSelected);
+        rbTransfer.disableProperty().bind(noAccountSelected);
+        cbReceivers.disableProperty().bind(Bindings.createBooleanBinding(
+                noAccountSelected.or(rbTransfer.selectedProperty().not())::get, rbTransfer.selectedProperty(), selectedAccountProperty));
+    }
 
-
+    private void setupValidationSupport() {
+        /* amount validation **************************************************************************************** */
+        tfAmountValidation = new ValidationSupport();
         Validator<String> decimalNumberValidator = Validator.createRegexValidator(
                 "Decimal number with at most two decimal places required",
                 "\\d+((.|,)\\d{1,2})?",
                 Severity.ERROR);
+
         selectedAccountProperty.addListener(observable -> {
-            amountValidation.registerValidator(
+            tfAmountValidation.registerValidator(
                     tfAmount,
-                    accountListProperty.isNotNull()
-                            .and(selectedAccountProperty.isNotNull()).get(),
+                    accountListProperty.isNotNull().and(selectedAccountProperty.isNotNull()).get(),
                     decimalNumberValidator);
         });
-        amountValidation.errorDecorationEnabledProperty()
-                .bind(btnApply.disableProperty().not());
 
-        receiverValidation = new ValidationSupport();
-        rbTransfer.selectedProperty().addListener(observable -> {
-            receiverValidation.registerValidator(
-                    cbReceivers, rbTransfer.selectedProperty()
-                            .and(selectedAccountProperty.isNotNull()).get(),
-                    (control, receiver) -> ValidationResult.fromErrorIf(cbReceivers, "Receiver Selection required", receiver == null));
+        /* receiver selection validation ************************************************************************** */
+        cbReceiverValidation = new ValidationSupport();
+        Validator<Object> receiverSelectedValidator = (control, receiver) ->
+                ValidationResult.fromErrorIf(cbReceivers, "Receiver Selection required", receiver == null);
+        rbTransfer.selectedProperty().addListener((observableValue, wasSelected, isSelected) -> {
+            cbReceiverValidation.registerValidator(
+                    cbReceivers,
+                    isSelected,
+                    receiverSelectedValidator);
         });
-        receiverValidation.errorDecorationEnabledProperty()
-                .bind(rbTransfer.selectedProperty()
-                        .and(amountValidation.errorDecorationEnabledProperty()));
+        /* decoration visibility ************************************************************************************ */
+        tfAmountValidation.errorDecorationEnabledProperty()
+                .bind(tfAmount.disableProperty().not());
 
-
+        cbReceiverValidation.errorDecorationEnabledProperty()
+                .bind(cbReceivers.disableProperty().not());
     }
 
 
     @FXML
     void onApply(ActionEvent event) { // TODO refactor method
-        if (amountValidation.isInvalid()) return;
+        if (tfAmountValidation.isInvalid()) return;
 
         var selectedAccount = selectedAccountProperty.getValue();
         double amount = Double.parseDouble(tfAmount.getText().replace(",", "."));
@@ -144,6 +150,7 @@ public class MakeTransactionController implements Initializable {
                 }
             };
         } else if (rbTransfer.isSelected()) {
+            if (cbReceiverValidation.isInvalid()) return;
             performTransaction = new Runnable() {
                 @Override
                 public void run() {
