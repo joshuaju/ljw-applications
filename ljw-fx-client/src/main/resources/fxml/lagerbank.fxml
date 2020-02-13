@@ -8,14 +8,12 @@
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="850.0" prefWidth="1250.0" stylesheets="/css/validation.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.ljw.aachen.gui.controller.LagerbankController">
     <center>
         <VBox spacing="20.0" BorderPane.alignment="TOP_CENTER">
-            <children>
-                <fx:include source="transactions_overview.fxml" VBox.vgrow="ALWAYS" />
-                <Separator prefWidth="200.0" />
-                <fx:include source="make_transaction.fxml" />
-            </children>
             <BorderPane.margin>
-                <Insets left="10.0" />
+                <Insets left="10.0"/>
             </BorderPane.margin>
+            <fx:include source="transactions_overview.fxml" VBox.vgrow="ALWAYS"/>
+            <Separator prefWidth="200.0"/>
+            <fx:include source="make_transaction.fxml"/>
         </VBox>
     </center>
     <left>

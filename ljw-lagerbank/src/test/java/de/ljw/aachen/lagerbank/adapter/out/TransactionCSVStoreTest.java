@@ -21,11 +21,10 @@ class TransactionCSVStoreTest {
     private final AccountId julia = new AccountId();
 
     private static Path out = Path.of("transactions.csv");
-    private TransactionStorePort transactionCSVStore;
 
     @Test
     void interactWithStore() {
-        transactionCSVStore = new TransactionCSVStore(out);
+        TransactionStorePort transactionCSVStore = new TransactionCSVStore(out);
         assertThat(transactionCSVStore.getAll()).isEmpty();
 
         Transaction petersFirstDeposit = Transaction.forDeposit(peter, Money.of(15.0));
