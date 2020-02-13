@@ -5,6 +5,7 @@ import de.ljw.aachen.account.management.domain.Account;
 import de.ljw.aachen.account.management.port.in.CreateAccountUseCase;
 import de.ljw.aachen.account.management.port.in.ListAccountsUseCase;
 import de.ljw.aachen.account.management.port.in.ReadAccountUseCase;
+import de.ljw.aachen.account.management.port.in.UpdateAccountUseCase;
 import de.ljw.aachen.account.management.port.out.AccountStorePort;
 import de.ljw.aachen.account.management.service.AccountService;
 import de.ljw.aachen.common.EventPort;
@@ -51,10 +52,18 @@ public class LagerbankAppConfig {
     }
 
     @Bean
-    AccountSelectionController accountSelectionController(ApplicationContext applicationContext,
+    EditUserController editUserController(UpdateAccountUseCase updateAccountUseCase,
+                                          ObjectProperty<Account> selectedAccountProperty) {
+        return new EditUserController(updateAccountUseCase, selectedAccountProperty);
+    }
+
+    @Bean
+    AccountSelectionController accountSelectionController(CreateUserController createUserController,
+                                                          EditUserController editUserController,
                                                           ObjectProperty<Account> selectedAccountProperty,
                                                           ListProperty<Account> accountListProperty) {
-        return new AccountSelectionController(applicationContext, selectedAccountProperty, accountListProperty);
+        return new AccountSelectionController(createUserController, editUserController,
+                selectedAccountProperty, accountListProperty);
     }
 
     @Bean

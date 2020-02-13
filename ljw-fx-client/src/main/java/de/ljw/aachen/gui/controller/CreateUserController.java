@@ -22,44 +22,23 @@ import static de.ljw.aachen.account.management.port.in.CreateAccountUseCase.*;
 
 @Slf4j
 @RequiredArgsConstructor
-public class CreateUserController {
-
-    @FXML
-    private TextField tfFirstName;
-
-    @FXML
-    private TextField tfLastName;
-
-    @FXML
-    private Button btnSave;
-
-    @FXML
-    private Button btnCancel;
+public class CreateUserController extends UserDetailController {
 
     private final CreateAccountUseCase createAccountUseCase;
 
-    @FXML
-    void onSave(ActionEvent event) {
-        var firstName = tfFirstName.getText().trim();
-        var lastName = tfLastName.getText().trim();
 
+    @Override
+    protected void onAction(String firstName, String lastName) {
         var cmd = new CreateAccountCommand(firstName, lastName);
-        try {
-            var accountId = createAccountUseCase.createAccount(cmd);
-            log.info("Created Account: {}", accountId);
-            Stage stage = (Stage) btnSave.getScene().getWindow();
-            stage.close();
-        } catch (IllegalArgumentException e){
-            BuildNotification.about("Could not create account", null, ((Node) event.getSource()).getScene().getWindow())
-                    .showError();
-            log.error("Error creating account", e);
-        }
+        var accountId = createAccountUseCase.createAccount(cmd);
+        closeStage();
     }
 
-    @FXML
-    void onCancel(ActionEvent event) {
-        log.info("Creating a user was cancelled");
-        Stage stage = (Stage) btnCancel.getScene().getWindow();
-        stage.close();
+    @Override
+    protected void onError(Exception e) {
+        BuildNotification.about("Could not create account", null,
+                btnCancel.getScene().getWindow())
+                .showError();
+        log.error("Error creating account", e);
     }
 }
