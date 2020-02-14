@@ -2,6 +2,7 @@ package de.ljw.aachen.account.management.service;
 
 import de.ljw.aachen.account.management.adapter.out.AccountStoreMem;
 import de.ljw.aachen.account.management.domain.Account;
+import de.ljw.aachen.account.management.domain.AccountId;
 import de.ljw.aachen.account.management.domain.event.AccountCreatedEvent;
 import de.ljw.aachen.account.management.domain.event.AccountDeletedEvent;
 import de.ljw.aachen.account.management.domain.event.AccountUpdatedEvent;
@@ -15,6 +16,7 @@ import de.ljw.aachen.account.management.port.in.UpdateAccountUseCase;
 import de.ljw.aachen.account.management.port.in.UpdateAccountUseCase.UpdateAccountCommand;
 import de.ljw.aachen.account.management.port.out.AccountStorePort;
 import de.ljw.aachen.common.EventPort;
+import org.assertj.core.description.Description;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -36,6 +38,7 @@ class AccountServiceTest {
 
     EventPort eventPortMock;
     public static final Account BENJAMIN_LINUS = Account.createFor("Benjamin", "Linus");
+    public static final Account JULIA_JULIETTE = Account.createFor("Julia", "Juliette");
 
     @BeforeEach
     void beforeEach() {
@@ -67,9 +70,24 @@ class AccountServiceTest {
         assertThatCode(() -> createAccountService.createAccount(createBenjamin))
                 .doesNotThrowAnyException();
         assertThatIllegalArgumentException()
-                .isThrownBy(() -> assertThat(createAccountService.createAccount(createBenjamin)));
+                .isThrownBy(() -> createAccountService.createAccount(createBenjamin));
+    }
 
+    @Test
+    void updateAccountToBeIdenticalWithAnotherAccount() {
+        var createBenjamin = new CreateAccountCommand(BENJAMIN_LINUS.getFirstName(), BENJAMIN_LINUS.getLastName());
+        var createJulia = new CreateAccountUseCase.CreateAccountCommand(JULIA_JULIETTE.getFirstName(), JULIA_JULIETTE.getLastName());
 
+        createAccountService.createAccount(createBenjamin);
+        AccountId juliasId = createAccountService.createAccount(createJulia);
+        Account julia = readAccountService.readAccount(new ReadAccountCommand(juliasId));
+        julia.setFirstName(BENJAMIN_LINUS.getFirstName());
+        julia.setLastName(BENJAMIN_LINUS.getLastName());
+
+        var renameJuliaToBen = new UpdateAccountCommand(julia);
+        assertThatIllegalArgumentException()
+                .as("Renaming an account to the same first and last name like another account should not be possible")
+                .isThrownBy(() -> updateAccountService.updateAccount(renameJuliaToBen));
     }
 
     @Test
@@ -97,15 +115,16 @@ class AccountServiceTest {
 
         var benjamin = readAccountService.readAccount(readBenjamin);
         benjamin.setFirstName("Ben");
-        var benjaminWithChangedName = readAccountService.readAccount(readBenjamin);
-        assertThat(benjamin).isNotEqualTo(benjaminWithChangedName);
 
-        updateAccountService.updateAccount(new UpdateAccountCommand(benjaminWithChangedName));
+        var benjaminAfterChangingName = readAccountService.readAccount(readBenjamin);
+        assertThat(benjamin).isNotEqualTo(benjaminAfterChangingName);
+
+        updateAccountService.updateAccount(new UpdateAccountCommand(benjaminAfterChangingName));
         verify(eventPortMock).publish(any(AccountUpdatedEvent.class));
 
         var benjaminAfterUpdate = readAccountService.readAccount(readBenjamin);
         assertThat(benjaminAfterUpdate).isNotEqualTo(benjamin);
-        assertThat(benjaminAfterUpdate).isEqualTo(benjaminWithChangedName);
+        assertThat(benjaminAfterUpdate).isEqualTo(benjaminAfterChangingName);
     }
 
 }

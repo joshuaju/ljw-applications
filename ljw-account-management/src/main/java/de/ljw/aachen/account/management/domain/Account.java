@@ -34,7 +34,7 @@ public class Account {
     }
 
     public static Account createFor(String firstName, String lastName) {
-        return new Account(new AccountId(firstName.toLowerCase().trim() + lastName.toLowerCase().trim()), Instant.now(), firstName, lastName);
+        return new Account(new AccountId(), Instant.now(), firstName, lastName);
     }
 
 }
