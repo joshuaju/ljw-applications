@@ -99,7 +99,7 @@ public class TransactionsOverviewController implements Initializable {
 
     private void clear() {
         tvTransactions.getItems().clear();
-        lblTotalBalance.setText("");
+        lblTotalBalance.setText("-");
     }
 
     private void update(Account account) {

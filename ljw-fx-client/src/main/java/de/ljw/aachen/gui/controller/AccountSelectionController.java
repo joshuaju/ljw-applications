@@ -22,6 +22,7 @@ import lombok.SneakyThrows;
 
 import java.net.URL;
 import java.util.List;
+import java.util.Locale;
 import java.util.ResourceBundle;
 
 @RequiredArgsConstructor
@@ -72,6 +73,7 @@ public class AccountSelectionController implements Initializable {
         URL resource = AccountSelectionController.class.getClassLoader().getResource("fxml/user_detail.fxml");
         FXMLLoader loader = new FXMLLoader(resource);
         loader.setController(createUserController);
+        loader.setResources(ResourceBundle.getBundle("Bundle", Locale.getDefault()));// TODO inject bundle
         Parent root = loader.load();
 
         Stage stage = new Stage();
@@ -88,6 +90,7 @@ public class AccountSelectionController implements Initializable {
         URL resource = AccountSelectionController.class.getClassLoader().getResource("fxml/user_detail.fxml");
         FXMLLoader loader = new FXMLLoader(resource);
         loader.setController(editUserController);
+        loader.setResources(ResourceBundle.getBundle("Bundle", Locale.getDefault()));// TODO inject bundle
         Parent root = loader.load();
 
         Stage stage = new Stage();

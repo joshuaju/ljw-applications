@@ -10,6 +10,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 
 import java.net.URL;
+import java.util.Locale;
+import java.util.ResourceBundle;
 
 @SpringBootApplication
 public class LagerbankApp extends Application {
@@ -24,6 +26,7 @@ public class LagerbankApp extends Application {
         URL resource = getClass().getResource("/fxml/lagerbank.fxml");
         FXMLLoader loader = new FXMLLoader(resource);
         loader.setControllerFactory(context::getBean);
+        loader.setResources(ResourceBundle.getBundle("Bundle", Locale.getDefault())); // TODO inject bundle
 
         this.root = loader.load();
     }
