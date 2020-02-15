@@ -1,9 +1,9 @@
 package de.ljw.aachen.gui.controller;
 
 import de.ljw.aachen.account.management.domain.Account;
-import de.ljw.aachen.gui.BuildNotification;
-import de.ljw.aachen.gui.comparator.CompareAccounts;
-import de.ljw.aachen.gui.converter.AccountStringConverter;
+import de.ljw.aachen.gui.util.BuildNotification;
+import de.ljw.aachen.gui.util.comparator.CompareAccounts;
+import de.ljw.aachen.gui.util.converter.AccountStringConverter;
 import de.ljw.aachen.lagerbank.domain.Money;
 import de.ljw.aachen.lagerbank.port.in.DepositMoneyUseCase;
 import de.ljw.aachen.lagerbank.port.in.TransferMoneyUseCase;
@@ -31,7 +31,6 @@ import org.controlsfx.validation.Validator;
 
 import java.net.URL;
 import java.util.ResourceBundle;
-import java.util.function.Predicate;
 
 @Slf4j
 @RequiredArgsConstructor

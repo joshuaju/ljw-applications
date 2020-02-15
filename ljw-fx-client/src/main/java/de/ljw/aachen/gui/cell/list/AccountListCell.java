@@ -1,7 +1,7 @@
 package de.ljw.aachen.gui.cell.list;
 
 import de.ljw.aachen.account.management.domain.Account;
-import de.ljw.aachen.gui.converter.AccountStringConverter;
+import de.ljw.aachen.gui.util.converter.AccountStringConverter;
 import javafx.scene.control.ListCell;
 import javafx.scene.input.MouseEvent;
 

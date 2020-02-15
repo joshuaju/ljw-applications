@@ -1,4 +1,4 @@
-package de.ljw.aachen.gui;
+package de.ljw.aachen.gui.util;
 
 import javafx.scene.Node;
 import javafx.stage.Stage;

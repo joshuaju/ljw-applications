@@ -1,17 +1,11 @@
 package de.ljw.aachen.gui.controller;
 
-import de.ljw.aachen.account.management.port.in.CreateAccountUseCase;
-import de.ljw.aachen.gui.BuildNotification;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
-import static de.ljw.aachen.account.management.port.in.CreateAccountUseCase.CreateAccountCommand;
 
 @Slf4j
 abstract class UserDetailController {

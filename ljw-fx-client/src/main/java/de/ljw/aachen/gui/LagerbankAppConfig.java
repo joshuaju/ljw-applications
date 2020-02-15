@@ -109,7 +109,19 @@ public class LagerbankAppConfig {
     @Bean
     AccountStorePort accountStorePort() {
         // TODO remove dummy data
-        var accounts = List.of(Account.createFor("Peter", "Peterson"), Account.createFor("Julia", "Juliette"));
+        var accounts = List.of(
+                Account.createFor("Bruce", "Wayne"),
+                Account.createFor("Dwayne The Rock", "Johnson"),
+                Account.createFor("Peter", "Peterson"),
+                Account.createFor("Julia", "Juliette"),
+                Account.createFor("Karlos", "die Kralle"),
+                Account.createFor("Spongebob", "Schwammkopf"),
+                Account.createFor("Benjamin", "Linus"),
+                Account.createFor("Jack", "Shepherd"),
+                Account.createFor("Mogli", "Duschungelkind"),
+                Account.createFor("Beate", "Beispielbraut"),
+                Account.createFor("Bernd", "das Brot")
+        );
         return new AccountStoreMem(accounts); // TODO write to file instead of mem
     }
 
@@ -129,17 +141,11 @@ public class LagerbankAppConfig {
     TransactionStorePort transactionStorePort(AccountStorePort accountStorePort) {
         // TODO remove dummy data
         var accounts = new ArrayList<>(accountStorePort.readAll());
-        var first = accounts.get(0);
-        var second = accounts.get(1);
-
-        return new TransactionStoreMem(List.of( // TODO write to file instead of mem
-                Transaction.forDeposit(first.getId(), Money.of(10)),
-                Transaction.forWithdrawal(first.getId(), Money.of(1)),
-                Transaction.forDeposit(first.getId(), Money.of(1)),
-                Transaction.forDeposit(first.getId(), Money.of(5)),
-                Transaction.forDeposit(first.getId(), Money.of(2.5)),
-                Transaction.forTransfer(first.getId(), second.getId(), Money.of(5.25))
-        ));
+        var transactions = accounts.stream()
+                .map(Account::getId)
+                .map(id -> Transaction.forDeposit(id, Money.of(10.0)))
+                .collect(Collectors.toList());
+        return new TransactionStoreMem(transactions); // TODO write to file instead of mem
     }
 
     /* Event handling *********************************************************************************************** */

@@ -1,4 +1,4 @@
-package de.ljw.aachen.gui.converter;
+package de.ljw.aachen.gui.util.converter;
 
 import de.ljw.aachen.account.management.domain.Account;
 import javafx.util.StringConverter;

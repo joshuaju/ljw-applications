@@ -1,25 +1,15 @@
 package de.ljw.aachen.gui.controller;
 
 import de.ljw.aachen.account.management.domain.Account;
-import de.ljw.aachen.account.management.port.in.CreateAccountUseCase;
 import de.ljw.aachen.account.management.port.in.UpdateAccountUseCase;
-import de.ljw.aachen.gui.BuildNotification;
-import javafx.beans.binding.Bindings;
+import de.ljw.aachen.gui.util.BuildNotification;
 import javafx.beans.property.ObjectProperty;
-import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
-import javafx.stage.Stage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.net.URL;
 import java.util.ResourceBundle;
-
-import static de.ljw.aachen.account.management.port.in.CreateAccountUseCase.CreateAccountCommand;
 
 @Slf4j
 @RequiredArgsConstructor

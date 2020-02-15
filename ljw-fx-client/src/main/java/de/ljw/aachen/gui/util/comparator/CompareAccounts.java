@@ -1,4 +1,4 @@
-package de.ljw.aachen.gui.comparator;
+package de.ljw.aachen.gui.util.comparator;
 
 import de.ljw.aachen.account.management.domain.Account;
 import lombok.experimental.UtilityClass;

@@ -2,8 +2,7 @@ package de.ljw.aachen.gui.controller;
 
 import de.ljw.aachen.account.management.domain.Account;
 import de.ljw.aachen.gui.cell.list.AccountListCell;
-import de.ljw.aachen.gui.comparator.CompareAccounts;
-import javafx.beans.binding.Bindings;
+import de.ljw.aachen.gui.util.comparator.CompareAccounts;
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.collections.transformation.FilteredList;
@@ -20,12 +19,8 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import org.controlsfx.control.textfield.CustomTextField;
-import org.controlsfx.control.textfield.TextFields;
 
 import java.net.URL;
-import java.util.Arrays;
-import java.util.Comparator;
 import java.util.List;
 import java.util.ResourceBundle;
 
