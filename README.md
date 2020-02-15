@@ -14,6 +14,8 @@ A GUI supporting everyday tasks. Currently the application supports:
 - Making money deposits and withdrawals 
 - Transfering money between two accounts
 
+![UI Showcase](ljw-fx-client/ui-showcase.png)
+
 # Setting up
 ## Prerequisites
 - Java 11
