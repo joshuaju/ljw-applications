@@ -12,7 +12,6 @@
                 <Insets left="10.0"/>
             </BorderPane.margin>
             <fx:include source="transactions_overview.fxml" VBox.vgrow="ALWAYS"/>
-            <Separator prefWidth="200.0"/>
             <fx:include source="make_transaction.fxml"/>
         </VBox>
     </center>
