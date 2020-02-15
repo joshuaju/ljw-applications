@@ -2,6 +2,7 @@ package de.ljw.aachen.gui.controller;
 
 import de.ljw.aachen.account.management.domain.Account;
 import de.ljw.aachen.gui.cell.list.AccountListCell;
+import de.ljw.aachen.gui.comparator.CompareAccounts;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.ObjectProperty;
@@ -51,11 +52,10 @@ public class AccountSelectionController implements Initializable {
         btnEditUser.disableProperty().bind(selectedAccountProperty.isNull());
 
         // setup account filtering
-        FilteredList<Account> filteredList = new FilteredList<>(accountListProperty);
-        Comparator<Account> sortAccountByFirstName = Comparator.comparing(account -> account.getFirstName().toUpperCase());
-        SortedList<Account> sortedList = new SortedList<>(filteredList, sortAccountByFirstName);
+        FilteredList<Account> filteredAccounts = new FilteredList<>(accountListProperty);
+        SortedList<Account> sortedAndFilteredAccounts = new SortedList<>(filteredAccounts, CompareAccounts.byFirstName());
         tfSearchAccount.textProperty().addListener((observableValue, previousValue, newValue) -> {
-            filteredList.setPredicate(account -> {
+            filteredAccounts.setPredicate(account -> {
                 if (newValue == null || newValue.isBlank()) return true;
                 var expressions = List.of(newValue.split(" "));
                 return expressions.stream().map(String::toLowerCase).map(String::trim).anyMatch(expression -> {
@@ -67,7 +67,7 @@ public class AccountSelectionController implements Initializable {
             });
         });
 
-        lvAccounts.setItems(sortedList);
+        lvAccounts.setItems(sortedAndFilteredAccounts);
         lvAccounts.setCellFactory(accountListView -> new AccountListCell());
     }
 
