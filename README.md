@@ -5,7 +5,7 @@ This repository contains projects to support [LJW Aachen e.V.](http://ljw-aachen
 ## Account management
 To keep track of all participants of the summer camp.
 
-## Lagerbank ("summer camp bank"
+## Lagerbank (translates to "summer camp bank")
 Manage expenses of the camp participats. Allows deposits, withdrawal and transfering money.
 
 ## LJW FX Client
