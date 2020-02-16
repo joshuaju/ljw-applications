@@ -1,5 +1,6 @@
 package de.ljw.aachen.gui;
 
+import com.sun.javafx.fxml.FXMLLoaderHelper;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -18,6 +19,7 @@ public class LagerbankApp extends Application {
 
     private ConfigurableApplicationContext context;
     private Parent root;
+    private ResourceBundle resourceBundle;
 
     @Override
     public void init() throws Exception {
@@ -26,14 +28,16 @@ public class LagerbankApp extends Application {
         URL resource = getClass().getResource("/fxml/lagerbank.fxml");
         FXMLLoader loader = new FXMLLoader(resource);
         loader.setControllerFactory(context::getBean);
-        loader.setResources(ResourceBundle.getBundle("Bundle", Locale.getDefault())); // TODO inject bundle
+
+        this.resourceBundle = ResourceBundle.getBundle("Bundle", Locale.getDefault());
+        loader.setResources(resourceBundle); // TODO inject bundle
 
         this.root = loader.load();
     }
 
     @Override
     public void start(Stage stage) {
-        stage.setTitle("LJW Lagerbank");
+        stage.setTitle(resourceBundle.getString("app.name"));
         Scene scene = new Scene(root);
         stage.setScene(scene);
         stage.show();

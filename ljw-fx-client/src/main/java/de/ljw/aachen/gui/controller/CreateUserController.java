@@ -2,8 +2,11 @@ package de.ljw.aachen.gui.controller;
 
 import de.ljw.aachen.account.management.port.in.CreateAccountUseCase;
 import de.ljw.aachen.gui.util.BuildNotification;
+import javafx.fxml.FXML;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.ResourceBundle;
 
 import static de.ljw.aachen.account.management.port.in.CreateAccountUseCase.*;
 
@@ -12,6 +15,9 @@ import static de.ljw.aachen.account.management.port.in.CreateAccountUseCase.*;
 public class CreateUserController extends UserDetailController {
 
     private final CreateAccountUseCase createAccountUseCase;
+
+    @FXML
+    private ResourceBundle resources;
 
 
     @Override
@@ -23,9 +29,9 @@ public class CreateUserController extends UserDetailController {
 
     @Override
     protected void onError(Exception e) {
-        BuildNotification.about("Could not create account", null,
-                btnCancel.getScene().getWindow())
+        String errorMessage = resources.getString("error.create.account");
+        BuildNotification.about(errorMessage, null, btnCancel.getScene().getWindow())
                 .showError();
-        log.error("Error creating account", e);
+        log.error(errorMessage, e);
     }
 }

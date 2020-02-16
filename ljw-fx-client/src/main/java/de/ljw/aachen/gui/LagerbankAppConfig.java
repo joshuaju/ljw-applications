@@ -30,6 +30,7 @@ import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;
+import java.util.Currency;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
@@ -40,7 +41,8 @@ public class LagerbankAppConfig {
 
     @PostConstruct
     void setLocale() {
-        Locale.setDefault(Locale.GERMANY);
+        Locale.setDefault(Locale.GERMAN);
+        Locale.setDefault(Locale.Category.FORMAT, Locale.GERMANY);
     }
 
     @Bean

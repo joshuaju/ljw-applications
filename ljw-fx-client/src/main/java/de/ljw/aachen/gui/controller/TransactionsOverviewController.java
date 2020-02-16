@@ -34,7 +34,7 @@ import java.util.ResourceBundle;
 
 @Slf4j
 @RequiredArgsConstructor
-public class TransactionsOverviewController implements Initializable {
+public class TransactionsOverviewController {
 
     @FXML
     private TableView<Transaction> tvTransactions;
@@ -57,8 +57,8 @@ public class TransactionsOverviewController implements Initializable {
     private final ObjectProperty<Account> selectedAccountProperty;
     private final ListProperty<Account> accountListProperty;
 
-    @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
+    @FXML
+    private void initialize() {
         tcDate.setCellValueFactory(new PropertyValueFactory<>("time"));
         tcDate.setCellFactory(transactionInstantTableColumn -> new InstantTableCell());
 
@@ -106,7 +106,7 @@ public class TransactionsOverviewController implements Initializable {
         var balance = getBalanceUseCase.getBalance(account.getId());
         lblTotalBalance.setText(MessageFormat.format("{0, number, #0.00} {1}",
                 balance.getAmount(),
-                Currency.getInstance(Locale.getDefault()).getSymbol()));
+                Currency.getInstance(Locale.getDefault(Locale.Category.FORMAT)).getSymbol()));
         var transactions = listTransactionsUseCase.listTransactions(account.getId());
         tvTransactions.getItems().setAll(transactions);
     }
