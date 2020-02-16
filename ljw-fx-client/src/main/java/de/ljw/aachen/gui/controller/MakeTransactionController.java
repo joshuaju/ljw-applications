@@ -19,7 +19,6 @@ import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import lombok.RequiredArgsConstructor;
@@ -29,12 +28,11 @@ import org.controlsfx.validation.ValidationResult;
 import org.controlsfx.validation.ValidationSupport;
 import org.controlsfx.validation.Validator;
 
-import java.net.URL;
 import java.util.ResourceBundle;
 
 @Slf4j
 @RequiredArgsConstructor
-public class MakeTransactionController implements Initializable {
+public class MakeTransactionController {
 
     @FXML
     private RadioButton rbDeposit;
@@ -60,6 +58,9 @@ public class MakeTransactionController implements Initializable {
     @FXML
     private Button btnReset;
 
+    @FXML
+    private ResourceBundle resources;
+
     private final DepositMoneyUseCase depositMoneyUseCase;
     private final WithdrawMoneyUseCase withdrawMoneyUseCase;
     private final TransferMoneyUseCase transferMoneyUseCase;
@@ -71,10 +72,9 @@ public class MakeTransactionController implements Initializable {
     private ValidationSupport tfAmountValidation;
     private ValidationSupport cbReceiverValidation;
 
-    @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
-
-        selectedReceiverProperty = new SimpleObjectProperty<Account>();
+    @FXML
+    private void initialize() {
+        selectedReceiverProperty = new SimpleObjectProperty<>();
         selectedReceiverProperty.bind(cbReceivers.getSelectionModel().selectedItemProperty());
 
         cbReceivers.setConverter(new AccountStringConverter());
@@ -154,8 +154,7 @@ public class MakeTransactionController implements Initializable {
                     try {
                         withdrawMoneyUseCase.withdraw(Money.of(amount), selectedAccount.getId());
                     } catch (WithdrawalNotAllowedException e) {
-                        BuildNotification.about("Invalid input", "Withdrawal not allowed", ((Node) event.getSource()).getScene().getWindow())
-                                .showError();
+                       onWithdrawalNotAllowed(event, e);
                     }
                 }
             };
@@ -167,8 +166,7 @@ public class MakeTransactionController implements Initializable {
                     try {
                         transferMoneyUseCase.transfer(Money.of(amount), selectedAccount.getId(), selectedReceiverProperty.get().getId());
                     } catch (WithdrawalNotAllowedException e) {
-                        BuildNotification.about("Invalid input", "Withdrawal not allowed", ((Node) event.getSource()).getScene().getWindow())
-                                .showError();
+                        onWithdrawalNotAllowed(event, e);
                     }
                 }
             };
@@ -182,6 +180,14 @@ public class MakeTransactionController implements Initializable {
         cbReceivers.getSelectionModel().clearSelection();
         tgTransaction.getToggles().forEach(toggle -> toggle.setSelected(false));
         tfAmount.clear();
+    }
+
+    private void onWithdrawalNotAllowed(ActionEvent event, WithdrawalNotAllowedException exception){
+        String errorMessage = resources.getString("error.withdrawal.not.allowed");
+        String errorMessageDetail = resources.getString("error.withdrawal.exceeds.balance");
+        BuildNotification.about(errorMessage, errorMessageDetail, ((Node) event.getSource()).getScene().getWindow())
+                .showError();
+        log.error(errorMessage, exception);
     }
 
 }

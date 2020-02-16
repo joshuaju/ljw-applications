@@ -26,7 +26,7 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 
 @RequiredArgsConstructor
-public class AccountSelectionController implements Initializable {
+public class AccountSelectionController {
 
     @FXML
     private ListView<Account> lvAccounts;
@@ -42,8 +42,8 @@ public class AccountSelectionController implements Initializable {
     private final ObjectProperty<Account> selectedAccountProperty;
     private final ListProperty<Account> accountListProperty;
 
-    @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
+    @FXML
+    private void initialize() {
         selectedAccountProperty.bind(lvAccounts.getSelectionModel().selectedItemProperty());
         btnEditUser.disableProperty().bind(selectedAccountProperty.isNull());
 

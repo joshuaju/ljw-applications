@@ -1,7 +1,5 @@
 package de.ljw.aachen.gui.util;
 
-import javafx.scene.Node;
-import javafx.stage.Stage;
 import javafx.stage.Window;
 import org.controlsfx.control.Notifications;
 

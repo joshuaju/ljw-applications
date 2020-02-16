@@ -6,6 +6,7 @@ import de.ljw.aachen.account.management.domain.event.AccountDeletedEvent;
 import de.ljw.aachen.account.management.domain.event.AccountUpdatedEvent;
 import de.ljw.aachen.account.management.port.in.ListAccountsUseCase;
 import javafx.beans.property.ListProperty;
+import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,14 +17,14 @@ import java.util.ResourceBundle;
 
 @Slf4j
 @RequiredArgsConstructor
-public class LagerbankController implements Initializable {
+public class LagerbankController {
 
     private final ListAccountsUseCase listAccountsUseCase;
 
     private final ListProperty<Account> accountListProperty;
 
-    @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
+    @FXML
+    private void initialize() {
         updateAccountList();
     }
 
