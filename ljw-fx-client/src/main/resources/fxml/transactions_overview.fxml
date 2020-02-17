@@ -7,8 +7,8 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox spacing="20.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.ljw.aachen.gui.controller.TransactionsOverviewController">
-    <TableView fx:id="tvTransactions" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
+<VBox focusTraversable="false" spacing="20.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.ljw.aachen.gui.controller.TransactionsOverviewController">
+    <TableView fx:id="tvTransactions" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS" focusTraversable="false">
         <placeholder>
             <Label text="%no.transactions" />
         </placeholder>
@@ -22,12 +22,12 @@
         </columnResizePolicy>
     </TableView>
     <HBox alignment="CENTER_LEFT" spacing="10.0">
-        <Label text="%balance">
+        <Label text="%balance" focusTraversable="false">
             <font>
                 <Font name="System Bold" size="16.0" />
             </font>
         </Label>
-        <Label fx:id="lblTotalBalance">
+        <Label fx:id="lblTotalBalance" focusTraversable="false">
             <font>
                 <Font name="System Bold" size="16.0" />
             </font>
