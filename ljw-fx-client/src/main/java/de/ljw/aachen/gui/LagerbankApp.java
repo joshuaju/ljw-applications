@@ -24,13 +24,13 @@ public class LagerbankApp extends Application {
     @Override
     public void init() throws Exception {
         this.context = SpringApplication.run(LagerbankApp.class);
+        this.resourceBundle = ResourceBundle.getBundle("Bundle", Locale.getDefault());
 
         URL resource = getClass().getResource("/fxml/lagerbank.fxml");
         FXMLLoader loader = new FXMLLoader(resource);
-        loader.setControllerFactory(context::getBean);
 
-        this.resourceBundle = ResourceBundle.getBundle("Bundle", Locale.getDefault());
-        loader.setResources(resourceBundle); // TODO inject bundle
+        loader.setControllerFactory(context::getBean);
+        loader.setResources(resourceBundle);
 
         this.root = loader.load();
     }

@@ -16,6 +16,7 @@ import de.ljw.aachen.account.management.port.in.UpdateAccountUseCase;
 import de.ljw.aachen.account.management.port.in.UpdateAccountUseCase.UpdateAccountCommand;
 import de.ljw.aachen.account.management.port.out.AccountStorePort;
 import de.ljw.aachen.common.EventPort;
+import lombok.RequiredArgsConstructor;
 import org.assertj.core.description.Description;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

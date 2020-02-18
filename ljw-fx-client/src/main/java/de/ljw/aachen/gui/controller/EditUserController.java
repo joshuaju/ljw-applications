@@ -44,7 +44,7 @@ public class EditUserController extends UserDetailController {
     @Override
     protected void onError(Exception e) {
         String errorMessage = resources.getString("error.edit.account");
-        BuildNotification.about(errorMessage, null, btnSave.getScene().getWindow())
+        BuildNotification.about(errorMessage, e.getLocalizedMessage(), btnSave.getScene().getWindow())
                 .showError();
         log.error(errorMessage, e);
     }

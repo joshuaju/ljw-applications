@@ -38,6 +38,9 @@ public class AccountSelectionController {
     @FXML
     private TextField tfSearchAccount;
 
+    @FXML
+    private ResourceBundle resources;
+
     private final CreateUserController createUserController;
     private final EditUserController editUserController;
     private final ObjectProperty<Account> selectedAccountProperty;
@@ -74,12 +77,12 @@ public class AccountSelectionController {
         URL resource = AccountSelectionController.class.getClassLoader().getResource("fxml/user_detail.fxml");
         FXMLLoader loader = new FXMLLoader(resource);
         loader.setController(createUserController);
-        loader.setResources(ResourceBundle.getBundle("Bundle", Locale.getDefault()));// TODO inject bundle
+        loader.setResources(resources);
         Parent root = loader.load();
 
         Stage stage = new Stage();
         stage.setScene(new Scene(root));
-        stage.setTitle("Create new account");
+        stage.setTitle(resources.getString("title.create.account"));
         stage.initModality(Modality.WINDOW_MODAL);
         stage.initOwner(((Node) event.getSource()).getScene().getWindow());
         stage.show();
@@ -91,12 +94,12 @@ public class AccountSelectionController {
         URL resource = AccountSelectionController.class.getClassLoader().getResource("fxml/user_detail.fxml");
         FXMLLoader loader = new FXMLLoader(resource);
         loader.setController(editUserController);
-        loader.setResources(ResourceBundle.getBundle("Bundle", Locale.getDefault()));// TODO inject bundle
+        loader.setResources(resources);
         Parent root = loader.load();
 
         Stage stage = new Stage();
         stage.setScene(new Scene(root));
-        stage.setTitle("Create new account");
+        stage.setTitle(resources.getString("title.edit.account"));
         stage.initModality(Modality.WINDOW_MODAL);
         stage.initOwner(((Node) event.getSource()).getScene().getWindow());
         stage.show();

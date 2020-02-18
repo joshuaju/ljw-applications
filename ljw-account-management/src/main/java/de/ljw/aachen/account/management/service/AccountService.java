@@ -13,9 +13,12 @@ import org.apache.commons.lang.Validate;
 
 import javax.swing.*;
 import java.text.MessageFormat;
+import java.util.Collection;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 public class AccountService implements CreateAccountUseCase, DeleteAccountUseCase, ReadAccountUseCase, UpdateAccountUseCase, ListAccountsUseCase {
@@ -25,7 +28,7 @@ public class AccountService implements CreateAccountUseCase, DeleteAccountUseCas
 
     @Override
     public AccountId createAccount(CreateAccountCommand command) {
-        if (accountWithSameNameExists(command.getFirstName(), command.getLastName()).isPresent()) {
+        if (accountWithSameNameExists(listAccounts(), command.getFirstName(), command.getLastName()).isPresent()) {
             throw new IllegalArgumentException(String.format("An account with name '%s %s' already exists", command.getFirstName(), command.getLastName()));
         }
         var account = Account.createFor(command.getFirstName(), command.getLastName());
@@ -34,13 +37,17 @@ public class AccountService implements CreateAccountUseCase, DeleteAccountUseCas
         return account.getId();
     }
 
-    private Optional<Account> accountWithSameNameExists(String firstName, String lastName) {
-        Function<String, String> trimAndLower = s -> s.trim().toLowerCase();
-        return accountStore.readAll().stream().filter(account -> {
-            boolean firstNameEquals = trimAndLower.apply(account.getFirstName()).equals(trimAndLower.apply(firstName));
-            boolean lastNameEquals = trimAndLower.apply(account.getLastName()).equals(trimAndLower.apply(lastName));
-            return firstNameEquals && lastNameEquals;
+    private Optional<Account> accountWithSameNameExists(Collection<Account> accounts, String firstName, String lastName) {
+        String fullName = makeTrimmedLowerCaseFullName(firstName, lastName);
+        return accounts.stream().filter(account -> {
+            String fullNameOther = makeTrimmedLowerCaseFullName(account.getFirstName(), account.getLastName());
+            return fullName.equals(fullNameOther);
         }).findFirst();
+    }
+
+    private String makeTrimmedLowerCaseFullName(String firstName, String lastName) {
+        Function<String, String> trimAndLower = s -> s.trim().toLowerCase();
+        return String.format("%s %s", trimAndLower.apply(firstName), trimAndLower.apply(lastName));
     }
 
     @Override
@@ -61,11 +68,14 @@ public class AccountService implements CreateAccountUseCase, DeleteAccountUseCas
 
     @Override
     public void updateAccount(UpdateAccountCommand command) {
-        var idOfaccountWithSameName = accountWithSameNameExists(command.getAccount().getFirstName(), command.getAccount().getLastName())
-                .map(Account::getId).orElse(null);
+        var otherAccountWithSameName = accountWithSameNameExists(
+                listAccounts().stream()
+                        .filter(account -> !account.getId().equals(command.getAccount().getId()))
+                        .collect(Collectors.toSet()),
+                command.getAccount().getFirstName(),
+                command.getAccount().getLastName());
 
-        boolean otherAccountHasDifferentId = !command.getAccount().getId().equals(idOfaccountWithSameName);
-        if (otherAccountHasDifferentId) {
+        if (otherAccountWithSameName.isPresent()) {
             throw new IllegalArgumentException(String.format("An other account with name '%s %s' already exists", command.getAccount().getFirstName(), command.getAccount().getLastName()));
         }
 
