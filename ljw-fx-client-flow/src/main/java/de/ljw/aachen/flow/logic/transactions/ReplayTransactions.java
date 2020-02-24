@@ -11,7 +11,7 @@ public class ReplayTransactions {
 
     private final TransactionStore transactionStore;
 
-    void process(List<Transaction> transactions) {
+    public void process(List<Transaction> transactions) {
         transactions.forEach(transactionStore::store);
     }
 }

@@ -13,7 +13,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class TransactionStoreImpl implements TransactionStore {
 
-    private final Path source;
+    private Path source;
     private final List<Transaction> transactions = new LinkedList<>();
 
     @Override
@@ -29,5 +29,10 @@ public class TransactionStoreImpl implements TransactionStore {
     @Override
     public Path getSource() {
         return source;
+    }
+
+    @Override
+    public void setSource(Path path) {
+        this.source = path;
     }
 }

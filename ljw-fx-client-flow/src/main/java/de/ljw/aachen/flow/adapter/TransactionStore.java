@@ -13,4 +13,5 @@ public interface TransactionStore {
 
     Path getSource();
 
+    void setSource(Path path);
 }

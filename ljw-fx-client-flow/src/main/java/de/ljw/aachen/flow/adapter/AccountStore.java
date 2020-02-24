@@ -11,4 +11,6 @@ public interface AccountStore {
     Path getSource();
 
     void store(Account account);
+
+    void setSource(Path path);
 }
