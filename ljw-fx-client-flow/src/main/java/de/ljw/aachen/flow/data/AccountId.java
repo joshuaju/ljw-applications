@@ -3,13 +3,12 @@ package de.ljw.aachen.flow.data;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.Value;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class Account {
+public class AccountId {
 
-    private AccountId id;
-    private String firstName;
-    private String lastName;
+    private String value;
 }

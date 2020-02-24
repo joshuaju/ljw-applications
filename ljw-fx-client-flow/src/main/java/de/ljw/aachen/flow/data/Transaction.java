@@ -5,16 +5,30 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.Instant;
+import java.util.UUID;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
 public class Transaction {
 
-    private String id;
-    private String sourceAccountId;
-    private String targetAccountId;
-    private String amount;
+    private TransactionId id;
+    private AccountId source;
+    private AccountId target;
+    private Money amount;
     private Instant time;
+
+    public static Transaction deposit(AccountId to, Money amount){
+        return new Transaction(new TransactionId(), null, to, amount, Instant.now());
+    }
+
+    public static Transaction withdraw(AccountId from, Money amount){
+        return new Transaction(new TransactionId(), from, null, amount, Instant.now());
+    }
+
+    public static Transaction transfer(AccountId from, AccountId to, Money amount){
+        return new Transaction(new TransactionId(), from, to, amount, Instant.now());
+    }
+
 
 }
