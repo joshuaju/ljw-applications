@@ -14,11 +14,11 @@ import java.util.List;
 
 public class TransactionConverter {
 
-    static CSVFormat getFormat() {
+    public static CSVFormat getFormat() {
         return CSVFormat.DEFAULT.withTrim();
     }
 
-    static List<String> toValues(Transaction transaction) {
+    public static List<String> toValues(Transaction transaction) {
         return List.of(
                 transaction.getId().getValue(),
                 transaction.getTime().toString(),
@@ -30,7 +30,7 @@ public class TransactionConverter {
         );
     }
 
-    static Transaction fromRecord(CSVRecord record) {
+    public static Transaction fromRecord(CSVRecord record) {
         var transactionId = new TransactionId(record.get(0));
         var time = Instant.parse(record.get(1));
         var sourceId = new AccountId(record.get(2));
