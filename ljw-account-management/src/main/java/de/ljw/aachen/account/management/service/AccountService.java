@@ -3,25 +3,24 @@ package de.ljw.aachen.account.management.service;
 import de.ljw.aachen.account.management.domain.Account;
 import de.ljw.aachen.account.management.domain.AccountId;
 import de.ljw.aachen.account.management.domain.event.AccountCreatedEvent;
-import de.ljw.aachen.account.management.domain.event.AccountDeletedEvent;
 import de.ljw.aachen.account.management.domain.event.AccountUpdatedEvent;
-import de.ljw.aachen.account.management.port.in.*;
+import de.ljw.aachen.account.management.port.in.CreateAccountUseCase;
+import de.ljw.aachen.account.management.port.in.ListAccountsUseCase;
+import de.ljw.aachen.account.management.port.in.ReadAccountUseCase;
+import de.ljw.aachen.account.management.port.in.UpdateAccountUseCase;
 import de.ljw.aachen.account.management.port.out.AccountStorePort;
 import de.ljw.aachen.common.EventPort;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang.Validate;
 
-import javax.swing.*;
-import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
-public class AccountService implements CreateAccountUseCase, DeleteAccountUseCase, ReadAccountUseCase, UpdateAccountUseCase, ListAccountsUseCase {
+public class AccountService implements CreateAccountUseCase, ReadAccountUseCase, UpdateAccountUseCase, ListAccountsUseCase {
 
     private final AccountStorePort accountStore;
     private final EventPort eventPort;
@@ -48,15 +47,6 @@ public class AccountService implements CreateAccountUseCase, DeleteAccountUseCas
     private String makeTrimmedLowerCaseFullName(String firstName, String lastName) {
         Function<String, String> trimAndLower = s -> s.trim().toLowerCase();
         return String.format("%s %s", trimAndLower.apply(firstName), trimAndLower.apply(lastName));
-    }
-
-    @Override
-    public void deleteAccount(DeleteAccountCommand command) {
-        var id = command.getAccountId();
-        if (accountStore.contains(id)) {
-            accountStore.delete(id);
-            eventPort.publish(new AccountDeletedEvent());
-        }
     }
 
     @Override

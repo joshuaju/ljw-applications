@@ -12,29 +12,26 @@ import java.time.Instant;
 public class Account {
 
     private final AccountId id;
-    private final Instant created;
 
     private String firstName;
     private String lastName;
 
     public Account(Account account) {
-        this(account.id, account.created, account.firstName, account.lastName);
+        this(account.id, account.firstName, account.lastName);
     }
 
-    public Account(AccountId id, Instant created, String firstName, String lastName) {
+    public Account(AccountId id, String firstName, String lastName) {
         this.id = id;
-        this.created = created;
         this.firstName = firstName;
         this.lastName = lastName;
 
         Validate.notNull(id);
-        Validate.notNull(created);
         Validate.isTrue(firstName != null && !firstName.isBlank());
         Validate.isTrue(lastName != null && !lastName.isBlank());
     }
 
     public static Account createFor(String firstName, String lastName) {
-        return new Account(new AccountId(), Instant.now(), firstName, lastName);
+        return new Account(new AccountId(), firstName, lastName);
     }
 
 }

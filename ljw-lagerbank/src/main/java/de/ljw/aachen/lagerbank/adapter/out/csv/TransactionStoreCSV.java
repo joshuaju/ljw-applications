@@ -18,21 +18,19 @@ public class TransactionStoreCSV implements TransactionStorePort {
     private final TransactionStoreMem memoryStore;
 
     @SneakyThrows
-    public TransactionStoreCSV(Path out) {
+    public TransactionStoreCSV(Path out, TransactionStoreMem memoryStore) {
         this.out = out;
+        this.memoryStore = memoryStore;
         if (!Files.exists(out)) {
             Files.createFile(out);
         }
-        var transactions = ReadTransactions.read(Files.newBufferedReader(out));
-        this.memoryStore = new TransactionStoreMem(transactions);
     }
 
     @Override
     @SneakyThrows
     public void add(Transaction transaction) {
         memoryStore.add(transaction);
-        var transactions = memoryStore.getAll();
-        WriteTransactions.write(Files.newBufferedWriter(out, StandardOpenOption.WRITE), transactions);
+        WriteTransactions.write(Files.newBufferedWriter(out, StandardOpenOption.APPEND), transaction);
     }
 
     @Override

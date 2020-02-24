@@ -50,8 +50,4 @@ public class AccountStoreMem implements AccountStorePort {
         return new HashSet<>(accounts.values());
     }
 
-    @Override
-    public void delete(AccountId id) {
-        accounts.remove(id);
-    }
 }

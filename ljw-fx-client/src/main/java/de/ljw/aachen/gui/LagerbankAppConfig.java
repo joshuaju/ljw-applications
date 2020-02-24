@@ -1,6 +1,8 @@
 package de.ljw.aachen.gui;
 
+import de.ljw.aachen.account.management.adapter.out.AccountStoreCSV;
 import de.ljw.aachen.account.management.adapter.out.AccountStoreMem;
+import de.ljw.aachen.account.management.adapter.out.InitializeAccountStoreFromCSV;
 import de.ljw.aachen.account.management.domain.Account;
 import de.ljw.aachen.account.management.port.in.CreateAccountUseCase;
 import de.ljw.aachen.account.management.port.in.ListAccountsUseCase;
@@ -11,6 +13,8 @@ import de.ljw.aachen.account.management.service.AccountService;
 import de.ljw.aachen.common.EventPort;
 import de.ljw.aachen.gui.controller.*;
 import de.ljw.aachen.lagerbank.adapter.out.TransactionStoreMem;
+import de.ljw.aachen.lagerbank.adapter.out.csv.InitializeTransactionStoreFromCSV;
+import de.ljw.aachen.lagerbank.adapter.out.csv.TransactionStoreCSV;
 import de.ljw.aachen.lagerbank.domain.Money;
 import de.ljw.aachen.lagerbank.domain.Transaction;
 import de.ljw.aachen.lagerbank.port.in.*;
@@ -22,13 +26,18 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
+import lombok.SneakyThrows;
 import org.apache.commons.lang.math.IntRange;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.PostConstruct;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Currency;
 import java.util.List;
@@ -109,22 +118,12 @@ public class LagerbankAppConfig {
     }
 
     @Bean
+    @SneakyThrows
     AccountStorePort accountStorePort() {
-        // TODO remove dummy data
-        var accounts = List.of(
-                Account.createFor("Bruce", "Wayne"),
-                Account.createFor("Dwayne The Rock", "Johnson"),
-                Account.createFor("Peter", "Peterson"),
-                Account.createFor("Julia", "Juliette"),
-                Account.createFor("Karlos", "die Kralle"),
-                Account.createFor("Spongebob", "Schwammkopf"),
-                Account.createFor("Benjamin", "Linus"),
-                Account.createFor("Jack", "Shepherd"),
-                Account.createFor("Mogli", "Duschungelkind"),
-                Account.createFor("Beate", "Beispielbraut"),
-                Account.createFor("Bernd", "das Brot")
-        );
-        return new AccountStoreMem(accounts); // TODO write to file instead of mem
+        var source = Paths.get("accountStore.csv");
+        if (!Files.exists(source)) Files.createFile(source);
+        var memoryStore = InitializeAccountStoreFromCSV.init(source);
+        return new AccountStoreCSV(source, memoryStore);
     }
 
     /* Lagerbank **************************************************************************************************** */
@@ -140,14 +139,12 @@ public class LagerbankAppConfig {
     }
 
     @Bean
+    @SneakyThrows
     TransactionStorePort transactionStorePort(AccountStorePort accountStorePort) {
-        // TODO remove dummy data
-        var accounts = new ArrayList<>(accountStorePort.readAll());
-        var transactions = accounts.stream()
-                .map(Account::getId)
-                .map(id -> Transaction.forDeposit(id, Money.of(10.0)))
-                .collect(Collectors.toList());
-        return new TransactionStoreMem(transactions); // TODO write to file instead of mem
+        var source = Paths.get("transactionStore.csv");
+        if (!Files.exists(source)) Files.createFile(source);
+        var memoryStore = InitializeTransactionStoreFromCSV.init(source);
+        return new TransactionStoreCSV(source, memoryStore);
     }
 
     /* Event handling *********************************************************************************************** */

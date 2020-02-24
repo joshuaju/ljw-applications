@@ -15,8 +15,6 @@ public interface AccountStorePort {
 
     Account read(AccountId id);
 
-    void delete(AccountId id);
-
     Set<Account> readAll();
 
 }

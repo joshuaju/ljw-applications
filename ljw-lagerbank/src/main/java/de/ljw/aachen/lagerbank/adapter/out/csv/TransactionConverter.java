@@ -14,8 +14,7 @@ class TransactionConverter {
 
 
     static CSVFormat getFormat() {
-        return CSVFormat.DEFAULT
-                .withHeader("id", "source", "target", "amount", "time");
+        return CSVFormat.DEFAULT;
     }
 
     static List<String> convertToValues(Transaction transaction) {
@@ -30,11 +29,11 @@ class TransactionConverter {
 
     static Transaction convertToTransaction(CSVRecord record) {
 
-        var transactionId = new TransactionId(record.get("id"));
-        var sourceId = AccountIdConverter.convert(record.get("source"));
-        var targetId = AccountIdConverter.convert(record.get("target"));
-        var amount = Money.of(Double.parseDouble(record.get("amount")));
-        var time = Instant.parse(record.get("time"));
+        var transactionId = new TransactionId(record.get(0));
+        var sourceId = AccountIdConverter.convert(record.get(1));
+        var targetId = AccountIdConverter.convert(record.get(2));
+        var amount = Money.of(Double.parseDouble(record.get(3)));
+        var time = Instant.parse(record.get(4));
 
         return new Transaction(transactionId, sourceId, targetId, amount, time);
     }

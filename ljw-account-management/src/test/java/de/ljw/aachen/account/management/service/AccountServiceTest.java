@@ -4,20 +4,15 @@ import de.ljw.aachen.account.management.adapter.out.AccountStoreMem;
 import de.ljw.aachen.account.management.domain.Account;
 import de.ljw.aachen.account.management.domain.AccountId;
 import de.ljw.aachen.account.management.domain.event.AccountCreatedEvent;
-import de.ljw.aachen.account.management.domain.event.AccountDeletedEvent;
 import de.ljw.aachen.account.management.domain.event.AccountUpdatedEvent;
 import de.ljw.aachen.account.management.port.in.CreateAccountUseCase;
 import de.ljw.aachen.account.management.port.in.CreateAccountUseCase.CreateAccountCommand;
-import de.ljw.aachen.account.management.port.in.DeleteAccountUseCase;
-import de.ljw.aachen.account.management.port.in.DeleteAccountUseCase.DeleteAccountCommand;
 import de.ljw.aachen.account.management.port.in.ReadAccountUseCase;
 import de.ljw.aachen.account.management.port.in.ReadAccountUseCase.ReadAccountCommand;
 import de.ljw.aachen.account.management.port.in.UpdateAccountUseCase;
 import de.ljw.aachen.account.management.port.in.UpdateAccountUseCase.UpdateAccountCommand;
 import de.ljw.aachen.account.management.port.out.AccountStorePort;
 import de.ljw.aachen.common.EventPort;
-import lombok.RequiredArgsConstructor;
-import org.assertj.core.description.Description;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -30,7 +25,6 @@ import static org.mockito.Mockito.verify;
 class AccountServiceTest {
 
     CreateAccountUseCase createAccountService;
-    DeleteAccountUseCase deleteAccountService;
     ReadAccountUseCase readAccountService;
     UpdateAccountUseCase updateAccountService;
 
@@ -48,7 +42,6 @@ class AccountServiceTest {
 
         AccountService accountService = new AccountService(accountStore, eventPortMock);
         this.createAccountService = accountService;
-        this.deleteAccountService = accountService;
         this.readAccountService = accountService;
         this.updateAccountService = accountService;
     }
@@ -89,23 +82,6 @@ class AccountServiceTest {
         assertThatIllegalArgumentException()
                 .as("Renaming an account to the same first and last name like another account should not be possible")
                 .isThrownBy(() -> updateAccountService.updateAccount(renameJuliaToBen));
-    }
-
-    @Test
-    void deleteAccount() {
-        var createBenjamin = new CreateAccountCommand(BENJAMIN_LINUS.getFirstName(), BENJAMIN_LINUS.getLastName());
-        var benjaminsId = createAccountService.createAccount(createBenjamin);
-
-        var deleteBenjamin = new DeleteAccountCommand(benjaminsId);
-        deleteAccountService.deleteAccount(deleteBenjamin);
-
-        verify(eventPortMock).publish(any(AccountDeletedEvent.class));
-
-        var readBenjamin = new ReadAccountCommand(benjaminsId);
-        assertThatExceptionOfType(IllegalArgumentException.class)
-                .isThrownBy(() -> readAccountService.readAccount(readBenjamin));
-        assertThatCode(() -> deleteAccountService.deleteAccount(deleteBenjamin))
-                .doesNotThrowAnyException();
     }
 
     @Test

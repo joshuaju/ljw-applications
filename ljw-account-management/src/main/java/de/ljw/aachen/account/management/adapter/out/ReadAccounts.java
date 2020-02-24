@@ -1,6 +1,6 @@
-package de.ljw.aachen.lagerbank.adapter.out.csv;
+package de.ljw.aachen.account.management.adapter.out;
 
-import de.ljw.aachen.lagerbank.domain.Transaction;
+import de.ljw.aachen.account.management.domain.Account;
 import lombok.SneakyThrows;
 import org.apache.commons.csv.CSVParser;
 
@@ -9,15 +9,14 @@ import java.util.Collection;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-public class ReadTransactions {
+public class ReadAccounts {
 
     @SneakyThrows
-    public static Collection<Transaction> read(Reader data){
-        try (var parser = CSVParser.parse(data, TransactionConverter.getFormat())) {
+    static Collection<Account> read(Reader data) {
+        try (var parser = CSVParser.parse(data, AccountConverter.getFormat())) {
             return StreamSupport.stream(parser.spliterator(), false)
-                    .map(TransactionConverter::convertToTransaction)
+                    .map(AccountConverter::convertToAccount)
                     .collect(Collectors.toList());
-
         }
     }
 }
