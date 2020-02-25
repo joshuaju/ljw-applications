@@ -19,11 +19,13 @@ public class TransactionConverter {
     }
 
     public static List<String> toValues(Transaction transaction) {
+        AccountId source = transaction.getSource();
+        AccountId target = transaction.getTarget();
         return List.of(
                 transaction.getId().getValue(),
                 transaction.getTime().toString(),
-                transaction.getSource().getValue(),
-                transaction.getTarget().getValue(),
+                source == null ? "DEPOSIT" : source.getValue(),
+                target == null ? "WITHDRAWAL" : target.getValue(),
                 MessageFormat.format("{0,number,#.##}", transaction.getAmount().getValue())
                         .replace(",", ".") // avoid parsing issues with ',' as decimal delimiter
 

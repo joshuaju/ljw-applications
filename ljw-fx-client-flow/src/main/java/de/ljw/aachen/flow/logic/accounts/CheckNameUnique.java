@@ -12,20 +12,12 @@ public class CheckNameUnique {
 
     private final AccountStore accountStore;
 
-    @Setter
-    private Consumer<Account> onUnique;
-    @Setter
-    private Consumer<Account> onNotUnique;
-
-    public void process(Account account) {
+    public boolean process(Account account) {
         String fullName = getFullName(account);
 
-        var alreadyUsed = accountStore.getAccounts().stream()
+        return accountStore.getAccounts().stream()
                 .map(this::getFullName)
-                .anyMatch(fullName::equalsIgnoreCase);
-
-        if (alreadyUsed) onNotUnique.accept(account);
-        else onUnique.accept(account);
+                .noneMatch(fullName::equalsIgnoreCase);
     }
 
     private String getFullName(Account account) {

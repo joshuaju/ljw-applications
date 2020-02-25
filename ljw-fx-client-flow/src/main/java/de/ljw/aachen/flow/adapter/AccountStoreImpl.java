@@ -1,7 +1,9 @@
 package de.ljw.aachen.flow.adapter;
 
 import de.ljw.aachen.flow.data.Account;
+import lombok.SneakyThrows;
 
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -28,7 +30,9 @@ public class AccountStoreImpl implements AccountStore {
     }
 
     @Override
+    @SneakyThrows
     public void setSource(Path path) {
+        if (Files.notExists(path)) Files.createFile(path);
         this.source = path;
     }
 }

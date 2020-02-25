@@ -15,6 +15,6 @@ public class ParseArgs {
 
     void process(String[] args) {
         onAccountSource.accept(Paths.get(args[0]));
-        onAccountSource.accept(Paths.get(args[1]));
+        onTransactionSource.accept(Paths.get(args[1]));
     }
 }

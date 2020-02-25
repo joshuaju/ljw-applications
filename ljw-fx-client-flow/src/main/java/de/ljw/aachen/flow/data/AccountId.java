@@ -5,10 +5,15 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.Value;
 
-@NoArgsConstructor
+import java.util.UUID;
+
 @AllArgsConstructor
 @Data
 public class AccountId {
 
     private String value;
+
+    public AccountId(){
+        this(UUID.randomUUID().toString());
+    }
 }

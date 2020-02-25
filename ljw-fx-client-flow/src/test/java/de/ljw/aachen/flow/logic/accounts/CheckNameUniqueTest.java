@@ -19,9 +19,6 @@ class CheckNameUniqueTest {
             new Account(null, "Jack", "Shepherd")
     );
 
-    Boolean isUnique;
-    Boolean isNotUnique;
-
     CheckNameUnique checkNameUnique;
     AccountStore accountStoreMock;
 
@@ -30,28 +27,24 @@ class CheckNameUniqueTest {
     void beforeEach() {
         accountStoreMock = mock(AccountStore.class);
         checkNameUnique = new CheckNameUnique(accountStoreMock);
-        checkNameUnique.setOnUnique(account -> isUnique = true);
-        checkNameUnique.setOnNotUnique(account -> isNotUnique = true);
     }
 
     @Test
     void checkUnique() {
         doReturn(accounts).when(accountStoreMock).getAccounts();
 
-        checkNameUnique.process(new Account(null, "Benjamin", "Shepherd"));
+        var isUnique = checkNameUnique.process(new Account(null, "Benjamin", "Shepherd"));
 
         assertThat(isUnique).isTrue();
-        assertThat(isNotUnique).isNull();
     }
 
     @Test
     void checkNotUnique() {
         doReturn(accounts).when(accountStoreMock).getAccounts();
 
-        checkNameUnique.process(new Account(null, "Benjamin", "Linus"));
+        var isUnique = checkNameUnique.process(new Account(null, "Benjamin", "Linus"));
 
-        assertThat(isUnique).isNull();
-        assertThat(isNotUnique).isTrue();
+        assertThat(isUnique).isFalse();
     }
 
     @Test
@@ -59,10 +52,9 @@ class CheckNameUniqueTest {
         var accounts = List.of(new Account(null, "Benjamin Franklin", "Superstar"));
         doReturn(accounts).when(accountStoreMock).getAccounts();
 
-        checkNameUnique.process(new Account(null, "benjamin", "franklin Superstar"));
+        var isUnique = checkNameUnique.process(new Account(null, "benjamin", "franklin Superstar"));
 
-        assertThat(isUnique).isNull();
-        assertThat(isNotUnique).isTrue();
+        assertThat(isUnique).isFalse();
     }
 
 }

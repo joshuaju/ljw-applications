@@ -21,7 +21,6 @@ public class ExecuteTransaction {
 
         determineTransactionType.setOnDeposit(storeTransaction::process);
         checkCredit.setOnCredible(storeTransaction::process);
-        checkCredit.setOnNotCredible(storeTransaction::process);
 
         determineTransactionType.process(transaction);
     }

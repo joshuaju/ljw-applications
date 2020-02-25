@@ -4,7 +4,9 @@ import de.ljw.aachen.flow.data.Transaction;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -32,7 +34,9 @@ public class TransactionStoreImpl implements TransactionStore {
     }
 
     @Override
+    @SneakyThrows
     public void setSource(Path path) {
+        if (Files.notExists(path)) Files.createFile(path);
         this.source = path;
     }
 }
