@@ -1,5 +1,6 @@
 package de.ljw.aachen.flow.adapter;
 
+import de.ljw.aachen.flow.adapter.FileSystem;
 import lombok.SneakyThrows;
 
 import java.io.Reader;

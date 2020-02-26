@@ -1,26 +1,18 @@
 package de.ljw.aachen.flow.adapter;
 
-import de.ljw.aachen.flow.data.Account;
+import de.ljw.aachen.flow.adapter.TransactionStore;
 import de.ljw.aachen.flow.data.Transaction;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 
 public class TransactionStoreImpl implements TransactionStore {
 
     private Path source;
-    private List<Transaction> transactions = new LinkedList<>();
-
-    public TransactionStoreImpl() {
-        this.transactions = new LinkedList<>();
-    }
+    private List<Transaction> transactions;
 
     public TransactionStoreImpl(List<Transaction> transaction) {
         this.transactions = transaction;

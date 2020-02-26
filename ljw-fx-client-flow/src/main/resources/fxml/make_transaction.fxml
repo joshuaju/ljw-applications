@@ -12,7 +12,7 @@
 
 
 <TitledPane animated="false" collapsible="false" focusTraversable="false" text="%transaction" xmlns="http://javafx.com/javafx/11.0.1"
-            xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.ljw.aachen.flow.app.fx.controller.MakeTransactionController">
+            xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.ljw.aachen.flow.app.controller.MakeTransactionController">
     <VBox spacing="20.0">
 
         <HBox alignment="CENTER_LEFT" spacing="10.0">
