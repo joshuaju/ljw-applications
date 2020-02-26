@@ -14,6 +14,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.stage.Modality;
@@ -49,11 +50,9 @@ public class AccountSelectionController {
     private ResourceBundle resources;
 
 
-
-
-
     @FXML
     private void initialize() {
+        editUserController.setOnEditedAccount(this::refresh);
         selectedAccountProperty.bind(lvAccounts.getSelectionModel().selectedItemProperty());
         btnEditUser.disableProperty().bind(selectedAccountProperty.isNull());
 
@@ -75,6 +74,10 @@ public class AccountSelectionController {
 
         lvAccounts.setItems(sortedAndFilteredAccounts);
         lvAccounts.setCellFactory(accountListView -> new AccountListCell());
+    }
+
+    void refresh(Account account){
+        lvAccounts.refresh();
     }
 
     @FXML

@@ -24,7 +24,11 @@ public class StoreAccount {
                 fs.newWriter(accountStore.getSource()),
                 AccountConverter.getFormat())) {
             printer.printRecord(values);
-            accountStore.store(account);
+
+            boolean notYetStored = accountStore.getAccounts().stream().noneMatch(other -> other.getId().equals(account.getId()));
+            if (notYetStored) {
+                accountStore.store(account);
+            }
         }
     }
 }

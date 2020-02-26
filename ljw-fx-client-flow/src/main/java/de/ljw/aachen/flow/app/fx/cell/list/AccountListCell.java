@@ -18,6 +18,7 @@ public class AccountListCell extends ListCell<Account> {
     @Override
     protected void updateItem(Account account, boolean b) {
         super.updateItem(account, b);
+
         if (account == null) {
             setText("");
         }

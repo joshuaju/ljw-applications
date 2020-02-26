@@ -12,6 +12,7 @@ import de.ljw.aachen.flow.logic.transactions.GetRelevantTransactions;
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
@@ -31,9 +32,9 @@ import java.util.Locale;
 @RequiredArgsConstructor
 public class TransactionsOverviewController {
 
-    private final TransactionStore transactionStore;
     private final ObjectProperty<Account> selectedAccountProperty;
     private final ListProperty<Account> accountListProperty;
+    private final ListProperty<Transaction> transactionListProperty;
 
     @FXML
     private TableView<Transaction> tvTransactions;
@@ -63,6 +64,7 @@ public class TransactionsOverviewController {
         tcAmount.setCellValueFactory(transactionDoubleCellDataFeatures -> new SimpleObjectProperty<Money>(transactionDoubleCellDataFeatures.getValue().getAmount()));
         tcAmount.setCellFactory(transactionMoneyTableColumn -> new MoneyTableCell());
         selectedAccountProperty.addListener((observableValue, previous, selected) -> refresh());
+        transactionListProperty.addListener((ListChangeListener<Transaction>) change -> refresh());
         clear();
     }
 
@@ -78,7 +80,7 @@ public class TransactionsOverviewController {
     }
 
     private void update(Account account) {
-        var transactions = transactionStore.getTransactions();
+        var transactions = transactionListProperty.get();
         var relevantTransactions = GetRelevantTransactions.process(account.getId(), transactions);
 
         tvTransactions.getItems().setAll(relevantTransactions);

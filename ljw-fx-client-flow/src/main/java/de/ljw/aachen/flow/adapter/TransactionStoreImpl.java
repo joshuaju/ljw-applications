@@ -1,5 +1,6 @@
 package de.ljw.aachen.flow.adapter;
 
+import de.ljw.aachen.flow.data.Account;
 import de.ljw.aachen.flow.data.Transaction;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -12,11 +13,18 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-@RequiredArgsConstructor
 public class TransactionStoreImpl implements TransactionStore {
 
     private Path source;
-    private final List<Transaction> transactions = new LinkedList<>();
+    private List<Transaction> transactions = new LinkedList<>();
+
+    public TransactionStoreImpl() {
+        this.transactions = new LinkedList<>();
+    }
+
+    public TransactionStoreImpl(List<Transaction> transaction) {
+        this.transactions = transaction;
+    }
 
     @Override
     public List<Transaction> getTransactions() {

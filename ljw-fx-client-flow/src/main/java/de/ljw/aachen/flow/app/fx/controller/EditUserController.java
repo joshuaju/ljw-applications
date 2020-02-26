@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.util.ResourceBundle;
+import java.util.function.Consumer;
 
 @Slf4j
 @Component
@@ -21,8 +22,10 @@ public class EditUserController extends UserDetailController {
 
     private final FileSystem fileSystem;
     private final AccountStore accountStore;
-
     private final ObjectProperty<Account> selectedAccountProperty;
+
+    @Setter
+    private Consumer<Account> onEditedAccount;
 
     @FXML
     private ResourceBundle resources;
@@ -37,11 +40,16 @@ public class EditUserController extends UserDetailController {
 
     @Override
     protected void onAction(String firstName, String lastName) {
-        var editedAccount = new Account(selectedAccountProperty.get().getId(), firstName, lastName);
-
+        var accountToBeEdited = selectedAccountProperty.get();
         var editAccount = new EditAccount(fileSystem, accountStore);
-        editAccount.process(editedAccount);
+        var accountAfterEdit = new Account(accountToBeEdited.getId(), firstName, lastName);
+        if (editAccount.process(accountAfterEdit)) {
+            accountToBeEdited.setFirstName(firstName);
+            accountToBeEdited.setLastName(lastName);
+            onEditedAccount.accept(accountToBeEdited);
+        }
         closeStage();
+
     }
 
     @Override

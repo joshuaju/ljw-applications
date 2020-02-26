@@ -24,7 +24,6 @@ public class InitializeRunner implements CommandLineRunner {
     private final FileSystem fs;
     private final AccountStore accountStore;
     private final TransactionStore transactionStore;
-    private final ListProperty<Account> accountListProperty;
 
     @Override
     public void run(String... args) throws Exception {
@@ -49,6 +48,5 @@ public class InitializeRunner implements CommandLineRunner {
         parseTransactionSource.setOnSourcedTransactions(replayTransactions::process);
 
         parseArgs.process(args);
-        accountListProperty.setAll(accountStore.getAccounts());
     }
 }

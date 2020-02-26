@@ -12,7 +12,15 @@ import java.util.List;
 public class AccountStoreImpl implements AccountStore {
 
     private Path source;
-    private final List<Account> accounts = new LinkedList<>();
+    private List<Account> accounts;
+
+    public AccountStoreImpl() {
+        this.accounts = new LinkedList<>();
+    }
+
+    public AccountStoreImpl(List<Account> accounts) {
+        this.accounts = accounts;
+    }
 
     @Override
     public List<Account> getAccounts() {
