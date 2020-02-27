@@ -22,8 +22,8 @@ public class EditAccount {
         if (!CheckNameValid.process(account))
             if (checkNameUnique.process(account))
                 storeAccount.process(account);
-            else log.error("Name not unique");
-        else log.error("Name not valid");
+            else throw new IllegalArgumentException("Name not unique");
+        else throw new IllegalArgumentException("Name not valid");
     }
 
 }

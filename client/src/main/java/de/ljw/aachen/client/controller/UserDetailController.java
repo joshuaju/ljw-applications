@@ -38,7 +38,8 @@ abstract class UserDetailController {
             onAction(firstName, lastName);
             onSuccess();
         } catch (Exception e) {
-            onError(e);
+            //onError(e);
+            throw e;
         }
     }
 
