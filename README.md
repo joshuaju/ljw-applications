@@ -1,18 +1,12 @@
 # ljw-applications
 
-This repository contains projects to support [LJW Aachen e.V.](http://ljw-aachen.de/) in organizational tasks. 
+This repository contains tooling to support [LJW Aachen e.V.](http://ljw-aachen.de/) in organizational tasks. 
 
-## Account management
-To keep track of all participants of the summer camp.
-
-## Lagerbank (translates to "summer camp bank")
-Manage expenses of the camp participats. Allows deposits, withdrawal and transfering money.
-
-## LJW FX Client
-A GUI supporting everyday tasks. Currently the application supports:
-- Creating and editing accounts
-- Making money deposits and withdrawals 
-- Transfering money between two accounts
+# Client
+A GUI to manage expenses of the summer camp participants. The application supports:
+- creating and editing accounts
+- making money deposits and withdrawals 
+- transferring money between two accounts
 
 ![UI Showcase](ljw-fx-client/ui-showcase.png)
 
@@ -24,7 +18,7 @@ A GUI supporting everyday tasks. Currently the application supports:
 - download the repository
 - open a terminal in the top directory
 - execute `mvn clean install -DskipTests`
-- change directory to `ljw-fx-client/shade`
-- execute `java -jar ljw-fx-client.jar`
+## Run
+- execute `java -jar client/target/client.jar`
 
 
