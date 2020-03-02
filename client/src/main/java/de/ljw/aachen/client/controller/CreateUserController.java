@@ -26,17 +26,10 @@ public class CreateUserController extends UserDetailController {
     private ResourceBundle resources;
 
     @Override
-    protected void onAction(String firstName, String lastName) {
+    protected void onApply(String firstName, String lastName) {
         var account = new Account(null, firstName, lastName);
-
         var createAccount = new CreateAccount(fileSystem, accountStore);
         createAccount.process(account);
-
-        closeStage();
     }
 
-    @Override
-    protected void onError(Exception e) {
-
-    }
 }

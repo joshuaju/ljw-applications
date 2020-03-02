@@ -9,6 +9,7 @@ import de.ljw.aachen.application.data.Transaction;
 import de.ljw.aachen.client.util.AccountStringConverter;
 import de.ljw.aachen.application.data.Money;
 import de.ljw.aachen.application.logic.ExecuteTransaction;
+import de.ljw.aachen.client.util.NotifyingExceptionHandler;
 import javafx.application.Platform;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.ObjectProperty;
@@ -136,27 +137,24 @@ public class MakeTransactionController {
 
     @FXML
     void onApply(ActionEvent event) {
-        createTransactionFromUserInput(
-                transaction -> executeTransaction.process(transaction),
-                () -> BuildNotification.about("Missing required fields", "", ((Node) event.getSource()).getScene().getWindow()).showError()
-        );
+        NotifyingExceptionHandler.tryRun(this::createTransactionFromUserInput, event, resources);
     }
 
-    private void createTransactionFromUserInput(Consumer<Transaction> onValid, Runnable onInvalid) {
+    private void createTransactionFromUserInput() {
         if (!tfAmountValidation.isInvalid()) {
             var selectedAccount = selectedAccountProperty.getValue();
             double amountValue = Double.parseDouble(tfAmount.getText().replace(",", "."));
             Money amount = new Money(amountValue);
 
             if (rbDeposit.isSelected())
-                onValid.accept(Transaction.deposit(selectedAccount.getId(), amount));
+                executeTransaction.process(Transaction.deposit(selectedAccount.getId(), amount));
             else if (rbWithdraw.isSelected())
-                onValid.accept(Transaction.withdraw(selectedAccount.getId(), amount));
+                executeTransaction.process(Transaction.withdraw(selectedAccount.getId(), amount));
             else if (rbTransfer.isSelected() && !cbReceiverValidation.isInvalid()) {
                 Account selectedReceiver = cbReceivers.getValue();
-                onValid.accept(Transaction.transfer(selectedAccount.getId(), selectedReceiver.getId(), amount));
-            } else onInvalid.run();
-        } else onInvalid.run();
+                executeTransaction.process(Transaction.transfer(selectedAccount.getId(), selectedReceiver.getId(), amount));
+            } else throw new IllegalArgumentException("Receiver missing");
+        } else throw new IllegalArgumentException("Amount missing");
     }
 
     @FXML

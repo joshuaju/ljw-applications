@@ -1,5 +1,6 @@
 package de.ljw.aachen.client.configuration;
 
+import de.ljw.aachen.client.util.NotifyingExceptionHandler;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -43,7 +44,7 @@ public class App extends Application {
 
     @Override
     public void start(Stage stage) {
-        Thread.setDefaultUncaughtExceptionHandler(new NotifyingExceptionHandler(stage, resources));
+        Thread.setDefaultUncaughtExceptionHandler(NotifyingExceptionHandler.asUncaughtExceptionHandler(stage, resources));
         stage.setTitle(resources.getString("app.name"));
         Scene scene = new Scene(root);
         stage.setScene(scene);
