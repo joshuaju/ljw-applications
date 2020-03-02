@@ -4,7 +4,7 @@ import de.ljw.aachen.application.data.Account;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public class CheckNameValid {
+class CheckNameValid {
 
     public static boolean process(Account account) {
         String first = account.getFirstName();

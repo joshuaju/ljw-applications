@@ -7,7 +7,7 @@ import org.apache.commons.csv.CSVRecord;
 
 import java.util.List;
 
-public class AccountConverter {
+class AccountConverter {
 
     public static CSVFormat getFormat() {
         return CSVFormat.DEFAULT;

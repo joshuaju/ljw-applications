@@ -10,7 +10,7 @@ import org.apache.commons.csv.CSVPrinter;
 import java.util.function.Predicate;
 
 @RequiredArgsConstructor
-public class StoreAccount {
+class StoreAccount {
 
     private final FileSystem fs;
     private final AccountStore accountStore;

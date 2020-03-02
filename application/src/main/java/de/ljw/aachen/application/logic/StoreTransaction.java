@@ -8,7 +8,7 @@ import lombok.SneakyThrows;
 import org.apache.commons.csv.CSVPrinter;
 
 @RequiredArgsConstructor
-public class StoreTransaction {
+class StoreTransaction {
 
     private final FileSystem fs;
     private final TransactionStore transactionStore;

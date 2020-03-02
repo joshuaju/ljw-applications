@@ -137,8 +137,7 @@ public class MakeTransactionController {
     @FXML
     void onApply(ActionEvent event) {
         createTransactionFromUserInput(
-                transaction -> executeTransaction.process(transaction,
-                        (msg) -> BuildNotification.about("Not credible", msg, ((Node) event.getSource()).getScene().getWindow()).showError()),
+                transaction -> executeTransaction.process(transaction),
                 () -> BuildNotification.about("Missing required fields", "", ((Node) event.getSource()).getScene().getWindow()).showError()
         );
     }

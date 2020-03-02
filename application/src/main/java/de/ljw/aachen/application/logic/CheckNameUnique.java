@@ -5,7 +5,7 @@ import de.ljw.aachen.application.data.Account;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public class CheckNameUnique {
+class CheckNameUnique {
 
     private final AccountStore accountStore;
 

@@ -1,3 +1,5 @@
+package de.ljw.aachen.application.logic;
+
 import de.ljw.aachen.application.adapter.AccountStore;
 import de.ljw.aachen.application.data.Account;
 import de.ljw.aachen.application.logic.CheckNameUnique;

@@ -8,7 +8,7 @@ import lombok.Setter;
 import java.util.function.Consumer;
 
 @RequiredArgsConstructor
-public class CheckCredit {
+class CheckCredit {
 
     private final TransactionStore transactionStore;
 

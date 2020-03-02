@@ -8,7 +8,8 @@ import lombok.RequiredArgsConstructor;
 import java.nio.file.Path;
 
 @RequiredArgsConstructor
-public class InitializeAccounts {
+public
+class InitializeAccounts {
 
     private final FileSystem fs;
     private final AccountStore accountStore;

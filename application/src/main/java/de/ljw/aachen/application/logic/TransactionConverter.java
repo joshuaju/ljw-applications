@@ -11,7 +11,7 @@ import java.text.MessageFormat;
 import java.time.Instant;
 import java.util.List;
 
-public class TransactionConverter {
+class TransactionConverter {
 
     public static final String PLACEHOLDER_DEPOSIT = "DEPOSIT";
     public static final String PLACEHOLDER_WITHDRAWAL = "WITHDRAWAL";

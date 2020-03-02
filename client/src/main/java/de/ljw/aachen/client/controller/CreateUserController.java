@@ -37,9 +37,6 @@ public class CreateUserController extends UserDetailController {
 
     @Override
     protected void onError(Exception e) {
-        String errorMessage = resources.getString("error.create.account");
-        BuildNotification.about(errorMessage, null, btnCancel.getScene().getWindow())
-                .showError();
-        log.error(errorMessage, e);
+
     }
 }

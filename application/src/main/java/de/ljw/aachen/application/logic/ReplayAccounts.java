@@ -8,7 +8,7 @@ import lombok.RequiredArgsConstructor;
 import java.util.*;
 
 @RequiredArgsConstructor
-public class ReplayAccounts {
+class ReplayAccounts {
 
     private final AccountStore accountStore;
 

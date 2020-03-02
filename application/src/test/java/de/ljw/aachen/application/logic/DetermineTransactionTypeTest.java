@@ -1,3 +1,5 @@
+package de.ljw.aachen.application.logic;
+
 import de.ljw.aachen.application.data.AccountId;
 import de.ljw.aachen.application.data.Transaction;
 import de.ljw.aachen.application.logic.DetermineTransactionType;

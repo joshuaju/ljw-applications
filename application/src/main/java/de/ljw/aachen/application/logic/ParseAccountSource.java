@@ -14,7 +14,7 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
-public class ParseAccountSource {
+class ParseAccountSource {
 
     private final FileSystem fs;
 

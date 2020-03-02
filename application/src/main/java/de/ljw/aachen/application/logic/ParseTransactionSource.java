@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
-public class ParseTransactionSource {
+class ParseTransactionSource {
 
     private final FileSystem fs;
 
