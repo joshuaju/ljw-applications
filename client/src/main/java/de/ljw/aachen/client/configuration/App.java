@@ -1,8 +1,6 @@
 package de.ljw.aachen.client.configuration;
 
-import de.ljw.aachen.client.util.BuildNotification;
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -45,12 +43,7 @@ public class App extends Application {
 
     @Override
     public void start(Stage stage) {
-        Thread.setDefaultUncaughtExceptionHandler((thread, throwable) -> {
-            Throwable uncaughtException = throwable.getCause().getCause();
-            log.error("Uncaught exception", uncaughtException);
-            BuildNotification.about(resources.getString("unexpected.exception"), uncaughtException.getMessage(), stage)
-                    .showError();
-        });
+        Thread.setDefaultUncaughtExceptionHandler(new NotifyingExceptionHandler(stage, resources));
         stage.setTitle(resources.getString("app.name"));
         Scene scene = new Scene(root);
         stage.setScene(scene);
