@@ -1,6 +1,7 @@
-package de.ljw.aachen.client.util;
+package de.ljw.aachen.client.exception;
 
 import de.ljw.aachen.application.exceptions.LocalizedException;
+import de.ljw.aachen.client.util.BuildNotification;
 import javafx.event.ActionEvent;
 import javafx.scene.Node;
 import javafx.stage.Window;
@@ -19,7 +20,7 @@ public class NotifyingExceptionHandler {
             Throwable uncaughtException = throwable.getCause().getCause();
 
             ErrorInformation errorInfo = ErrorInformation.forUnexpectedException(resources);
-            logAndShow(errorInfo, window, throwable);
+            logAndShow(errorInfo, window, uncaughtException);
         };
     }
 

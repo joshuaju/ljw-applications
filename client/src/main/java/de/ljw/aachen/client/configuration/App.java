@@ -1,6 +1,6 @@
 package de.ljw.aachen.client.configuration;
 
-import de.ljw.aachen.client.util.NotifyingExceptionHandler;
+import de.ljw.aachen.client.exception.NotifyingExceptionHandler;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;

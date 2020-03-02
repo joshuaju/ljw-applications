@@ -2,14 +2,14 @@ package de.ljw.aachen.client.controller;
 
 import de.ljw.aachen.application.adapter.FileSystem;
 import de.ljw.aachen.application.adapter.TransactionStore;
-import de.ljw.aachen.client.util.BuildNotification;
+import de.ljw.aachen.client.exception.ValidationException;
 import de.ljw.aachen.client.util.CompareAccounts;
 import de.ljw.aachen.application.data.Account;
 import de.ljw.aachen.application.data.Transaction;
 import de.ljw.aachen.client.util.AccountStringConverter;
 import de.ljw.aachen.application.data.Money;
 import de.ljw.aachen.application.logic.ExecuteTransaction;
-import de.ljw.aachen.client.util.NotifyingExceptionHandler;
+import de.ljw.aachen.client.exception.NotifyingExceptionHandler;
 import javafx.application.Platform;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.ObjectProperty;
@@ -18,7 +18,6 @@ import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
 import javafx.scene.control.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +28,6 @@ import org.controlsfx.validation.Validator;
 import org.springframework.stereotype.Component;
 
 import java.util.ResourceBundle;
-import java.util.function.Consumer;
 
 @Slf4j
 @Component
@@ -137,24 +135,33 @@ public class MakeTransactionController {
 
     @FXML
     void onApply(ActionEvent event) {
-        NotifyingExceptionHandler.tryRun(this::createTransactionFromUserInput, event, resources);
+        NotifyingExceptionHandler.tryRun(() -> {
+            var amount = getAmount();
+            var selectedAccount = selectedAccountProperty.get();
+            var transaction = getTransaction(selectedAccount, amount);
+            executeTransaction.process(transaction);
+        }, event, resources);
     }
 
-    private void createTransactionFromUserInput() {
-        if (!tfAmountValidation.isInvalid()) {
-            var selectedAccount = selectedAccountProperty.getValue();
-            double amountValue = Double.parseDouble(tfAmount.getText().replace(",", "."));
-            Money amount = new Money(amountValue);
+    private Money getAmount() {
+        if (tfAmountValidation.isInvalid()) throw new ValidationException("error.detail.validation.amount.invalid");
+        double amountValue = Double.parseDouble(tfAmount.getText().replace(",", "."));
+        return new Money(amountValue);
+    }
 
-            if (rbDeposit.isSelected())
-                executeTransaction.process(Transaction.deposit(selectedAccount.getId(), amount));
-            else if (rbWithdraw.isSelected())
-                executeTransaction.process(Transaction.withdraw(selectedAccount.getId(), amount));
-            else if (rbTransfer.isSelected() && !cbReceiverValidation.isInvalid()) {
-                Account selectedReceiver = cbReceivers.getValue();
-                executeTransaction.process(Transaction.transfer(selectedAccount.getId(), selectedReceiver.getId(), amount));
-            } else throw new IllegalArgumentException("Receiver missing");
-        } else throw new IllegalArgumentException("Amount missing");
+    private Transaction getTransaction(Account selectedAccount, Money amount) {
+        Transaction transaction = null;
+        if (rbDeposit.isSelected())
+            transaction = Transaction.deposit(selectedAccount.getId(), amount);
+        else if (rbWithdraw.isSelected())
+            transaction = Transaction.withdraw(selectedAccount.getId(), amount);
+        else {
+            if (cbReceiverValidation.isInvalid())
+                throw new ValidationException("error.detail.validation.receiver.missing");
+            Account selectedReceiver = cbReceivers.getValue();
+            transaction = Transaction.transfer(selectedAccount.getId(), selectedReceiver.getId(), amount);
+        }
+        return transaction;
     }
 
     @FXML

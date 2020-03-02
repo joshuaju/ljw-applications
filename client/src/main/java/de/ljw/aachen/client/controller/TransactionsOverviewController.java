@@ -67,7 +67,7 @@ public class TransactionsOverviewController {
         tcAmount.setCellValueFactory(transactionDoubleCellDataFeatures -> new SimpleObjectProperty<Money>(transactionDoubleCellDataFeatures.getValue().getAmount()));
         tcAmount.setCellFactory(transactionMoneyTableColumn -> new MoneyTableCell());
         selectedAccountProperty.addListener((observableValue, previous, selected) -> refresh());
-        transactionListProperty.addListener((ListChangeListener<Transaction>) change -> refresh());
+        transactionListProperty.addListener((ListChangeListener<Transaction>) change ->     refresh());
         clear();
     }
 
