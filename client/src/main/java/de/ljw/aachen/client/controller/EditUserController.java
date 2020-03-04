@@ -2,7 +2,6 @@ package de.ljw.aachen.client.controller;
 
 import de.ljw.aachen.application.adapter.AccountStore;
 import de.ljw.aachen.application.adapter.FileSystem;
-import de.ljw.aachen.client.util.BuildNotification;
 import de.ljw.aachen.application.data.Account;
 import de.ljw.aachen.application.logic.EditAccount;
 import javafx.beans.property.ObjectProperty;

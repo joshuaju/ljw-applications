@@ -9,7 +9,6 @@ import de.ljw.aachen.application.data.Transaction;
 import de.ljw.aachen.client.util.AccountStringConverter;
 import de.ljw.aachen.application.data.Money;
 import de.ljw.aachen.application.logic.ExecuteTransaction;
-import de.ljw.aachen.client.exception.NotifyingExceptionHandler;
 import javafx.application.Platform;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.ObjectProperty;
@@ -28,6 +27,8 @@ import org.controlsfx.validation.Validator;
 import org.springframework.stereotype.Component;
 
 import java.util.ResourceBundle;
+
+import static de.ljw.aachen.client.exception.NotifyingExceptionHandler.tryRun;
 
 @Slf4j
 @Component
@@ -108,12 +109,6 @@ public class MakeTransactionController {
                 "\\d+((.|,)\\d{1,2})?",
                 Severity.ERROR);
 
-        selectedAccountProperty.addListener(observable -> {
-            tfAmountValidation.registerValidator(
-                    tfAmount,
-                    accountListProperty.isNotNull().and(selectedAccountProperty.isNotNull()).get(),
-                    decimalNumberValidator);
-        });
         /* receiver selection validation ************************************************************************** */
         cbReceiverValidation = new ValidationSupport();
         Validator<Object> receiverSelectedValidator = (control, receiver) ->
@@ -135,7 +130,7 @@ public class MakeTransactionController {
 
     @FXML
     void onApply(ActionEvent event) {
-        NotifyingExceptionHandler.tryRun(() -> {
+        tryRun(() -> {
             var amount = getAmount();
             var selectedAccount = selectedAccountProperty.get();
             var transaction = getTransaction(selectedAccount, amount);

@@ -11,6 +11,8 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.ResourceBundle;
 
+import static de.ljw.aachen.client.exception.NotifyingExceptionHandler.tryRun;
+
 @Slf4j
 abstract class UserDetailController {
 
@@ -37,13 +39,12 @@ abstract class UserDetailController {
     void onSave(ActionEvent event) {
         var firstName = prepareName(tfFirstName.getText());
         var lastName = prepareName(tfLastName.getText());
-        NotifyingExceptionHandler
-                .tryRun(() -> {
-                            onApply(firstName, lastName);
-                            closeStage();
-                        },
-                        ((Node) event.getSource()).getScene().getWindow(),
-                        resources);
+        tryRun(() -> {
+                    onApply(firstName, lastName);
+                    closeStage();
+                },
+                ((Node) event.getSource()).getScene().getWindow(),
+                resources);
 
     }
 

@@ -1,15 +1,20 @@
 package de.ljw.aachen.client.exception;
 
 import de.ljw.aachen.application.exceptions.LocalizedException;
-import de.ljw.aachen.client.util.BuildNotification;
 import javafx.event.ActionEvent;
 import javafx.scene.Node;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Label;
 import javafx.stage.Window;
 import lombok.Value;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
+import org.controlsfx.control.Notifications;
 
 import java.util.ResourceBundle;
+
+import static javafx.scene.control.Alert.*;
 
 @Slf4j
 @UtilityClass
@@ -45,7 +50,11 @@ public class NotifyingExceptionHandler {
 
     private static void logAndShow(ErrorInformation errorInformation, Window window, Throwable exception) {
         log.error(errorInformation.getTitle(), exception);
-        BuildNotification.about(errorInformation.getTitle(), errorInformation.getDetail(), window).showError();
+        Notifications.create()
+                .title(errorInformation.getTitle())
+                .text(errorInformation.getDetail())
+                .owner(window)
+                .showError();
     }
 
     @Value
