@@ -12,7 +12,7 @@ public class ExecuteTransaction {
     private final FileSystem fs;
     private final TransactionStore transactionStore;
 
-    public void process(Transaction transaction) {
+    public void process(Transaction transaction, boolean ignoreCredibility) {
         var determineTransactionType = new DetermineTransactionType();
         var checkCredit = new CheckCredit(transactionStore);
         var storeTransaction = new StoreTransaction(fs, transactionStore);
@@ -21,10 +21,13 @@ public class ExecuteTransaction {
         determineTransactionType.setOnTransfer(checkCredit::process);
         determineTransactionType.setOnDeposit(storeTransaction::process);
         checkCredit.setOnCredible(storeTransaction::process);
-        checkCredit.setOnNotCredible((t) -> {
-            throw new InsufficientFundsException();
-        });
+        if (ignoreCredibility) checkCredit.setOnNotCredible(storeTransaction::process);
+        else checkCredit.setOnNotCredible(ExecuteTransaction::fail);
 
         determineTransactionType.process(transaction);
+    }
+
+    private static void fail(Transaction t) {
+        throw new InsufficientFundsException();
     }
 }

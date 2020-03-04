@@ -64,6 +64,9 @@ public class MakeTransactionController {
     private Button btnReset;
 
     @FXML
+    private CheckBox cbOverdraw;
+
+    @FXML
     private ResourceBundle resources;
 
     private ValidationSupport tfAmountValidation;
@@ -97,6 +100,7 @@ public class MakeTransactionController {
         rbTransfer.disableProperty().bind(noAccountSelected);
         tfAmount.disableProperty().bind(noAccountSelected.or(noToggleSelected));
         cbReceivers.disableProperty().bind(noAccountSelected.or(transferNotSelected));
+        cbOverdraw.disableProperty().bind(noAccountSelected.or(noToggleSelected).or(rbDeposit.selectedProperty()));
         btnApply.disableProperty().bind(noAccountSelected.or(noToggleSelected));
         btnReset.disableProperty().bind(noAccountSelected.or(noToggleSelected));
     }
@@ -134,7 +138,7 @@ public class MakeTransactionController {
             var amount = getAmount();
             var selectedAccount = selectedAccountProperty.get();
             var transaction = getTransaction(selectedAccount, amount);
-            executeTransaction.process(transaction);
+            executeTransaction.process(transaction, cbOverdraw.isSelected());
         }, event, resources);
     }
 
