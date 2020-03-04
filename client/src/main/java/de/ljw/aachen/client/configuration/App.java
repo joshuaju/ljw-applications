@@ -7,6 +7,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.Banner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
@@ -28,7 +29,9 @@ public class App extends Application {
     private static ConfigurableApplicationContext applicationContext;
 
     public static void main(String[] args) {
-        applicationContext = SpringApplication.run(App.class, args);
+        var application = new SpringApplication(App.class);
+        application.setBannerMode(Banner.Mode.OFF);
+        applicationContext = application.run(args);
         launch();
     }
 
