@@ -12,15 +12,25 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyListProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.ListChangeListener;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import java.net.URL;
 import java.text.MessageFormat;
 import java.time.Instant;
 import java.util.Currency;
@@ -35,6 +45,7 @@ public class TransactionsOverviewController {
     private final ObjectProperty<Account> selectedAccountProperty;
     private final ReadOnlyListProperty<Account> accountListProperty;
     private final ReadOnlyListProperty<Transaction> transactionListProperty;
+    private final MakeTransactionController makeTransactionController;
 
     @FXML
     private TableView<Transaction> tvTransactions;
@@ -50,6 +61,9 @@ public class TransactionsOverviewController {
 
     @FXML
     private Label lblTotalBalance;
+
+    @FXML
+    private Button btnMakeTransaction;
 
     @FXML
     private ResourceBundle resources;
@@ -69,7 +83,25 @@ public class TransactionsOverviewController {
         tcAmount.setCellFactory(transactionMoneyTableColumn -> new MoneyTableCell(selectedAccountProperty));
         selectedAccountProperty.addListener((observableValue, previous, selected) -> refresh());
         transactionListProperty.addListener((ListChangeListener<Transaction>) change -> refresh());
+        btnMakeTransaction.disableProperty().bind(selectedAccountProperty.isNull());
         clear();
+    }
+
+    @FXML
+    @SneakyThrows
+    private void onMakeTransaction(ActionEvent event) {
+        URL resource = AccountSelectionController.class.getClassLoader().getResource("fxml/make_transaction.fxml");
+        FXMLLoader loader = new FXMLLoader(resource);
+        loader.setControllerFactory(any -> makeTransactionController);
+        loader.setResources(resources);
+        Parent root = loader.load();
+
+        Stage stage = new Stage();
+        stage.setScene(new Scene(root));
+        stage.setTitle(resources.getString("make.transaction"));
+        stage.initModality(Modality.WINDOW_MODAL);
+        stage.initOwner(((Node) event.getSource()).getScene().getWindow());
+        stage.showAndWait();
     }
 
     private void refresh() {

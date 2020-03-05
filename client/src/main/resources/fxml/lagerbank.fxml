@@ -12,7 +12,6 @@
                 <Insets left="10.0"/>
             </BorderPane.margin>
             <fx:include fx:id="transactionOverview" source="transactions_overview.fxml" VBox.vgrow="ALWAYS"/>
-            <fx:include fx:id="makeTransaction" source="make_transaction.fxml"/>
         </VBox>
     </center>
     <left>

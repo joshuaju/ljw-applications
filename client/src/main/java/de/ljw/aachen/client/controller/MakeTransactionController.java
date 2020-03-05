@@ -10,6 +10,7 @@ import de.ljw.aachen.client.util.AccountStringConverter;
 import de.ljw.aachen.application.data.Money;
 import de.ljw.aachen.application.logic.ExecuteTransaction;
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyListProperty;
@@ -18,6 +19,7 @@ import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.stage.Stage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.controlsfx.validation.Severity;
@@ -74,6 +76,7 @@ public class MakeTransactionController {
 
     private ValidationSupport tfAmountValidation;
     private ValidationSupport cbReceiverValidation;
+    private ValidationSupport tgTransactionValidation;
     private ExecuteTransaction executeTransaction;
 
     @FXML
@@ -89,24 +92,10 @@ public class MakeTransactionController {
         });
         SortedList<Account> sortedAndFilteredAccounts = new SortedList<>(filteredAccounts, CompareAccounts.byFirstName());
         cbReceivers.setItems(sortedAndFilteredAccounts);
-        this.setupControlsDisableProperty();
         Platform.runLater(this::setupValidationSupport);
-    }
 
-    private void setupControlsDisableProperty() {
-        BooleanBinding noAccountSelected = selectedAccountProperty.isNull();
-        BooleanBinding noToggleSelected = tgTransaction.selectedToggleProperty().isNull();
-        BooleanBinding transferNotSelected = rbTransfer.selectedProperty().not();
-
-        rbDeposit.disableProperty().bind(noAccountSelected);
-        rbWithdraw.disableProperty().bind(noAccountSelected);
-        rbTransfer.disableProperty().bind(noAccountSelected);
-        tfAmount.disableProperty().bind(noAccountSelected.or(noToggleSelected));
-        tfDescription.disableProperty().bind(noAccountSelected.or(noToggleSelected));
-        cbReceivers.disableProperty().bind(noAccountSelected.or(transferNotSelected));
-        cbOverdraw.disableProperty().bind(noAccountSelected.or(noToggleSelected).or(rbDeposit.selectedProperty()));
-        btnApply.disableProperty().bind(noAccountSelected.or(noToggleSelected));
-        btnReset.disableProperty().bind(noAccountSelected.or(noToggleSelected));
+        cbReceivers.disableProperty().bind(Bindings.createBooleanBinding(() -> !rbTransfer.equals(tgTransaction.getSelectedToggle()), tgTransaction.selectedToggleProperty()));
+        cbOverdraw.disableProperty().bind(Bindings.createBooleanBinding(() -> tgTransaction.getSelectedToggle() == null || rbDeposit.equals(tgTransaction.getSelectedToggle()), tgTransaction.selectedToggleProperty()));
     }
 
     private void setupValidationSupport() {
@@ -116,8 +105,9 @@ public class MakeTransactionController {
                 "Decimal number with at most two decimal places required",
                 "\\d+((.|,)\\d{1,2})?",
                 Severity.ERROR);
+        tfAmountValidation.registerValidator(tfAmount, true, decimalNumberValidator);
 
-        /* receiver selection validation ************************************************************************** */
+        /* receiver selection validation **************************************************************************** */
         cbReceiverValidation = new ValidationSupport();
         Validator<Object> receiverSelectedValidator = (control, receiver) ->
                 ValidationResult.fromErrorIf(cbReceivers, "Receiver Selection required", receiver == null);
@@ -127,22 +117,29 @@ public class MakeTransactionController {
                     isSelected,
                     receiverSelectedValidator);
         });
-        /* decoration visibility ************************************************************************************ */
-        tfAmountValidation.errorDecorationEnabledProperty()
-                .bind(tfAmount.disableProperty().not());
+        cbReceiverValidation.errorDecorationEnabledProperty().bind(rbTransfer.selectedProperty());
+        /* transaction type selection validation ******************************************************************** */
+        tgTransactionValidation = new ValidationSupport();
+        tgTransaction.selectedToggleProperty().addListener((observableValue, previousToggle, newToggle) -> {
+            tgTransactionValidation.registerValidator(rbDeposit, true,
+                    (control, t) -> ValidationResult.fromErrorIf(control, "Transaction type required", newToggle == null));
+        });
 
-        cbReceiverValidation.errorDecorationEnabledProperty()
-                .bind(cbReceivers.disableProperty().not());
+
     }
 
 
     @FXML
     void onApply(ActionEvent event) {
+        if (tgTransactionValidation.isInvalid())
+            throw new ValidationException("error.detail.transaction.type.not.selected");
         tryRun(() -> {
             var amount = getAmount();
             var selectedAccount = selectedAccountProperty.get();
             var transaction = getTransaction(selectedAccount, amount);
             executeTransaction.process(transaction, cbOverdraw.isSelected());
+            Stage stage = (Stage) btnApply.getScene().getWindow();
+            stage.close();
         }, event, resources);
     }
 
@@ -158,12 +155,12 @@ public class MakeTransactionController {
             transaction = Transaction.deposit(selectedAccount.getId(), amount);
         else if (rbWithdraw.isSelected())
             transaction = Transaction.withdraw(selectedAccount.getId(), amount);
-        else {
+        else if (rbTransfer.isSelected()) {
             if (cbReceiverValidation.isInvalid())
                 throw new ValidationException("error.detail.validation.receiver.missing");
             Account selectedReceiver = cbReceivers.getValue();
             transaction = Transaction.transfer(selectedAccount.getId(), selectedReceiver.getId(), amount);
-        }
+        } else throw new ValidationException("error.detail.transaction.type.not.selected");
         transaction.setDescription(tfDescription.getText().replaceAll("[\\r\\n]", ""));
         return transaction;
     }
@@ -173,6 +170,8 @@ public class MakeTransactionController {
         cbReceivers.getSelectionModel().clearSelection();
         tgTransaction.getToggles().forEach(toggle -> toggle.setSelected(false));
         tfAmount.clear();
+        tfDescription.clear();
+        cbOverdraw.setSelected(false);
     }
 
 }
