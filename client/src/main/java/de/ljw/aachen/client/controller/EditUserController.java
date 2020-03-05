@@ -39,11 +39,11 @@ public class EditUserController extends UserDetailController {
 
     @Override
     protected void onApply(String firstName, String lastName) {
-        var accountToBeEdited = selectedAccountProperty.get();
         var editAccount = new EditAccount(fileSystem, accountStore);
-        var accountAfterEdit = new Account(accountToBeEdited.getId(), firstName, lastName);
-        editAccount.process(accountAfterEdit);
-        onEditedAccount.accept(accountToBeEdited);
+        var selectAccount = selectedAccountProperty.get();
+        Account editedAccount = new Account(selectAccount.getId(), firstName, lastName);
+        editAccount.process(editedAccount);
+        onEditedAccount.accept(editedAccount);
     }
 
 

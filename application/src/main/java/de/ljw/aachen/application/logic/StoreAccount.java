@@ -32,15 +32,16 @@ class StoreAccount {
                 .filter(accountWithSameId)
                 .findAny()
                 .ifPresentOrElse(
-                        this::modifyReference,
+                        reference -> modifyReference(reference, account),
                         () -> storeNewAccount(account)
                 );
     }
 
-    private void modifyReference(Account reference) {
-        reference.setFirstName(reference.getFirstName());
-        reference.setLastName(reference.getLastName());
+    private void modifyReference(Account reference, Account edited) {
+        reference.setFirstName(edited.getFirstName());
+        reference.setLastName(edited.getLastName());
     }
+
 
     private void storeNewAccount(Account account) {
         accountStore.store(account);
