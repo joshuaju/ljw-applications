@@ -46,7 +46,7 @@ public class TransactionsOverviewController {
     private TableColumn<Transaction, Transaction> tcDescription;
 
     @FXML
-    private TableColumn<Transaction, Money> tcAmount;
+    private TableColumn<Transaction, Transaction> tcAmount;
 
     @FXML
     private Label lblTotalBalance;
@@ -64,10 +64,11 @@ public class TransactionsOverviewController {
         tcDescription.setCellFactory(transactionInstantTableColumn ->
                 new DescriptionTableCell(selectedAccountProperty, accountListProperty, resources));
 
-        tcAmount.setCellValueFactory(transactionDoubleCellDataFeatures -> new SimpleObjectProperty<Money>(transactionDoubleCellDataFeatures.getValue().getAmount()));
-        tcAmount.setCellFactory(transactionMoneyTableColumn -> new MoneyTableCell());
+        tcAmount.setCellValueFactory(transactionStringCellDataFeatures ->
+                new SimpleObjectProperty<>(transactionStringCellDataFeatures.getValue()));
+        tcAmount.setCellFactory(transactionMoneyTableColumn -> new MoneyTableCell(selectedAccountProperty));
         selectedAccountProperty.addListener((observableValue, previous, selected) -> refresh());
-        transactionListProperty.addListener((ListChangeListener<Transaction>) change ->     refresh());
+        transactionListProperty.addListener((ListChangeListener<Transaction>) change -> refresh());
         clear();
     }
 

@@ -55,6 +55,9 @@ public class MakeTransactionController {
     private TextField tfAmount;
 
     @FXML
+    private TextField tfDescription;
+
+    @FXML
     private ComboBox<Account> cbReceivers;
 
     @FXML
@@ -99,6 +102,7 @@ public class MakeTransactionController {
         rbWithdraw.disableProperty().bind(noAccountSelected);
         rbTransfer.disableProperty().bind(noAccountSelected);
         tfAmount.disableProperty().bind(noAccountSelected.or(noToggleSelected));
+        tfDescription.disableProperty().bind(noAccountSelected.or(noToggleSelected));
         cbReceivers.disableProperty().bind(noAccountSelected.or(transferNotSelected));
         cbOverdraw.disableProperty().bind(noAccountSelected.or(noToggleSelected).or(rbDeposit.selectedProperty()));
         btnApply.disableProperty().bind(noAccountSelected.or(noToggleSelected));
@@ -160,6 +164,7 @@ public class MakeTransactionController {
             Account selectedReceiver = cbReceivers.getValue();
             transaction = Transaction.transfer(selectedAccount.getId(), selectedReceiver.getId(), amount);
         }
+        transaction.setDescription(tfDescription.getText().replaceAll("[\\r\\n]", ""));
         return transaction;
     }
 

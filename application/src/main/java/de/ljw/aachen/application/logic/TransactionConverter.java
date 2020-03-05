@@ -6,6 +6,7 @@ import de.ljw.aachen.application.data.Transaction;
 import de.ljw.aachen.application.data.TransactionId;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
+import org.apache.commons.lang.StringEscapeUtils;
 
 import java.text.MessageFormat;
 import java.time.Instant;
@@ -29,8 +30,8 @@ class TransactionConverter {
                 source == null ? PLACEHOLDER_DEPOSIT : source.getValue(),
                 target == null ? PLACEHOLDER_WITHDRAWAL : target.getValue(),
                 MessageFormat.format("{0,number,#.##}", transaction.getAmount().getValue())
-                        .replace(",", ".") // avoid parsing issues with ',' as decimal delimiter
-
+                        .replace(",", "."), // avoid parsing issues with ',' as decimal delimiter
+                transaction.getDescription()
         );
     }
 
@@ -42,7 +43,8 @@ class TransactionConverter {
         String targetIdString = record.get(3);
         var targetId = targetIdString.equals(PLACEHOLDER_WITHDRAWAL) ? null : new AccountId(targetIdString);
         var amount = new Money(Double.parseDouble(record.get(4)));
+        var description = record.get(5);
 
-        return new Transaction(transactionId, sourceId, targetId, amount, time);
+        return new Transaction(transactionId, sourceId, targetId, amount, time, description);
     }
 }

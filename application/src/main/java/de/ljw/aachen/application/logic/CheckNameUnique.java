@@ -10,16 +10,12 @@ class CheckNameUnique {
     private final AccountStore accountStore;
 
     public boolean process(Account account) {
-        String fullName = getFullName(account);
+        String fullName = ComposeFullName.process(account);
 
         return accountStore.getAccounts().stream()
-                .map(this::getFullName)
+                .map(ComposeFullName::process)
                 .noneMatch(fullName::equalsIgnoreCase);
     }
 
-    private String getFullName(Account account) {
-        String firstName = account.getFirstName().trim();
-        String lastName = account.getLastName().trim();
-        return String.format("%s %s", firstName, lastName);
-    }
+
 }

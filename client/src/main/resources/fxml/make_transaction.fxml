@@ -20,7 +20,8 @@
             <RadioButton fx:id="rbWithdraw" mnemonicParsing="false" text="%withdrawal" toggleGroup="$tgTransaction"/>
             <RadioButton fx:id="rbTransfer" mnemonicParsing="false" text="%transfer" toggleGroup="$tgTransaction"/>
         </HBox>
-        <TextField id="tfAmount" fx:id="tfAmount" promptText="%enter.amount"/>
+        <TextField fx:id="tfAmount" promptText="%enter.amount"/>
+        <TextField fx:id="tfDescription" promptText="%enter.description"/>
         <SearchableComboBox fx:id="cbReceivers" disable="true" maxWidth="1.7976931348623157E308"
                             promptText="%select.receiver"/>
         <HBox alignment="CENTER" spacing="10.0">
