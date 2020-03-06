@@ -3,6 +3,7 @@ package de.ljw.aachen.application.data;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang.Validate;
 
 import java.time.Instant;
 
@@ -19,16 +20,31 @@ public class Transaction {
     private String description;
 
     public static Transaction deposit(AccountId to, Money amount){
-        return new Transaction(new TransactionId(), null, to, amount, Instant.now(), "deposit");
+        Validate.notNull(to);
+        return new Transaction(new TransactionId(), null, to, amount, Instant.now(), "");
     }
 
     public static Transaction withdraw(AccountId from, Money amount){
-        return new Transaction(new TransactionId(), from, null, amount, Instant.now(), "withdraw");
+        Validate.notNull(from);
+        return new Transaction(new TransactionId(), from, null, amount, Instant.now(), "");
     }
 
     public static Transaction transfer(AccountId from, AccountId to, Money amount){
-        return new Transaction(new TransactionId(), from, to, amount, Instant.now(), "transfer");
+        Validate.notNull(from);
+        Validate.notNull(to);
+        return new Transaction(new TransactionId(), from, to, amount, Instant.now(), "");
     }
 
+    public boolean isDeposit(){
+        return source == null && target != null;
+    }
+
+    public boolean isWithdrawal(){
+        return source != null && target == null;
+    }
+
+    public boolean isTransfer(){
+        return source != null && target != null;
+    }
 
 }
