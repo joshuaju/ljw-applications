@@ -172,6 +172,8 @@ public class MakeTransactionController {
         tfAmount.clear();
         tfDescription.clear();
         cbOverdraw.setSelected(false);
+        Stage stage = (Stage) btnApply.getScene().getWindow();
+        stage.close();
     }
 
 }

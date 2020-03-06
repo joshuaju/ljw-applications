@@ -54,13 +54,13 @@ public class DescriptionTableCell extends TableCell<Transaction, Transaction> {
         determineTransactionType.setOnTransfer(t -> {
             var source = t.getSource();
             var target = t.getTarget();
-            String directionOfTransfer = null;
+            String title = null;
             if (source.equals(selectedAccountProperty.get().getId()))
-                directionOfTransfer = resources.getString("transfer.sent.to");
+                title = resources.getString("transfer.sent.to") + " " + ComposeFullName.process(searchAccount(target));
             else if (target.equals(selectedAccountProperty.get().getId())) {
-                directionOfTransfer = resources.getString("transfer.received.from");
+                title = resources.getString("transfer.received.from") + " " + ComposeFullName.process(searchAccount(source));
             }
-            title.setText(directionOfTransfer + " " + ComposeFullName.process(searchAccount(target)));
+            this.title.setText(title);
             description.setText(transaction.getDescription());
         });
 

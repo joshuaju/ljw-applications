@@ -8,10 +8,12 @@ import de.ljw.aachen.application.data.Transaction;
 import de.ljw.aachen.client.controls.DescriptionTableCell;
 import de.ljw.aachen.application.logic.CalculateBalance;
 import de.ljw.aachen.application.logic.GetRelevantTransactions;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyListProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.ListChangeListener;
+import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -33,9 +35,7 @@ import org.springframework.stereotype.Component;
 import java.net.URL;
 import java.text.MessageFormat;
 import java.time.Instant;
-import java.util.Currency;
-import java.util.Locale;
-import java.util.ResourceBundle;
+import java.util.*;
 
 @Slf4j
 @Component
@@ -66,6 +66,12 @@ public class TransactionsOverviewController {
     private Button btnMakeTransaction;
 
     @FXML
+    private Label lblFirstName;
+
+    @FXML
+    private Label lblLastName;
+
+    @FXML
     private ResourceBundle resources;
 
     @FXML
@@ -84,6 +90,7 @@ public class TransactionsOverviewController {
         selectedAccountProperty.addListener((observableValue, previous, selected) -> refresh());
         transactionListProperty.addListener((ListChangeListener<Transaction>) change -> refresh());
         btnMakeTransaction.disableProperty().bind(selectedAccountProperty.isNull());
+
         clear();
     }
 
@@ -99,7 +106,7 @@ public class TransactionsOverviewController {
         Stage stage = new Stage();
         stage.setScene(new Scene(root));
         stage.setTitle(resources.getString("make.transaction"));
-        stage.initModality(Modality.WINDOW_MODAL);
+        stage.initModality(Modality.APPLICATION_MODAL);
         stage.initOwner(((Node) event.getSource()).getScene().getWindow());
         stage.showAndWait();
     }
@@ -116,16 +123,17 @@ public class TransactionsOverviewController {
     }
 
     private void update(Account account) {
+        lblFirstName.setText(account.getFirstName());
+        lblLastName.setText(account.getLastName());
+
         var transactions = transactionListProperty.get();
         var relevantTransactions = GetRelevantTransactions.process(account.getId(), transactions);
-
         tvTransactions.getItems().setAll(relevantTransactions);
 
         var balance = CalculateBalance.process(account.getId(), relevantTransactions);
         lblTotalBalance.setText(MessageFormat.format("{0} {1}",
                 MessageFormat.format("{0,number, #0.00}", balance.getValue()),
                 Currency.getInstance(Locale.getDefault(Locale.Category.FORMAT)).getSymbol()));
-
     }
 
 }

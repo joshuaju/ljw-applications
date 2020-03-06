@@ -8,6 +8,6 @@
 <VBox spacing="5.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.ljw.aachen.client.controller.AccountSelectionController">
    <TextFields fx:id="tfSearchAccount" focusTraversable="true" promptText="%search" fx:factory="createClearableTextField"/>
    <ListView fx:id="lvAccounts" minWidth="-Infinity" prefHeight="835.0" prefWidth="247.0" VBox.vgrow="ALWAYS" />
-   <Button fx:id="btnNewUser" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#onCreateAccount" text="%create" VBox.vgrow="NEVER" />
-   <Button fx:id="btnEditUser" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#onEditAccount" text="%edit" />
+   <Button fx:id="btnNewUser"  maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="true" onAction="#onCreateAccount" text="%create" VBox.vgrow="NEVER" />
+   <Button fx:id="btnEditUser" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="true" onAction="#onEditAccount" text="%edit" />
 </VBox>
