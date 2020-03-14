@@ -102,7 +102,7 @@ public class MakeTransactionController {
         /* amount validation **************************************************************************************** */
         tfAmountValidation = new ValidationSupport();
         Validator<String> decimalNumberValidator = Validator.createRegexValidator(
-                "Decimal number with at most two decimal places required",
+                resources.getString("validation.decimal"),
                 "\\d+((.|,)\\d{1,2})?",
                 Severity.ERROR);
         tfAmountValidation.registerValidator(tfAmount, true, decimalNumberValidator);
@@ -110,7 +110,9 @@ public class MakeTransactionController {
         /* receiver selection validation **************************************************************************** */
         cbReceiverValidation = new ValidationSupport();
         Validator<Object> receiverSelectedValidator = (control, receiver) ->
-                ValidationResult.fromErrorIf(cbReceivers, "Receiver Selection required", receiver == null);
+                ValidationResult.fromErrorIf(cbReceivers,
+                        resources.getString("validation.receiver"),
+                        receiver == null);
         rbTransfer.selectedProperty().addListener((observableValue, wasSelected, isSelected) -> {
             cbReceiverValidation.registerValidator(
                     cbReceivers,
@@ -122,7 +124,9 @@ public class MakeTransactionController {
         tgTransactionValidation = new ValidationSupport();
         tgTransaction.selectedToggleProperty().addListener((observableValue, previousToggle, newToggle) -> {
             tgTransactionValidation.registerValidator(rbDeposit, true,
-                    (control, t) -> ValidationResult.fromErrorIf(control, "Transaction type required", newToggle == null));
+                    (control, t) -> ValidationResult.fromErrorIf(control,
+                            resources.getString("validation.transaction.type"),
+                            newToggle == null));
         });
 
 

@@ -30,7 +30,9 @@ public class EditUserController extends UserDetailController {
     private ResourceBundle resources;
 
     @FXML
-    private void initialize() {
+    @Override
+    protected void initialize() {
+        super.initialize();
         if (selectedAccountProperty.isNotNull().get()) {
             tfFirstName.setText(selectedAccountProperty.get().getFirstName());
             tfLastName.setText(selectedAccountProperty.get().getLastName());
