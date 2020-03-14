@@ -4,46 +4,48 @@ import de.ljw.aachen.application.data.AccountId;
 import de.ljw.aachen.application.data.Money;
 import de.ljw.aachen.application.data.Transaction;
 import de.ljw.aachen.application.data.TransactionId;
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVRecord;
-import org.apache.commons.lang.StringEscapeUtils;
 
 import java.text.MessageFormat;
 import java.time.Instant;
-import java.util.List;
 
 class TransactionConverter {
 
+    private static final String DELIMITER = ",";
     public static final String PLACEHOLDER_DEPOSIT = "DEPOSIT";
     public static final String PLACEHOLDER_WITHDRAWAL = "WITHDRAWAL";
+    public static final String PLACEHOLDER_NO_DESCRIPTION = "-";
 
-    public static CSVFormat getFormat() {
-        return CSVFormat.DEFAULT.withTrim();
+    public static String getHeader() {
+        return String.join(DELIMITER, "id", "date", "source", "target", "amount", "description");
     }
 
-    public static List<String> toValues(Transaction transaction) {
+    public static String toString(Transaction transaction) {
         AccountId source = transaction.getSource();
         AccountId target = transaction.getTarget();
-        return List.of(
+
+        return String.join(DELIMITER,
                 transaction.getId().getValue(),
                 transaction.getTime().toString(),
                 source == null ? PLACEHOLDER_DEPOSIT : source.getValue(),
                 target == null ? PLACEHOLDER_WITHDRAWAL : target.getValue(),
                 MessageFormat.format("{0,number,#.##}", transaction.getAmount().getValue())
                         .replace(",", "."), // avoid parsing issues with ',' as decimal delimiter
-                transaction.getDescription()
+                transaction.getDescription().isBlank() ? PLACEHOLDER_NO_DESCRIPTION : transaction.getDescription()
         );
     }
 
-    public static Transaction fromRecord(CSVRecord record) {
-        var transactionId = new TransactionId(record.get(0));
-        var time = Instant.parse(record.get(1));
-        String sourceIdString = record.get(2);
+    public static Transaction fromString(String transactionString) {
+        var values = transactionString.split(DELIMITER);
+
+        var transactionId = new TransactionId(values[0]);
+        var time = Instant.parse(values[1]);
+        String sourceIdString = values[2];
         var sourceId = sourceIdString.equals(PLACEHOLDER_DEPOSIT) ? null : new AccountId(sourceIdString);
-        String targetIdString = record.get(3);
+        String targetIdString = values[3];
         var targetId = targetIdString.equals(PLACEHOLDER_WITHDRAWAL) ? null : new AccountId(targetIdString);
-        var amount = new Money(Double.parseDouble(record.get(4)));
-        var description = record.get(5);
+        var amount = new Money(Double.parseDouble(values[4]));
+        var descriptionString = values[5];
+        var description = descriptionString.equals(PLACEHOLDER_NO_DESCRIPTION) ? "" : descriptionString;
 
         return new Transaction(transactionId, sourceId, targetId, amount, time, description);
     }

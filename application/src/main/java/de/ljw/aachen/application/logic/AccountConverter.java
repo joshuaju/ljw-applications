@@ -2,29 +2,29 @@ package de.ljw.aachen.application.logic;
 
 import de.ljw.aachen.application.data.Account;
 import de.ljw.aachen.application.data.AccountId;
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVRecord;
-
-import java.util.List;
 
 class AccountConverter {
 
-    public static CSVFormat getFormat() {
-        return CSVFormat.DEFAULT;
+    private static final String DELIMITER = ",";
+
+    public static String getHeader() {
+        return String.join(DELIMITER, "id", "first name", "last name");
     }
 
-    public static List<String> toValues(Account account) {
-        return List.of(
+    public static String toString(Account account) {
+        return String.join(DELIMITER,
                 account.getId().getValue(),
                 account.getFirstName(),
                 account.getLastName()
         );
     }
 
-    public static Account fromRecord(CSVRecord record) {
-        var accountId = new AccountId(record.get(0));
-        var firstName = record.get(1);
-        var lastName = record.get(2);
+    public static Account fromString(String accountString) {
+        var values = accountString.split(DELIMITER);
+
+        var accountId = new AccountId(values[0]);
+        var firstName = values[1];
+        var lastName = values[2];
 
         return new Account(accountId, firstName, lastName);
     }

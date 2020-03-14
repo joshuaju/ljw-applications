@@ -7,6 +7,7 @@ import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.util.List;
 
 public class FileSystemImpl implements FileSystem {
     @Override
@@ -19,5 +20,17 @@ public class FileSystemImpl implements FileSystem {
     @SneakyThrows
     public Reader newReader(Path path) {
         return Files.newBufferedReader(path);
+    }
+
+    @Override
+    @SneakyThrows
+    public void writeLine(Path destination, String line) {
+        Files.write(destination, List.of(line), StandardOpenOption.APPEND);
+    }
+
+    @Override
+    @SneakyThrows
+    public List<String> readLines(Path destination) {
+        return Files.readAllLines(destination);
     }
 }

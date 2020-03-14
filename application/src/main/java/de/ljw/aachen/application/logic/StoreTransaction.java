@@ -5,7 +5,6 @@ import de.ljw.aachen.application.adapter.TransactionStore;
 import de.ljw.aachen.application.data.Transaction;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import org.apache.commons.csv.CSVPrinter;
 
 @RequiredArgsConstructor
 class StoreTransaction {
@@ -16,13 +15,9 @@ class StoreTransaction {
     @SneakyThrows
     public void process(Transaction transaction) {
         assert transaction.getId() != null;
-
-        var values = TransactionConverter.toValues(transaction);
-        try (var printer = new CSVPrinter(
-                fs.newWriter(transactionStore.getSource()),
-                TransactionConverter.getFormat())) {
-            printer.printRecord(values);
-            transactionStore.store(transaction);
-        }
+        var values = TransactionConverter.toString(transaction);
+        var destination = transactionStore.getSource();
+        fs.writeLine(destination, values);
+        transactionStore.store(transaction);
     }
 }
