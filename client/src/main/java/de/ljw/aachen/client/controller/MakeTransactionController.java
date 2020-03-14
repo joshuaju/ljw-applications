@@ -175,5 +175,4 @@ public class MakeTransactionController {
         Stage stage = (Stage) btnApply.getScene().getWindow();
         stage.close();
     }
-
 }

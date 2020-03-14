@@ -105,7 +105,7 @@ public class TransactionsOverviewController {
 
         Stage stage = new Stage();
         stage.setScene(new Scene(root));
-        stage.setTitle(resources.getString("make.transaction"));
+        stage.setTitle(resources.getString("transaction"));
         stage.initModality(Modality.APPLICATION_MODAL);
         stage.initOwner(((Node) event.getSource()).getScene().getWindow());
         stage.showAndWait();
