@@ -8,7 +8,7 @@ A GUI to manage expenses of the summer camp participants. The application suppor
 - making money deposits and withdrawals 
 - transferring money between two accounts
 
-![UI Showcase](ljw-fx-client/ui-showcase.png)
+![UI Showcase](client-showcase.png)
 
 # Setting up
 ## Prerequisites
