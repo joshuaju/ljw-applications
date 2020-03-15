@@ -4,6 +4,9 @@ import lombok.Data;
 import org.joda.money.CurrencyUnit;
 
 import java.math.BigDecimal;
+import java.text.MessageFormat;
+import java.util.Currency;
+import java.util.Locale;
 
 @Data
 public class Money {
@@ -51,6 +54,15 @@ public class Money {
 
     public boolean isGreaterThanOrEqual(Money money) {
         return isGreaterThan(money) || isEqualTo(money);
+    }
+
+    public boolean isLessThan(Money money) {
+        return this.value.isLessThan(money.value);
+    }
+
+    public String formatWithCurrency() {
+        var currencySymbol = Currency.getInstance(Locale.getDefault(Locale.Category.FORMAT)).getSymbol();
+        return MessageFormat.format("{0,number, #0.00}{1}", getValue(), currencySymbol);
     }
 
 

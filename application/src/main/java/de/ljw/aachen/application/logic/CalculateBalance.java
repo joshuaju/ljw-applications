@@ -19,7 +19,7 @@ public class CalculateBalance {
         return earnings.minus(expenses);
     }
 
-    private static Money sum(Collection<Transaction> transactions, Predicate<Transaction> predicate) {
+    public static Money sum(Collection<Transaction> transactions, Predicate<Transaction> predicate) {
         return transactions.stream()
                 .filter(predicate)
                 .map(Transaction::getAmount)
