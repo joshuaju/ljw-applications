@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<MenuBar xmlns="http://javafx.com/javafx"
+         xmlns:fx="http://javafx.com/fxml"
+         fx:controller="de.ljw.aachen.client.controller.MenuController">
+
+    <Menu mnemonicParsing="false" text="%actions">
+        <MenuItem text="%action.cash.up" onAction="#onCashUp"/>
+        <MenuItem text="%action.check.balance" onAction="#onCheckBalance"/>
+        <MenuItem text="%action.import" onAction="#onImport"/>
+    </Menu>
+
+</MenuBar>
