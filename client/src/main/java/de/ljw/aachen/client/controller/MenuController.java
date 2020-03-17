@@ -1,6 +1,7 @@
 package de.ljw.aachen.client.controller;
 
 import de.ljw.aachen.application.adapter.AccountStore;
+import de.ljw.aachen.application.adapter.FileSystem;
 import de.ljw.aachen.application.adapter.TransactionStore;
 import de.ljw.aachen.application.data.Account;
 import de.ljw.aachen.application.data.Money;
@@ -8,19 +9,28 @@ import de.ljw.aachen.application.data.Transaction;
 import de.ljw.aachen.application.logic.CalculateBalance;
 import de.ljw.aachen.application.logic.CashUp;
 import de.ljw.aachen.application.logic.ComposeFullName;
+import de.ljw.aachen.application.logic.ImportAccountFromFile;
+import de.ljw.aachen.client.exception.NotifyingExceptionHandler;
+import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
+import javafx.stage.FileChooser;
+import javafx.stage.Window;
 import lombok.extern.slf4j.Slf4j;
+import org.controlsfx.control.Notifications;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.info.InfoProperties;
 import org.springframework.stereotype.Component;
 
+import javax.management.Notification;
+import java.io.File;
 import java.text.MessageFormat;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +41,9 @@ import java.util.stream.Collectors;
 @Slf4j
 @Component
 public class MenuController {
+
+    @Autowired
+    FileSystem fs;
 
     @Autowired
     AccountStore accountStore;
@@ -82,6 +95,7 @@ public class MenuController {
                     new Label(ComposeFullName.process(entry.getKey())),
                     new Label(entry.getValue().formatWithCurrency()));
         }
+
         return nameBalanceGrid;
     }
 
@@ -97,7 +111,24 @@ public class MenuController {
 
     @FXML
     void onImport(ActionEvent event) {
-        log.info("import accounts");
+        Window window = ((MenuItem) event.getTarget()).getParentPopup().getOwnerWindow();
+
+        FileChooser importFileChooser = new FileChooser();
+        File selected = importFileChooser.showOpenDialog(window);
+        importFileChooser.setTitle(resources.getString("select.import.file"));
+        FileChooser.ExtensionFilter csvFilter = new FileChooser.ExtensionFilter("Comma separated files (CSV)", "csv");
+        importFileChooser.getExtensionFilters().add(csvFilter);
+        if (selected == null) return;
+
+        var fileImporter = new ImportAccountFromFile(fs, accountStore, transactionStore);
+        NotifyingExceptionHandler.tryRun(
+                () -> {
+                    fileImporter.importFile(selected.toPath(), "imported");
+                    Notifications.create().title(resources.getString("import.success")).owner(window).showConfirm();
+                },
+                window,
+                resources
+        );
     }
 
 

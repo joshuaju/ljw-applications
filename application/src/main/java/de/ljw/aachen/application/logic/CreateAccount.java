@@ -16,7 +16,7 @@ public class CreateAccount {
     private final FileSystem fs;
     private final AccountStore accountStore;
 
-    public void process(Account account) {
+    public AccountId process(Account account) {
         assert account.getId() == null : "Creating an account assumes a non existing account";
         account.setId(new AccountId());
 
@@ -27,5 +27,6 @@ public class CreateAccount {
         if (!checkNameUnique.process(account)) throw new NameNotUniqueException();
 
         storeAccount.process(account);
+        return account.getId();
     }
 }
