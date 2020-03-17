@@ -16,13 +16,21 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.stage.FileChooser;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import javafx.stage.Window;
+import lombok.Data;
+import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.controlsfx.control.Notifications;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +39,7 @@ import org.springframework.stereotype.Component;
 
 import javax.management.Notification;
 import java.io.File;
+import java.net.URL;
 import java.text.MessageFormat;
 import java.util.List;
 import java.util.Map;
@@ -40,19 +49,16 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class MenuController {
 
-    @Autowired
-    FileSystem fs;
 
-    @Autowired
-    AccountStore accountStore;
-
-    @Autowired
-    TransactionStore transactionStore;
+    private final AccountStore accountStore;
+    private final TransactionStore transactionStore;
+    private final ImportAccountsController importAccountsController;
 
     @FXML
-    ResourceBundle resources;
+    private ResourceBundle resources;
 
     @FXML
     void onCashUp(ActionEvent event) {
@@ -110,25 +116,20 @@ public class MenuController {
     }
 
     @FXML
+    @SneakyThrows
     void onImport(ActionEvent event) {
-        Window window = ((MenuItem) event.getTarget()).getParentPopup().getOwnerWindow();
+        URL resource = AccountSelectionController.class.getClassLoader().getResource("fxml/import_accounts.fxml");
+        FXMLLoader loader = new FXMLLoader(resource);
+        loader.setController(importAccountsController);
+        loader.setResources(resources);
+        Parent root = loader.load();
 
-        FileChooser importFileChooser = new FileChooser();
-        File selected = importFileChooser.showOpenDialog(window);
-        importFileChooser.setTitle(resources.getString("select.import.file"));
-        FileChooser.ExtensionFilter csvFilter = new FileChooser.ExtensionFilter("Comma separated files (CSV)", "csv");
-        importFileChooser.getExtensionFilters().add(csvFilter);
-        if (selected == null) return;
-
-        var fileImporter = new ImportAccountFromFile(fs, accountStore, transactionStore);
-        NotifyingExceptionHandler.tryRun(
-                () -> {
-                    fileImporter.importFile(selected.toPath(), "imported");
-                    Notifications.create().title(resources.getString("import.success")).owner(window).showConfirm();
-                },
-                window,
-                resources
-        );
+        Stage stage = new Stage();
+        stage.setScene(new Scene(root));
+        stage.setTitle(resources.getString("title.import.accounts"));
+        stage.initModality(Modality.WINDOW_MODAL);
+        stage.initOwner(((MenuItem) event.getSource()).getParentPopup().getOwnerWindow());
+        stage.show();
     }
 
 
