@@ -10,7 +10,7 @@
         <GridPane hgap="20.0" vgap="10.0">
 
             <Label text="%import.select.file.label" GridPane.columnIndex="0" GridPane.rowIndex="0" />
-            <Button maxWidth="1.7976931348623157E308" onAction="#onSelectFile" text="%import.select.file.button" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="0" />
+            <Button fx:id="btnSelectFile" maxWidth="1.7976931348623157E308" onAction="#onSelectFile" text="%import.select.file.button" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="0" />
 
             <Label text="%import.deposit.description.label" GridPane.columnIndex="0" GridPane.rowIndex="1" />
             <TextField fx:id="tfDescription" promptText="%import.deposit.description.prompt" GridPane.columnIndex="1" GridPane.rowIndex="1" />
@@ -34,8 +34,8 @@
     <bottom>
         <ButtonBar>
             <buttons>
-                <Button onAction="#onApply" text="Apply" />
-                <Button onAction="#onCancel" text="Cancel" />
+                <Button fx:id="btnApply" onAction="#onApply" text="%apply" />
+                <Button onAction="#onCancel" text="%close" />
             </buttons>
         </ButtonBar>
     </bottom>

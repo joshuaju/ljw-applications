@@ -15,6 +15,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -26,11 +27,13 @@ public class ImportAccountFromFile {
     private final FileSystem fs;
     private final CreateAccount createAccount;
     private final ExecuteTransaction executeTransaction;
+    private final Consumer<String> logger;
 
-    public ImportAccountFromFile(FileSystem fs, AccountStore accountStore, TransactionStore transactionStore) {
+    public ImportAccountFromFile(FileSystem fs, AccountStore accountStore, TransactionStore transactionStore, Consumer<String> logger) {
         this.fs = fs;
-        createAccount = new CreateAccount(fs, accountStore);
-        executeTransaction = new ExecuteTransaction(fs, transactionStore);
+        this.createAccount = new CreateAccount(fs, accountStore);
+        this.executeTransaction = new ExecuteTransaction(fs, transactionStore);
+        this.logger = logger;
     }
 
     public void importFile(Path importFile, String description) {
@@ -80,8 +83,11 @@ public class ImportAccountFromFile {
             var deposit = Transaction.deposit(id, balance);
             deposit.setDescription(description);
             executeTransaction.process(deposit, false);
+            logger.accept(MessageFormat.format(" OK: {0}, {1}",
+                    ComposeFullName.process(account), balance.formatWithCurrency()));
         } catch (Exception e) {
-            log.error("Import failed: {}, {}", ComposeFullName.process(account), balance.formatWithCurrency(), e);
+            logger.accept(MessageFormat.format("ERR: {0}, {1}\n>>> {2}",
+                    ComposeFullName.process(account), balance.formatWithCurrency(), e.getClass().getSimpleName()));
         }
     }
 

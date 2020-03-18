@@ -48,7 +48,7 @@ class ImportAccountFromFileTest {
         linesFromFile = null;
         accountStore = new AccountStoreImpl(new ArrayList<>());
         transactionStore = new TransactionStoreImpl(new ArrayList<>());
-        fileImporter = new ImportAccountFromFile(fs, accountStore, transactionStore);
+        fileImporter = new ImportAccountFromFile(fs, accountStore, transactionStore, msg -> { /* do nothing */ });
     }
 
     @Test

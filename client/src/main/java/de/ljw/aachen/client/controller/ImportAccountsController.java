@@ -9,6 +9,7 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
@@ -40,12 +41,25 @@ public class ImportAccountsController {
     @FXML
     private TextArea taResults;
 
+    @FXML
+    private Button btnApply;
+
+    @FXML
+    private Button btnSelectFile;
+
 
     private SimpleObjectProperty<File> importFile = new SimpleObjectProperty<>();
+    private String btnSelectFileDefaultText;
 
     @FXML
     private void initialize() {
-        // TODO bind apply button disable to import file isNull
+        btnApply.disableProperty().bind(importFile.isNull());
+        btnSelectFileDefaultText = btnSelectFile.getText();
+
+        importFile.addListener((observableValue, prev, now) -> {
+            if (now == null) btnSelectFile.setText(btnSelectFileDefaultText);
+            else btnSelectFile.setText(now.getAbsolutePath());
+        });
     }
 
     @FXML
@@ -61,20 +75,19 @@ public class ImportAccountsController {
 
     @FXML
     public void onApply(ActionEvent event) {
-        var file = importFile.get();
-        Window window = ((Node) event.getTarget()).getScene().getWindow();
+        NotifyingExceptionHandler.tryRun(this::importAccounts, event, resources);
+    }
 
-        var fileImporter = new ImportAccountFromFile(fs, accountStore, transactionStore);
-        NotifyingExceptionHandler.tryRun(
-                () -> {
-                    var description = tfDescription.getText();
-                    if (description.isBlank()) description = "Import";
-                    fileImporter.importFile(file.toPath(), description);
-                    taResults.appendText("Done");
-                },
-                window,
-                resources
-        );
+    private void importAccounts() {
+        var fileImporter = new ImportAccountFromFile(fs, accountStore, transactionStore, msg -> taResults.appendText(msg + "\n"));
+        var file = importFile.get();
+
+        var description = tfDescription.getText();
+        if (description.isBlank()) description = resources.getString("import.default.description");
+
+        fileImporter.importFile(file.toPath(), description);
+
+        taResults.appendText("\nDone");
     }
 
     @FXML
