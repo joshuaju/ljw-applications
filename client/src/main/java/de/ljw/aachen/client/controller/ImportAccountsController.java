@@ -79,6 +79,8 @@ public class ImportAccountsController {
     }
 
     private void importAccounts() {
+        taResults.clear();
+
         var fileImporter = new ImportAccountFromFile(fs, accountStore, transactionStore, msg -> taResults.appendText(msg + "\n"));
         var file = importFile.get();
 
@@ -86,8 +88,7 @@ public class ImportAccountsController {
         if (description.isBlank()) description = resources.getString("import.default.description");
 
         fileImporter.importFile(file.toPath(), description);
-
-        taResults.appendText("\nDone");
+        taResults.appendText("\nDone.");
     }
 
     @FXML
