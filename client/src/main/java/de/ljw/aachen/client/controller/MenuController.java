@@ -1,7 +1,6 @@
 package de.ljw.aachen.client.controller;
 
 import de.ljw.aachen.application.adapter.AccountStore;
-import de.ljw.aachen.application.adapter.FileSystem;
 import de.ljw.aachen.application.adapter.TransactionStore;
 import de.ljw.aachen.application.data.Account;
 import de.ljw.aachen.application.data.Money;
@@ -9,11 +8,6 @@ import de.ljw.aachen.application.data.Transaction;
 import de.ljw.aachen.application.logic.CalculateBalance;
 import de.ljw.aachen.application.logic.CashUp;
 import de.ljw.aachen.application.logic.ComposeFullName;
-import de.ljw.aachen.application.logic.ImportAccountFromFile;
-import de.ljw.aachen.client.exception.NotifyingExceptionHandler;
-import javafx.application.Platform;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -22,23 +16,13 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
-import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.stage.Window;
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.controlsfx.control.Notifications;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.info.InfoProperties;
 import org.springframework.stereotype.Component;
 
-import javax.management.Notification;
-import java.io.File;
 import java.net.URL;
 import java.text.MessageFormat;
 import java.util.List;
@@ -79,18 +63,20 @@ public class MenuController {
         var transactions = transactionStore.getTransactions();
 
         Map<Account, Money> accountBalanceMap = getAccountMoneyMap(accounts, transactions);
-        GridPane nameBalanceGrid = getAccountMoneyGridPane(accountBalanceMap);
+        Node content = getBalanceCheckContentNode(accountBalanceMap);
 
         var info = new Alert(Alert.AlertType.INFORMATION, null, ButtonType.OK);
         info.setTitle(resources.getString("balance.check.title"));
         info.setHeaderText(null);
-        info.getDialogPane().setContent(nameBalanceGrid);
+        info.getDialogPane().setContent(content);
         info.setResizable(true);
         info.setGraphic(null);
         info.show();
     }
 
-    private GridPane getAccountMoneyGridPane(Map<Account, Money> accountBalanceMap) {
+    private Node getBalanceCheckContentNode(Map<Account, Money> accountBalanceMap) {
+        if (accountBalanceMap.isEmpty()) return new Label(resources.getString("balance.check.no.accounts.with.negative.balance"));
+
         GridPane nameBalanceGrid = new GridPane();
         nameBalanceGrid.setHgap(15);
         nameBalanceGrid.setVgap(5);
