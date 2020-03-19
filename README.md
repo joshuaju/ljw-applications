@@ -7,6 +7,9 @@ A GUI to manage expenses of the summer camp participants. The application suppor
 - creating and editing accounts
 - making money deposits and withdrawals 
 - transferring money between two accounts
+- cashing up ("how much money is in the till?")
+- list accounts with negative balance
+- import accounts from CSV
 
 ![UI Showcase](client-showcase.png)
 
