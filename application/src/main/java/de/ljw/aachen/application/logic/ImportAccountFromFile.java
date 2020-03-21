@@ -6,6 +6,7 @@ import de.ljw.aachen.application.adapter.TransactionStore;
 import de.ljw.aachen.application.data.Account;
 import de.ljw.aachen.application.data.Money;
 import de.ljw.aachen.application.data.Transaction;
+import de.ljw.aachen.application.exceptions.ColumnMismatchException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.Validate;
 
@@ -47,9 +48,14 @@ public class ImportAccountFromFile {
 
     private void validateHeader(String headerLine) {
         var actualHeaderValues = splitLine(headerLine);
-        var errorMessage = MessageFormat.format("CSV file header is expected to be {0}, but was {1}",
-                EXPECTED_HEADER_VALUES, actualHeaderValues);
-        Validate.isTrue(EXPECTED_HEADER_VALUES.equals(actualHeaderValues), errorMessage);
+
+        if (!EXPECTED_HEADER_VALUES.equals(actualHeaderValues)) {
+            var errorMessage = MessageFormat.format("CSV file header is expected to be {0}, but was {1}",
+                    EXPECTED_HEADER_VALUES, actualHeaderValues);
+            log.info(errorMessage);
+            throw new ColumnMismatchException();
+        }
+
     }
 
     private Map<Account, Money> parseContent(List<String> contentLines) {
@@ -94,9 +100,11 @@ public class ImportAccountFromFile {
     private static List<String> splitLine(String line) {
         var values = line.split(",");
 
-        var errorMsg = MessageFormat.format("Column count does not match. Expected {0} but found {1} columns in line \"{2}\"",
-                EXPECTED_COLUMN_COUNT, values.length, line);
-        Validate.isTrue(values.length == EXPECTED_COLUMN_COUNT, errorMsg);
+        if (values.length != EXPECTED_COLUMN_COUNT) {
+            var errorMsg = MessageFormat.format("Column count does not match. Expected {0} but found {1} columns in line \"{2}\"", EXPECTED_COLUMN_COUNT, values.length, line);
+            log.error(errorMsg);
+            throw new ColumnMismatchException();
+        }
 
         return Arrays.stream(values)
                 .map(String::trim)
