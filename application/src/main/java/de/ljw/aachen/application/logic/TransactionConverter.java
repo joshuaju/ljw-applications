@@ -10,7 +10,7 @@ import java.time.Instant;
 
 class TransactionConverter {
 
-    private static final String DELIMITER = ",";
+    private static final String DELIMITER = ";";
     public static final String PLACEHOLDER_DEPOSIT = "DEPOSIT";
     public static final String PLACEHOLDER_WITHDRAWAL = "WITHDRAWAL";
     public static final String PLACEHOLDER_NO_DESCRIPTION = "-";
@@ -28,8 +28,7 @@ class TransactionConverter {
                 transaction.getTime().toString(),
                 source == null ? PLACEHOLDER_DEPOSIT : source.getValue(),
                 target == null ? PLACEHOLDER_WITHDRAWAL : target.getValue(),
-                MessageFormat.format("{0,number,#.##}", transaction.getAmount().getValue())
-                        .replace(",", "."), // avoid parsing issues with ',' as decimal delimiter
+                MessageFormat.format("{0,number,#.##}", transaction.getAmount().getValue()),
                 transaction.getDescription().isBlank() ? PLACEHOLDER_NO_DESCRIPTION : transaction.getDescription()
         );
     }
@@ -43,7 +42,7 @@ class TransactionConverter {
         var sourceId = sourceIdString.equals(PLACEHOLDER_DEPOSIT) ? null : new AccountId(sourceIdString);
         String targetIdString = values[3];
         var targetId = targetIdString.equals(PLACEHOLDER_WITHDRAWAL) ? null : new AccountId(targetIdString);
-        var amount = new Money(Double.parseDouble(values[4]));
+        var amount = new Money(Double.parseDouble(values[4].replace(",", ".")));
         var descriptionString = values[5];
         var description = descriptionString.equals(PLACEHOLDER_NO_DESCRIPTION) ? "" : descriptionString;
 

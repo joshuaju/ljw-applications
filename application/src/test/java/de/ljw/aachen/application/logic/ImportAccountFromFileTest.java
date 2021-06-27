@@ -63,7 +63,7 @@ class ImportAccountFromFileTest {
 
     @Test
     void importOnlyHeader() {
-        linesFromFile = List.of("first name, last name, balance");
+        linesFromFile = List.of("first name; last name; balance");
 
         fileImporter.importFile(Path.of("any"), "test deposit");
 
@@ -74,9 +74,9 @@ class ImportAccountFromFileTest {
     @Test
     void importAccounts() {
         linesFromFile = List.of(
-                "first name, last name, balance",
-                "Benjamin, Linus, 10.",
-                "Julia, Juliette, 25.50"
+                "first name; last name; balance",
+                "Benjamin; Linus; 10,",
+                "Julia; Juliette; 25,50"
         );
 
         fileImporter.importFile(Path.of("any"), "test deposit");

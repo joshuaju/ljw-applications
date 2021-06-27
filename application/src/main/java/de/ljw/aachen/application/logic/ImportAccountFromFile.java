@@ -24,6 +24,7 @@ public class ImportAccountFromFile {
 
     private static final List<String> EXPECTED_HEADER_VALUES = Arrays.asList("first name", "last name", "balance");
     private static final int EXPECTED_COLUMN_COUNT = EXPECTED_HEADER_VALUES.size();
+    public static final String DELIMITER = ";";
 
     private final FileSystem fs;
     private final CreateAccount createAccount;
@@ -78,7 +79,8 @@ public class ImportAccountFromFile {
     }
 
     private static Money parseBalance(List<String> values) {
-        var amount = values.get(2);
+        var amount = values.get(2)
+                           .replace(",", "."); // replace decimal delimiter
         var amountAsDouble = Double.parseDouble(amount);
         return new Money(amountAsDouble);
     }
@@ -98,7 +100,7 @@ public class ImportAccountFromFile {
     }
 
     private static List<String> splitLine(String line) {
-        var values = line.split(",");
+        var values = line.split(DELIMITER);
 
         if (values.length != EXPECTED_COLUMN_COUNT) {
             var errorMsg = MessageFormat.format("Column count does not match. Expected {0} but found {1} columns in line \"{2}\"", EXPECTED_COLUMN_COUNT, values.length, line);
