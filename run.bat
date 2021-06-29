@@ -1,0 +1,1 @@
+start "LJW Lagerbank" "%JAVA_HOME%\bin\java" "-jar" ".\client\target\client.jar"
