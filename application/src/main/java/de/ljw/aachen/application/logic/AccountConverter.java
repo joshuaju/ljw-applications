@@ -5,7 +5,7 @@ import de.ljw.aachen.application.data.AccountId;
 
 class AccountConverter {
 
-    private static final String DELIMITER = ",";
+    private static final String DELIMITER = ";";
 
     public static String getHeader() {
         return String.join(DELIMITER, "id", "first name", "last name");

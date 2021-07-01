@@ -28,7 +28,7 @@ class TransactionConverter {
                 transaction.getTime().toString(),
                 source == null ? PLACEHOLDER_DEPOSIT : source.getValue(),
                 target == null ? PLACEHOLDER_WITHDRAWAL : target.getValue(),
-                MessageFormat.format("{0,number,#.##}", transaction.getAmount().getValue()),
+                MessageFormat.format("{0,number,#.##}", transaction.getAmount().getValue()).replace(".", ","),
                 transaction.getDescription().isBlank() ? PLACEHOLDER_NO_DESCRIPTION : transaction.getDescription()
         );
     }
