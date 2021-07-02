@@ -18,7 +18,7 @@ public class InitializeTransactions {
         var parseTransactionSource = new ParseTransactionSource(fs);
         var replayTransactions = new ReplayTransactions(transactionStore);
 
-        if (fs.readLines(source).isEmpty()) fs.writeLine(source, TransactionConverter.getHeader());
+        if (fs.readLines(source).isEmpty()) fs.appendLine(source, TransactionConverter.getHeader());
         var transactions = parseTransactionSource.process(source);
         replayTransactions.process(transactions);
     }

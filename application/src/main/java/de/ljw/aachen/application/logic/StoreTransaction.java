@@ -17,7 +17,7 @@ class StoreTransaction {
         assert transaction.getId() != null;
         var values = TransactionConverter.toString(transaction);
         var destination = transactionStore.getSource();
-        fs.writeLine(destination, values);
+        fs.appendLine(destination, values);
         transactionStore.store(transaction);
     }
 }

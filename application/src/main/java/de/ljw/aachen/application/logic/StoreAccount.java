@@ -19,7 +19,7 @@ class StoreAccount {
         assert account.getId() != null;
         var values = AccountConverter.toString(account);
         var destination = accountStore.getSource();
-        fs.writeLine(destination, values);
+        fs.appendLine(destination, values);
         modifyOrStore(account);
     }
 

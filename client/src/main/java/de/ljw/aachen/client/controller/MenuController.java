@@ -1,6 +1,7 @@
 package de.ljw.aachen.client.controller;
 
 import de.ljw.aachen.application.adapter.AccountStore;
+import de.ljw.aachen.application.adapter.FileSystem;
 import de.ljw.aachen.application.adapter.TransactionStore;
 import de.ljw.aachen.application.data.Account;
 import de.ljw.aachen.application.data.Money;
@@ -8,6 +9,7 @@ import de.ljw.aachen.application.data.Transaction;
 import de.ljw.aachen.application.logic.CalculateBalance;
 import de.ljw.aachen.application.logic.CashUp;
 import de.ljw.aachen.application.logic.ComposeFullName;
+import de.ljw.aachen.application.logic.ExportAllTransactions;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -19,6 +21,7 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.layout.GridPane;
+import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import lombok.RequiredArgsConstructor;
@@ -26,12 +29,10 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import java.io.File;
 import java.net.URL;
 import java.text.MessageFormat;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.ResourceBundle;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -42,7 +43,7 @@ import java.util.stream.Collectors;
 public class MenuController
 {
 
-
+    private final FileSystem fs;
     private final AccountStore accountStore;
     private final TransactionStore transactionStore;
     private final ImportAccountsController importAccountsController;
@@ -121,7 +122,7 @@ public class MenuController
         return nameBalanceGrid;
     }
 
-    private Map<Account, Money> getAccountMoneyMap(List<Account> accounts, List<Transaction> transactions)
+    private Map<Account, Money> getAccountMoneyMap(Collection<Account> accounts, List<Transaction> transactions)
     {
         return accounts.stream()
                        .collect(Collectors.toMap(Function.identity(),
@@ -145,6 +146,23 @@ public class MenuController
         stage.initModality(Modality.WINDOW_MODAL);
         stage.initOwner(((MenuItem) event.getSource()).getParentPopup().getOwnerWindow());
         stage.show();
+    }
+
+    @FXML
+    void onExportTransactions(ActionEvent event)
+    {
+        var importFileChooser = new FileChooser();
+        importFileChooser.setTitle(resources.getString("select.file"));
+        FileChooser.ExtensionFilter csvFilter = new FileChooser.ExtensionFilter("Comma separated files (CSV)", "*.csv");
+        importFileChooser.getExtensionFilters().add(csvFilter);
+        File selected = importFileChooser.showSaveDialog(((MenuItem) event.getTarget()).getParentPopup()
+                                                                                       .getScene()
+                                                                                       .getWindow());
+
+        if (selected == null) return;
+
+        var exporter = new ExportAllTransactions(fs, transactionStore, accountStore);
+        exporter.export(selected.toPath());
     }
 
 

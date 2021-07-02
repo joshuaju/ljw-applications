@@ -9,6 +9,7 @@
         <MenuItem text="%action.cash.up" onAction="#onCashUp"/>
         <MenuItem text="%action.check.balance" onAction="#onCheckBalance"/>
         <MenuItem text="%action.list.balance" onAction="#onListBalance"/>
+        <MenuItem text="%action.export.transactions" onAction="#onExportTransactions"/>
         <MenuItem text="%action.import" onAction="#onImport"/>
     </Menu>
 

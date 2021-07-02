@@ -65,7 +65,7 @@ public class ImportAccountsController {
     @FXML
     public void onSelectFile(ActionEvent event) {
         var importFileChooser = new FileChooser();
-        importFileChooser.setTitle(resources.getString("select.import.file"));
+        importFileChooser.setTitle(resources.getString("select.file"));
         FileChooser.ExtensionFilter csvFilter = new FileChooser.ExtensionFilter("Comma separated files (CSV)", "*.csv");
         importFileChooser.getExtensionFilters().add(csvFilter);
         File selected = importFileChooser.showOpenDialog(((Node) event.getTarget()).getScene().getWindow());
