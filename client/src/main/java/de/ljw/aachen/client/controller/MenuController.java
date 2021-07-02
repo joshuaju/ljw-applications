@@ -16,14 +16,12 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.Label;
-import javafx.scene.control.MenuItem;
+import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -84,8 +82,8 @@ public class MenuController
         var accounts = accountStore.getAccounts();
         var transactions = transactionStore.getTransactions();
 
-        Map<Account, Money> accountBalanceMap = getAccountMoneyMap(accounts, transactions);
 
+        Map<Account, Money> accountBalanceMap = getAccountMoneyMap(accounts, transactions);
         displayAlert(resources.getString("balance.list.title"), accountBalanceMap);
     }
 
@@ -96,7 +94,10 @@ public class MenuController
         var info = new Alert(Alert.AlertType.INFORMATION, null, ButtonType.OK);
         info.setTitle(title);
         info.setHeaderText(null);
+
         info.getDialogPane().setContent(content);
+        info.setWidth(200);
+        info.setHeight(200);
         info.setResizable(true);
         info.setGraphic(null);
         info.show();
@@ -119,7 +120,7 @@ public class MenuController
                                      new Label(ComposeFullName.process(entry.getKey())),
                                      new Label(entry.getValue().formatWithCurrency()));
                          });
-        return nameBalanceGrid;
+        return new ScrollPane(nameBalanceGrid);
     }
 
     private Map<Account, Money> getAccountMoneyMap(Collection<Account> accounts, List<Transaction> transactions)
