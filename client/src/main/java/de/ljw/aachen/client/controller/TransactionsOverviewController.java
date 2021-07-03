@@ -118,6 +118,8 @@ public class TransactionsOverviewController {
     }
 
     private void clear() {
+        lblFirstName.setText("");
+        lblLastName.setText("");
         tvTransactions.getItems().clear();
         lblTotalBalance.setText("-");
     }
