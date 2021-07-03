@@ -50,12 +50,12 @@ public class ExportAllTransactions
 
         determine.setOnWithdrawal(t -> {
             records.add(ExportRecord.of(nextTransactionNumber, t.getTime(), TYPE_AUSZAHLUNG,
-                    ComposeFullName.process(accountStore.find(t.getSource())), t.getAmount(), t.getDescription()));
+                    ComposeFullName.process(accountStore.find(t.getSource())), t.getAmount().negated(), t.getDescription()));
         });
 
         determine.setOnTransfer(t -> {
             records.add(ExportRecord.of(nextTransactionNumber, t.getTime(), TYPE_AUSZAHLUNG,
-                    ComposeFullName.process(accountStore.find(t.getSource())), t.getAmount(), t.getDescription()));
+                    ComposeFullName.process(accountStore.find(t.getSource())), t.getAmount().negated(), t.getDescription()));
             records.add(ExportRecord.of(nextTransactionNumber, t.getTime(), TYPE_EINZAHLUNG,
                     ComposeFullName.process(accountStore.find(t.getTarget())), t.getAmount(), t.getDescription()));
         });
