@@ -45,6 +45,7 @@ public class MenuController
     private final AccountStore accountStore;
     private final TransactionStore transactionStore;
     private final ImportAccountsController importAccountsController;
+    private final BalanceOverviewController balanceOverviewController;
 
     @FXML
     private ResourceBundle resources;
@@ -77,14 +78,21 @@ public class MenuController
     }
 
     @FXML
+    @SneakyThrows
     void onListBalance(ActionEvent event)
     {
-        var accounts = accountStore.getAccounts();
-        var transactions = transactionStore.getTransactions();
+        URL resource = AccountSelectionController.class.getClassLoader().getResource("fxml/balance_overview.fxml");
+        FXMLLoader loader = new FXMLLoader(resource);
+        loader.setResources(resources);
+        loader.setController(balanceOverviewController);
+        Parent root = loader.load();
 
-
-        Map<Account, Money> accountBalanceMap = getAccountMoneyMap(accounts, transactions);
-        displayAlert(resources.getString("balance.list.title"), accountBalanceMap);
+        Stage stage = new Stage();
+        stage.setScene(new Scene(root));
+        stage.setTitle(resources.getString("title.balance.overview"));
+        stage.initModality(Modality.WINDOW_MODAL);
+        stage.initOwner(((MenuItem) event.getSource()).getParentPopup().getOwnerWindow());
+        stage.show();
     }
 
     private void displayAlert(String title, Map<Account, Money> accountBalanceMap)

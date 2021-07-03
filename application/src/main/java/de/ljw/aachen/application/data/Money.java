@@ -9,7 +9,7 @@ import java.util.Currency;
 import java.util.Locale;
 
 @Data
-public class Money
+public class Money implements Comparable<Money>
 {
 
 
@@ -84,4 +84,9 @@ public class Money
     }
 
 
+    @Override
+    public int compareTo(Money o)
+    {
+        return value.compareTo(o.value);
+    }
 }

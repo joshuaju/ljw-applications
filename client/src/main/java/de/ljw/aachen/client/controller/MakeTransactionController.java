@@ -90,7 +90,7 @@ public class MakeTransactionController {
                 return !(receiverIsSelectedAccount); // receiver should not be shown when it is the selected account
             });
         });
-        SortedList<Account> sortedAndFilteredAccounts = new SortedList<>(filteredAccounts, CompareAccounts.byFirstName());
+        SortedList<Account> sortedAndFilteredAccounts = new SortedList<>(filteredAccounts, CompareAccounts.byFirstName().thenComparing(Account::getLastName));
         cbReceivers.setItems(sortedAndFilteredAccounts);
         Platform.runLater(this::setupValidationSupport);
 
