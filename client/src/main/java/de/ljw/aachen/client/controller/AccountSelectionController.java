@@ -57,7 +57,7 @@ public class AccountSelectionController
 
         // setup account filtering
         FilteredList<Account> filteredAccounts = new FilteredList<>(accountListProperty);
-        SortedList<Account> sortedAndFilteredAccounts = new SortedList<>(filteredAccounts, CompareAccounts.byFirstName().thenComparing(Account::getLastName));
+        SortedList<Account> sortedAndFilteredAccounts = new SortedList<>(filteredAccounts, CompareAccounts.byFirstNameAndLastName());
         tfSearchAccount.textProperty().addListener((observableValue, previousValue, newValue) -> {
             filteredAccounts.setPredicate(account -> {
                 if (newValue == null || newValue.isBlank()) return true;
