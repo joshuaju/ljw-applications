@@ -16,6 +16,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +29,8 @@ import java.util.ResourceBundle;
 
 @Component
 @RequiredArgsConstructor
-public class AccountSelectionController {
+public class AccountSelectionController
+{
 
     private final ObjectProperty<Account> selectedAccountProperty;
     private final ReadOnlyListProperty<Account> accountListProperty;
@@ -47,7 +49,8 @@ public class AccountSelectionController {
     private ResourceBundle resources;
 
     @FXML
-    private void initialize() {
+    private void initialize()
+    {
         editUserController.setOnEditedAccount(account -> lvAccounts.refresh());
         selectedAccountProperty.bind(lvAccounts.getSelectionModel().selectedItemProperty());
         btnEditUser.disableProperty().bind(selectedAccountProperty.isNull());
@@ -69,11 +72,16 @@ public class AccountSelectionController {
 
         lvAccounts.setItems(sortedAndFilteredAccounts);
         lvAccounts.setCellFactory(accountListView -> new AccountListCell());
+        lvAccounts.setOnKeyTyped(keyEvent -> {
+            if (KeyCode.ESCAPE.getChar().equals(keyEvent.getCharacter()))
+                lvAccounts.getSelectionModel().clearSelection();
+        });
     }
 
     @FXML
     @SneakyThrows
-    void onCreateAccount(ActionEvent event) {
+    void onCreateAccount(ActionEvent event)
+    {
         URL resource = AccountSelectionController.class.getClassLoader().getResource("fxml/user_detail.fxml");
         FXMLLoader loader = new FXMLLoader(resource);
         loader.setController(createUserController);
@@ -90,7 +98,8 @@ public class AccountSelectionController {
 
     @FXML
     @SneakyThrows
-    void onEditAccount(ActionEvent event) {
+    void onEditAccount(ActionEvent event)
+    {
         URL resource = AccountSelectionController.class.getClassLoader().getResource("fxml/user_detail.fxml");
         FXMLLoader loader = new FXMLLoader(resource);
         loader.setController(editUserController);
