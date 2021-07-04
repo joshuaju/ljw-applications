@@ -65,19 +65,6 @@ public class MenuController
     }
 
     @FXML
-    void onCheckBalance(ActionEvent event)
-    {
-        var accounts = accountStore.getAccounts();
-        var transactions = transactionStore.getTransactions();
-
-        Map<Account, Money> accountBalanceMap = getAccountMoneyMap(accounts, transactions);
-        var zeroBalance = new Money(0.00);
-        accountBalanceMap.entrySet().removeIf(entry -> entry.getValue().isGreaterThanOrEqual(zeroBalance));
-
-        displayAlert(resources.getString("balance.check.title"), accountBalanceMap);
-    }
-
-    @FXML
     @SneakyThrows
     void onListBalance(ActionEvent event)
     {
@@ -93,50 +80,6 @@ public class MenuController
         stage.initModality(Modality.WINDOW_MODAL);
         stage.initOwner(((MenuItem) event.getSource()).getParentPopup().getOwnerWindow());
         stage.show();
-    }
-
-    private void displayAlert(String title, Map<Account, Money> accountBalanceMap)
-    {
-        Node content = getBalanceCheckContentNode(accountBalanceMap);
-
-        var info = new Alert(Alert.AlertType.INFORMATION, null, ButtonType.OK);
-        info.setTitle(title);
-        info.setHeaderText(null);
-
-        info.getDialogPane().setContent(content);
-        info.setWidth(200);
-        info.setHeight(200);
-        info.setResizable(true);
-        info.setGraphic(null);
-        info.show();
-    }
-
-    private Node getBalanceCheckContentNode(Map<Account, Money> accountBalanceMap)
-    {
-        if (accountBalanceMap.isEmpty())
-            return new Label(resources.getString("balance.check.no.accounts.with.negative.balance"));
-
-        GridPane nameBalanceGrid = new GridPane();
-        nameBalanceGrid.setHgap(15);
-        nameBalanceGrid.setVgap(5);
-
-        var rowIndex = new AtomicInteger();
-        accountBalanceMap.entrySet().stream()
-                         .sorted(Comparator.comparing(entry -> ComposeFullName.process(entry.getKey())))
-                         .forEach(entry -> {
-                             nameBalanceGrid.addRow(rowIndex.getAndIncrement(),
-                                     new Label(ComposeFullName.process(entry.getKey())),
-                                     new Label(entry.getValue().formatWithCurrency()));
-                         });
-        return new ScrollPane(nameBalanceGrid);
-    }
-
-    private Map<Account, Money> getAccountMoneyMap(Collection<Account> accounts, List<Transaction> transactions)
-    {
-        return accounts.stream()
-                       .collect(Collectors.toMap(Function.identity(),
-                               account -> CalculateBalance.process(account.getId(), transactions)
-                       ));
     }
 
     @FXML
@@ -164,9 +107,7 @@ public class MenuController
         importFileChooser.setTitle(resources.getString("select.file"));
         FileChooser.ExtensionFilter csvFilter = new FileChooser.ExtensionFilter("Comma separated files (CSV)", "*.csv");
         importFileChooser.getExtensionFilters().add(csvFilter);
-        File selected = importFileChooser.showSaveDialog(((MenuItem) event.getTarget()).getParentPopup()
-                                                                                       .getScene()
-                                                                                       .getWindow());
+        File selected = importFileChooser.showSaveDialog(((MenuItem) event.getTarget()).getParentPopup().getScene().getWindow());
 
         if (selected == null) return;
 
