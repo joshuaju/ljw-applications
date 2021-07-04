@@ -1,6 +1,8 @@
 package de.ljw.aachen.client.configuration;
 
+import de.ljw.aachen.client.FXMLRegister;
 import de.ljw.aachen.client.exception.NotifyingExceptionHandler;
+import de.ljw.aachen.client.util.Memoize;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -22,13 +24,15 @@ import java.util.ResourceBundle;
 @Configuration
 @ComponentScan(basePackages = {"de.ljw.aachen.client.controller", "de.ljw.aachen.client.configuration"})
 @Import(Config.class)
-public class App extends Application {
+public class App extends Application
+{
 
     private Parent root;
     private ResourceBundle resources;
     private static ConfigurableApplicationContext applicationContext;
 
-    public static void main(String[] args) {
+    public static void main(String[] args)
+    {
         var application = new SpringApplication(App.class);
         application.setBannerMode(Banner.Mode.OFF);
         applicationContext = application.run(args);
@@ -36,9 +40,10 @@ public class App extends Application {
     }
 
     @Override
-    public void init() throws Exception {
+    public void init() throws Exception
+    {
         resources = ResourceBundle.getBundle("Bundle", Locale.getDefault());
-        URL resource = getClass().getResource("/fxml/lagerbank.fxml");
+        URL resource = FXMLRegister.LAGERBANK.getResource();
         FXMLLoader loader = new FXMLLoader(resource);
         loader.setControllerFactory(applicationContext::getBean);
         loader.setResources(resources);
@@ -46,16 +51,20 @@ public class App extends Application {
     }
 
     @Override
-    public void start(Stage stage) {
+    public void start(Stage stage)
+    {
         Thread.setDefaultUncaughtExceptionHandler(NotifyingExceptionHandler.asUncaughtExceptionHandler(stage, resources));
         stage.setTitle(resources.getString("app.name"));
         Scene scene = new Scene(root);
         stage.setScene(scene);
         stage.show();
+
+        Memoize.stagePosition(stage, FXMLRegister.LAGERBANK.getFileName());
     }
 
     @Override
-    public void stop() throws Exception {
+    public void stop() throws Exception
+    {
         applicationContext.stop();
         super.stop();
     }

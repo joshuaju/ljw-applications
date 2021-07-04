@@ -1,8 +1,10 @@
 package de.ljw.aachen.client.controller;
 
 import de.ljw.aachen.application.data.Account;
+import de.ljw.aachen.client.FXMLRegister;
 import de.ljw.aachen.client.controls.AccountListCell;
 import de.ljw.aachen.client.util.CompareAccounts;
+import de.ljw.aachen.client.util.Memoize;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyListProperty;
 import javafx.collections.transformation.FilteredList;
@@ -23,7 +25,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Component;
 
-import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -82,8 +83,7 @@ public class AccountSelectionController
     @SneakyThrows
     void onCreateAccount(ActionEvent event)
     {
-        URL resource = AccountSelectionController.class.getClassLoader().getResource("fxml/user_detail.fxml");
-        FXMLLoader loader = new FXMLLoader(resource);
+        FXMLLoader loader = new FXMLLoader(FXMLRegister.USER_DETAIL.getResource());
         loader.setController(createUserController);
         loader.setResources(resources);
         Parent root = loader.load();
@@ -94,14 +94,15 @@ public class AccountSelectionController
         stage.initModality(Modality.WINDOW_MODAL);
         stage.initOwner(((Node) event.getSource()).getScene().getWindow());
         stage.show();
+
+        Memoize.stagePosition(stage, FXMLRegister.USER_DETAIL.getFileName());
     }
 
     @FXML
     @SneakyThrows
     void onEditAccount(ActionEvent event)
     {
-        URL resource = AccountSelectionController.class.getClassLoader().getResource("fxml/user_detail.fxml");
-        FXMLLoader loader = new FXMLLoader(resource);
+        FXMLLoader loader = new FXMLLoader(FXMLRegister.USER_DETAIL.getResource());
         loader.setController(editUserController);
         loader.setResources(resources);
         Parent root = loader.load();
@@ -112,6 +113,8 @@ public class AccountSelectionController
         stage.initModality(Modality.WINDOW_MODAL);
         stage.initOwner(((Node) event.getSource()).getScene().getWindow());
         stage.show();
+
+        Memoize.stagePosition(stage, FXMLRegister.USER_DETAIL.getFileName());
     }
 
 }

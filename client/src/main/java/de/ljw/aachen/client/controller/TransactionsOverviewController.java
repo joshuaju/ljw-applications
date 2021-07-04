@@ -1,19 +1,18 @@
 package de.ljw.aachen.client.controller;
 
+import de.ljw.aachen.client.FXMLRegister;
 import de.ljw.aachen.client.controls.InstantTableCell;
 import de.ljw.aachen.client.controls.MoneyTableCell;
 import de.ljw.aachen.application.data.Account;
-import de.ljw.aachen.application.data.Money;
 import de.ljw.aachen.application.data.Transaction;
 import de.ljw.aachen.client.controls.DescriptionTableCell;
 import de.ljw.aachen.application.logic.CalculateBalance;
 import de.ljw.aachen.application.logic.GetRelevantTransactions;
-import javafx.beans.binding.Bindings;
+import de.ljw.aachen.client.util.Memoize;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyListProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.ListChangeListener;
-import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -32,7 +31,6 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import java.net.URL;
 import java.text.MessageFormat;
 import java.time.Instant;
 import java.util.*;
@@ -97,8 +95,7 @@ public class TransactionsOverviewController {
     @FXML
     @SneakyThrows
     private void onMakeTransaction(ActionEvent event) {
-        URL resource = AccountSelectionController.class.getClassLoader().getResource("fxml/make_transaction.fxml");
-        FXMLLoader loader = new FXMLLoader(resource);
+        FXMLLoader loader = new FXMLLoader(FXMLRegister.MAKE_TRANSACTION.getResource());
         loader.setControllerFactory(any -> makeTransactionController);
         loader.setResources(resources);
         Parent root = loader.load();
@@ -109,6 +106,8 @@ public class TransactionsOverviewController {
         stage.initModality(Modality.APPLICATION_MODAL);
         stage.initOwner(((Node) event.getSource()).getScene().getWindow());
         stage.showAndWait();
+
+        Memoize.stagePosition(stage, FXMLRegister.MAKE_TRANSACTION.getFileName());
     }
 
     private void refresh() {

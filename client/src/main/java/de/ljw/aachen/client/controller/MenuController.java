@@ -3,22 +3,16 @@ package de.ljw.aachen.client.controller;
 import de.ljw.aachen.application.adapter.AccountStore;
 import de.ljw.aachen.application.adapter.FileSystem;
 import de.ljw.aachen.application.adapter.TransactionStore;
-import de.ljw.aachen.application.data.Account;
-import de.ljw.aachen.application.data.Money;
-import de.ljw.aachen.application.data.Transaction;
-import de.ljw.aachen.application.logic.CalculateBalance;
 import de.ljw.aachen.application.logic.CashUp;
-import de.ljw.aachen.application.logic.ComposeFullName;
 import de.ljw.aachen.application.logic.ExportAllTransactions;
-import de.ljw.aachen.client.util.CompareAccounts;
+import de.ljw.aachen.client.FXMLRegister;
+import de.ljw.aachen.client.util.Memoize;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.layout.GridPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -31,9 +25,6 @@ import java.io.File;
 import java.net.URL;
 import java.text.MessageFormat;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Component
@@ -69,7 +60,7 @@ public class MenuController
     void onListBalance(ActionEvent event)
     {
         URL resource = AccountSelectionController.class.getClassLoader().getResource("fxml/balance_overview.fxml");
-        FXMLLoader loader = new FXMLLoader(resource);
+        FXMLLoader loader = new FXMLLoader(FXMLRegister.BALANCE_OVERVIEW.getResource());
         loader.setResources(resources);
         loader.setController(balanceOverviewController);
         Parent root = loader.load();
@@ -80,14 +71,15 @@ public class MenuController
         stage.initModality(Modality.WINDOW_MODAL);
         stage.initOwner(((MenuItem) event.getSource()).getParentPopup().getOwnerWindow());
         stage.show();
+
+        Memoize.stagePosition(stage, FXMLRegister.BALANCE_OVERVIEW.getFileName());
     }
 
     @FXML
     @SneakyThrows
     void onImport(ActionEvent event)
     {
-        URL resource = AccountSelectionController.class.getClassLoader().getResource("fxml/import_accounts.fxml");
-        FXMLLoader loader = new FXMLLoader(resource);
+        FXMLLoader loader = new FXMLLoader(FXMLRegister.IMPORT_ACCOUNTS.getResource());
         loader.setController(importAccountsController);
         loader.setResources(resources);
         Parent root = loader.load();
@@ -98,6 +90,8 @@ public class MenuController
         stage.initModality(Modality.WINDOW_MODAL);
         stage.initOwner(((MenuItem) event.getSource()).getParentPopup().getOwnerWindow());
         stage.show();
+
+        Memoize.stagePosition(stage, FXMLRegister.IMPORT_ACCOUNTS.getFileName());
     }
 
     @FXML
