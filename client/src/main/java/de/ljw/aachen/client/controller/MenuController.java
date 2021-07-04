@@ -6,25 +6,28 @@ import de.ljw.aachen.application.adapter.TransactionStore;
 import de.ljw.aachen.application.logic.CashUp;
 import de.ljw.aachen.application.logic.ExportAllTransactions;
 import de.ljw.aachen.client.FXMLRegister;
+import de.ljw.aachen.client.controls.MemoizingFileChooser;
 import de.ljw.aachen.client.util.Memoize;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
-import javafx.stage.FileChooser;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.MenuItem;
+import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import java.io.File;
 import java.net.URL;
 import java.text.MessageFormat;
-import java.util.*;
+import java.util.ResourceBundle;
 
 @Slf4j
 @Component
@@ -97,16 +100,16 @@ public class MenuController
     @FXML
     void onExportTransactions(ActionEvent event)
     {
-        var importFileChooser = new FileChooser();
-        importFileChooser.setTitle(resources.getString("select.file"));
-        FileChooser.ExtensionFilter csvFilter = new FileChooser.ExtensionFilter("Comma separated files (CSV)", "*.csv");
-        importFileChooser.getExtensionFilters().add(csvFilter);
-        File selected = importFileChooser.showSaveDialog(((MenuItem) event.getTarget()).getParentPopup().getScene().getWindow());
+        Window ownerWindow = ((MenuItem) event.getTarget()).getParentPopup().getScene().getWindow();
 
-        if (selected == null) return;
-
-        var exporter = new ExportAllTransactions(fs, transactionStore, accountStore);
-        exporter.export(selected.toPath());
+        var fileChooser = new MemoizingFileChooser("file-chooser/export-transactions");
+        var selected = fileChooser.setTitle(resources.getString("select.file"))
+                                  .addExtensionFilter(new ExtensionFilter("Comma separated files (CSV)", "*.csv"))
+                                  .showSaveDialog(ownerWindow);
+        selected.ifPresent(file -> {
+            var exporter = new ExportAllTransactions(fs, transactionStore, accountStore);
+            exporter.export(file.toPath());
+        });
     }
 
 

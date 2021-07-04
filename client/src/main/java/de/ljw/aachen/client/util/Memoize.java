@@ -1,18 +1,18 @@
 package de.ljw.aachen.client.util;
 
-import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
-import java.util.Arrays;
+import java.io.File;
 import java.util.prefs.Preferences;
-import java.util.regex.Pattern;
 
 public class Memoize
 {
 
+    private static final String BASE = "/ljw";
+
     public static void stagePosition(Stage stage, String name)
     {
-        Preferences pref = Preferences.userRoot().node(name);
+        Preferences pref = prefs(name);
 
         stage.setX(pref.getDouble("x", stage.getX()));
         stage.setY(pref.getDouble("y", stage.getY()));
@@ -27,4 +27,25 @@ public class Memoize
         });
     }
 
+    public static File restore(String name, File defaultFile)
+    {
+        String path = prefs(name).get("absolutePath", "not_set");
+        if (path.equals("not_set")) return defaultFile;
+        return new File(path);
+    }
+
+    public static void store(String name, File file)
+    {
+        if (file == null) return;
+        Preferences pref = prefs(name);
+        pref.put("absolutePath", file.getAbsolutePath());
+
+    }
+
+    private static Preferences prefs(String name)
+    {
+        var pref = Preferences.userRoot();
+        if (name.startsWith("/")) return pref.node(BASE + name);
+        else return pref.node(BASE + "/" + name);
+    }
 }
