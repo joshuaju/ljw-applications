@@ -89,4 +89,9 @@ public class Money implements Comparable<Money>
     {
         return value.compareTo(o.value);
     }
+
+    public boolean isNegative()
+    {
+        return value.isNegative();
+    }
 }

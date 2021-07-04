@@ -20,4 +20,8 @@ public class Balance
         return account.getLastName();
     }
 
+    public boolean isNegative(){
+        return value.isNegative();
+    }
+
 }
