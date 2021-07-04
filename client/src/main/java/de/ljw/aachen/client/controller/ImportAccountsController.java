@@ -56,12 +56,6 @@ public class ImportAccountsController
     {
         btnApply.disableProperty().bind(importFile.isNull());
         btnSelectFileDefaultText = btnSelectFile.getText();
-
-        // TODO setText initially, then register listener
-        importFile.addListener((observableValue, prev, now) -> {
-            if (now == null) btnSelectFile.setText(btnSelectFileDefaultText);
-            else btnSelectFile.setText(now.getAbsolutePath());
-        });
     }
 
     @FXML
@@ -72,10 +66,16 @@ public class ImportAccountsController
         var fileChooser = new MemoizingFileChooser("file-chooser/import-accounts");
         var selected = fileChooser.setTitle(resources.getString("select.file"))
                                   .addExtensionFilter(new FileChooser.ExtensionFilter("Comma separated files (CSV)", "*.csv"))
-                                  .showSaveDialog(ownerWindow);
-        selected.ifPresent(file -> {
-            importFile.set(file);
-        });
+                                  .showOpenDialog(ownerWindow);
+        selected.ifPresentOrElse(
+                file -> {
+                    importFile.set(file);
+                    btnSelectFile.setText(file.getAbsolutePath());
+                },
+                () -> {
+                    importFile.set(null);
+                    btnSelectFile.setText(btnSelectFileDefaultText);
+                });
     }
 
     @FXML
@@ -107,6 +107,7 @@ public class ImportAccountsController
     private void closeStage()
     {
         Stage stage = (Stage) tfDescription.getScene().getWindow();
+        importFile.set(null);
         stage.close();
     }
 

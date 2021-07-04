@@ -37,7 +37,7 @@ public class MemoizingFileChooser
     public Optional<File> showOpenDialog(Window ownerWindow)
     {
         var file = this.fileChooser.showOpenDialog(ownerWindow);
-        Memoize.store(memoryKey, file.getParentFile());
+        if (file != null) Memoize.store(memoryKey, file.getParentFile());
         return Optional.ofNullable(file);
     }
 
