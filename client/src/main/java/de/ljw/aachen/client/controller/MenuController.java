@@ -27,7 +27,12 @@ import org.springframework.stereotype.Component;
 
 import java.net.URL;
 import java.text.MessageFormat;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.util.Locale;
 import java.util.ResourceBundle;
+
+import static java.time.format.DateTimeFormatter.ofPattern;
 
 @Slf4j
 @Component
@@ -101,11 +106,13 @@ public class MenuController
     void onExportTransactions(ActionEvent event)
     {
         Window ownerWindow = ((MenuItem) event.getTarget()).getParentPopup().getScene().getWindow();
+        var date = ofPattern("yyyyMMdd_HHmm").withLocale(Locale.GERMAN).withZone(ZoneId.systemDefault());
 
-        var fileChooser = new MemoizingFileChooser("file-chooser/export-transactions");
-        var selected = fileChooser.setTitle(resources.getString("select.file"))
-                                  .addExtensionFilter(new ExtensionFilter("Comma separated files (CSV)", "*.csv"))
-                                  .showSaveDialog(ownerWindow);
+        var selected = new MemoizingFileChooser("file-chooser/export-transactions")
+                .setTitle(resources.getString("select.file"))
+                .addExtensionFilter(new ExtensionFilter("Comma separated files (CSV)", "*.csv"))
+                .setInitialFileName(String.format("%s_export.csv", date.format(Instant.now())))
+                .showSaveDialog(ownerWindow);
         selected.ifPresent(file -> {
             var exporter = new ExportAllTransactions(fs, transactionStore, accountStore);
             exporter.export(file.toPath());

@@ -34,6 +34,12 @@ public class MemoizingFileChooser
         return this;
     }
 
+    public MemoizingFileChooser setInitialFileName(String filename)
+    {
+        this.fileChooser.setInitialFileName(filename);
+        return this;
+    }
+
     public Optional<File> showOpenDialog(Window ownerWindow)
     {
         var file = this.fileChooser.showOpenDialog(ownerWindow);
