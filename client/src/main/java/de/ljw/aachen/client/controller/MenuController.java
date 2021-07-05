@@ -4,7 +4,9 @@ import de.ljw.aachen.application.adapter.AccountStore;
 import de.ljw.aachen.application.adapter.FileSystem;
 import de.ljw.aachen.application.adapter.TransactionStore;
 import de.ljw.aachen.application.logic.CashUp;
+import de.ljw.aachen.application.logic.ExportAllBalances;
 import de.ljw.aachen.application.logic.ExportAllTransactions;
+import de.ljw.aachen.application.logic.ListAllBalances;
 import de.ljw.aachen.client.FXMLRegister;
 import de.ljw.aachen.client.controls.MemoizingFileChooser;
 import de.ljw.aachen.client.util.Memoize;
@@ -15,6 +17,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Modality;
@@ -45,6 +48,7 @@ public class MenuController
     private final TransactionStore transactionStore;
     private final ImportAccountsController importAccountsController;
     private final BalanceOverviewController balanceOverviewController;
+    private final ListAllBalances listAllBalances;
 
     @FXML
     private ResourceBundle resources;
@@ -105,16 +109,33 @@ public class MenuController
     @FXML
     void onExportTransactions(ActionEvent event)
     {
-        Window ownerWindow = ((MenuItem) event.getTarget()).getParentPopup().getScene().getWindow();
+        Window ownerWindow = ((MenuItem) event.getTarget()).getParentMenu().getParentPopup().getScene().getWindow();
         var date = ofPattern("yyyyMMdd_HHmm").withLocale(Locale.GERMAN).withZone(ZoneId.systemDefault());
 
         var selected = new MemoizingFileChooser("file-chooser/export-transactions")
                 .setTitle(resources.getString("select.file"))
                 .addExtensionFilter(new ExtensionFilter("Comma separated files (CSV)", "*.csv"))
-                .setInitialFileName(String.format("%s_export.csv", date.format(Instant.now())))
+                .setInitialFileName(String.format("%s_transaktionen.csv", date.format(Instant.now())))
                 .showSaveDialog(ownerWindow);
         selected.ifPresent(file -> {
             var exporter = new ExportAllTransactions(fs, transactionStore, accountStore);
+            exporter.export(file.toPath());
+        });
+    }
+
+    @FXML
+    void onExportBalances(ActionEvent event)
+    {
+        Window ownerWindow = ((MenuItem) event.getTarget()).getParentMenu().getParentPopup().getScene().getWindow();
+        var date = ofPattern("yyyyMMdd_HHmm").withLocale(Locale.GERMAN).withZone(ZoneId.systemDefault());
+
+        var selected = new MemoizingFileChooser("file-chooser/export-transactions")
+                .setTitle(resources.getString("select.file"))
+                .addExtensionFilter(new ExtensionFilter("Comma separated files (CSV)", "*.csv"))
+                .setInitialFileName(String.format("%s_guthaben.csv", date.format(Instant.now())))
+                .showSaveDialog(ownerWindow);
+        selected.ifPresent(file -> {
+            var exporter = new ExportAllBalances(fs, listAllBalances);
             exporter.export(file.toPath());
         });
     }

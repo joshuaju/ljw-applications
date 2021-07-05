@@ -8,7 +8,10 @@
     <Menu mnemonicParsing="false" text="%actions">
         <MenuItem text="%action.cash.up" onAction="#onCashUp"/>
         <MenuItem text="%action.list.balance" onAction="#onListBalance"/>
-        <MenuItem text="%action.export.transactions" onAction="#onExportTransactions"/>
+        <Menu mnemonicParsing="false" text="%action.export">
+            <MenuItem text="%action.export.transactions" onAction="#onExportTransactions"/>
+            <MenuItem text="%action.export.balances" onAction="#onExportBalances"/>
+        </Menu>
         <MenuItem text="%action.import" onAction="#onImport"/>
     </Menu>
 
