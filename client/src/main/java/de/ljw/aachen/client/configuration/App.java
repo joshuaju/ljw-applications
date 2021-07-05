@@ -54,8 +54,11 @@ public class App extends Application
     public void start(Stage stage)
     {
         Thread.setDefaultUncaughtExceptionHandler(NotifyingExceptionHandler.asUncaughtExceptionHandler(stage, resources));
-        stage.setTitle(resources.getString("app.name"));
         Scene scene = new Scene(root);
+
+        stage.setTitle(resources.getString("app.name"));
+        stage.setMinWidth(750);
+        stage.setMinHeight(375);
         stage.setScene(scene);
         stage.show();
 
