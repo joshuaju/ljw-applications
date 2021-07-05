@@ -17,15 +17,13 @@ class ExportRecordConverter
     private static final String DELIMITER = ";";
 
     private static final DateTimeFormatter formatter =
-            DateTimeFormatter.ofPattern("dd.MM.YYYY HH:mm:ss")
+            DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss")
                              .withLocale(Locale.GERMAN)
                              .withZone(ZoneId.systemDefault());
 
-    private final AccountStore accountStore;
-
     public static String getHeader()
     {
-        return String.join(DELIMITER, "id", "Datum", "Typ", "Konto", "Betrag", "Betreff");
+        return String.join(DELIMITER, "id", "Datum", "Typ", "Konto", "Betrag", "Betreff", "Info");
     }
 
     public static String toString(ExportRecord record)
@@ -36,7 +34,8 @@ class ExportRecordConverter
                 record.getType(),
                 record.getAccountName(),
                 MessageFormat.format("{0,number,#.##}", record.getAmount().getValue()).replace(".", ","),
-                record.getDescription()
+                record.getDescription(),
+                record.getInfo()
         );
     }
 

@@ -45,19 +45,26 @@ public class ExportAllTransactions
 
         determine.setOnDeposit(t -> {
             records.add(ExportRecord.of(nextTransactionNumber, t.getTime(), TYPE_EINZAHLUNG,
-                    ComposeFullName.process(accountStore.find(t.getTarget())), t.getAmount(), t.getDescription()));
+                    ComposeFullName.process(accountStore.find(t.getTarget())), t.getAmount(), t.getDescription(),
+                    (t.getInfo() == null || t.getInfo().isBlank()) ? "EINZAHLUNG" : t.getInfo()));
         });
 
         determine.setOnWithdrawal(t -> {
             records.add(ExportRecord.of(nextTransactionNumber, t.getTime(), TYPE_AUSZAHLUNG,
-                    ComposeFullName.process(accountStore.find(t.getSource())), t.getAmount().negated(), t.getDescription()));
+                    ComposeFullName.process(accountStore.find(t.getSource())), t.getAmount().negated(), t.getDescription(),
+                    "AUSZAHLUNG"));
         });
 
         determine.setOnTransfer(t -> {
+            String senderName = ComposeFullName.process(accountStore.find(t.getSource()));
+            String receiverName = ComposeFullName.process(accountStore.find(t.getTarget()));
+
             records.add(ExportRecord.of(nextTransactionNumber, t.getTime(), TYPE_AUSZAHLUNG,
-                    ComposeFullName.process(accountStore.find(t.getSource())), t.getAmount().negated(), t.getDescription()));
+                    senderName, t.getAmount().negated(), t.getDescription(),
+                    String.format("GESENDET AN %s", receiverName)));
             records.add(ExportRecord.of(nextTransactionNumber, t.getTime(), TYPE_EINZAHLUNG,
-                    ComposeFullName.process(accountStore.find(t.getTarget())), t.getAmount(), t.getDescription()));
+                    receiverName, t.getAmount(), t.getDescription(),
+                    String.format("EMPFANGEN VON %s", senderName)));
         });
 
         determine.process(transaction);

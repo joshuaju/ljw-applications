@@ -13,4 +13,5 @@ public class ExportRecord
     private final String accountName;
     private final Money amount;
     private final String description;
+    private final String info;
 }

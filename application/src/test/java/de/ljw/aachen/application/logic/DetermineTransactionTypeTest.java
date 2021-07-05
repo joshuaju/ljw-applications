@@ -31,28 +31,28 @@ class DetermineTransactionTypeTest {
 
     @Test
     void determineDeposit() {
-        var deposit = new Transaction(null, null, new AccountId(), null, null, null);
+        var deposit = new Transaction(null, null, new AccountId(), null, null, null, null);
         determineTransactionType.process(deposit);
         assertThat(isDeposit).isTrue();
     }
 
     @Test
     void determineWitdrawal() {
-        var withdrawal = new Transaction(null, new AccountId(), null, null, null, null);
+        var withdrawal = new Transaction(null, new AccountId(), null, null, null, null, null);
         determineTransactionType.process(withdrawal);
         assertThat(isWithdrawal).isTrue();
     }
 
     @Test
     void determineTransfer() {
-        var transfer = new Transaction(null, new AccountId(), new AccountId(), null, null, null);
+        var transfer = new Transaction(null, new AccountId(), new AccountId(), null, null, null, null);
         determineTransactionType.process(transfer);
         assertThat(isTransfer).isTrue();
     }
 
     @Test
     void determineError() {
-        var invalidTransaction = new Transaction(null, null, null, null, null, null);
+        var invalidTransaction = new Transaction(null, null, null, null, null, null, null);
         assertThatIllegalArgumentException().isThrownBy(() -> determineTransactionType.process(invalidTransaction));
         assertThat(isDeposit).isFalse();
         assertThat(isWithdrawal).isFalse();
